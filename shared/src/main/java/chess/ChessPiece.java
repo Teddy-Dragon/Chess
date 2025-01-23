@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Represents a single chess piece
@@ -60,7 +61,30 @@ public class ChessPiece {
          * Pawn: if starting position == current position, +2 row. Otherwise, +1 row if empty and +1 row +1 column if occupied
          * King: +-1 in any direction so long as not occupied nor board ended
          * **/
+        if (type == PieceType.QUEEN){
+            return QueenCalc(board, myPosition);
+        }
+        if(type == PieceType.BISHOP){
+            return BishopCalc(board, myPosition);
+        }
+        return null;
 
-        throw new RuntimeException("Not implemented");
+
     }
+
+    public Collection<ChessMove> QueenCalc(ChessBoard board, ChessPosition myPosition){
+        return null;
+
+    }
+    public Collection<ChessMove>BishopCalc(ChessBoard board, ChessPosition myPosition){
+        Collection<ChessMove> validMoves;
+
+        System.out.println(myPosition.getRow() + "  " + myPosition.getColumn());
+
+        return null;
+    }
+
+
+
+
 }
