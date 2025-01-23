@@ -67,6 +67,18 @@ public class ChessPiece {
         if(type == PieceType.BISHOP){
             return BishopCalc(board, myPosition);
         }
+        if(type == PieceType.PAWN){
+            return PawnCalc(board, myPosition);
+        }
+        if(type == PieceType.KNIGHT){
+            return KnightCalc(board, myPosition);
+        }
+        if(type == PieceType.ROOK){
+            return RookCalc(board, myPosition);
+        }
+        if(type == PieceType.KING){
+            return KingCalc(board, myPosition);
+        }
         return null;
 
 
@@ -81,6 +93,18 @@ public class ChessPiece {
 
         System.out.println(myPosition.getRow() + "  " + myPosition.getColumn());
 
+        return null;
+    }
+    public Collection<ChessMove>PawnCalc(ChessBoard board, ChessPosition myPosition){
+        return null;
+    }
+    public Collection<ChessMove>RookCalc(ChessBoard board, ChessPosition myPosition){
+        return null;
+    }
+    public Collection<ChessMove>KnightCalc(ChessBoard board, ChessPosition myPosition){
+        return null;
+    }
+    public Collection<ChessMove>KingCalc(ChessBoard board, ChessPosition myPosition){
         return null;
     }
 
