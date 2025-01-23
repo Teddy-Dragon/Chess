@@ -42,6 +42,9 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        throw new RuntimeException("Not implemented");
+        if(promotionPiece != ChessPiece.PieceType.PAWN){
+            return null;
+        }
+        return ChessPiece.PieceType.ROOK;
     }
 }

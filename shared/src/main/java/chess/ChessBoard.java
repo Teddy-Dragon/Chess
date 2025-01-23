@@ -34,8 +34,22 @@ public class ChessBoard {
         return squares[position.getRow()][position.getColumn()];
     }
 
-    public Boolean IsAvailable(ChessPosition position){
-        return getPiece(position) == null;
+    public int IsAvailable(ChessPosition position){
+        /**
+         * 1: Encountered another piece
+         * 2: Out of bounds
+         * 0: Available
+         * **/
+        if(getPiece(position) != null){
+            return 1;
+        }
+        if(position.getRow() < 0 || position.getRow() > 8){
+            return 2;
+        }
+        if(position.getColumn() < 0 || position.getColumn() > 8){
+            return 2;
+        }
+        return 0;
     }
 
     /**
