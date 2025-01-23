@@ -52,6 +52,15 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        /** When given PieceType, calculate valid moves based off current position of Self and current position of Others on board
+         * Bishop: +-N so long as the changes to both col and row are the same value, no one is in the way, and 1 < n < 8
+         * Rook: +- N so long as only col or row has that value, the opposing must be 0. No one can be in the way and 1 < n < 8
+         * Knight: +-2, +-1 in either category but neither can be the same number. No one can be in the way and the board cannot be over
+         * Queen: Same valid moves as both a bishop and a rook, can access their moves instead
+         * Pawn: if starting position == current position, +2 row. Otherwise, +1 row if empty and +1 row +1 column if occupied
+         * King: +-1 in any direction so long as not occupied nor board ended
+         * **/
+
         throw new RuntimeException("Not implemented");
     }
 }
