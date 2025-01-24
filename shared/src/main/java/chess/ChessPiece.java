@@ -3,6 +3,7 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -18,6 +19,23 @@ public class ChessPiece {
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
         this.type = type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
     }
 
     /**
@@ -87,7 +105,11 @@ public class ChessPiece {
 
 
     public Collection<ChessMove> QueenCalc(ChessBoard board, ChessPosition myPosition){
-        return null;
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        validMoves.addAll(BishopCalc(board, myPosition));
+        validMoves.addAll(RookCalc(board, myPosition));
+
+        return validMoves;
 
     }
     public Collection<ChessMove>BishopCalc(ChessBoard board, ChessPosition myPosition){
@@ -95,23 +117,6 @@ public class ChessPiece {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         int Change = 1;
-        while(row + Change <= 8 && col + Change <= 8) {
-            ChessPosition POStest = new ChessPosition(row + Change, col + Change);
-            while(board.IsAvailable(POStest) == 0){
-                validMoves.add(new ChessMove(myPosition, POStest, PieceType.BISHOP));
-                Change++;
-            }
-            if(board.IsAvailable(POStest) == 1){
-                validMoves.add(new ChessMove(myPosition, POStest, PieceType.BISHOP));
-            }
-            if(board.IsAvailable(POStest) == 2){
-                break;
-            }
-
-
-        }
-        Change = 1;
-
 
         return validMoves;
     }
@@ -120,9 +125,6 @@ public class ChessPiece {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
 
-
-
-
         return validMoves;
     }
     public Collection<ChessMove>RookCalc(ChessBoard board, ChessPosition myPosition){
@@ -130,49 +132,60 @@ public class ChessPiece {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         int change = 1;
-        while(row + change < 8){
+        while(row + change <= 8){
             ChessPosition TestPos = new ChessPosition(row + change, col);
-            if(board.IsAvailable(TestPos) == 0){
-                validMoves.add(new ChessMove(myPosition, TestPos, PieceType.ROOK));
+            if(board.getPiece(TestPos) == null){
+                validMoves.add(new ChessMove(myPosition, TestPos, null));
                 change++;
-            } else if (board.IsAvailable(TestPos) == 1) {
-                validMoves.add(new ChessMove(myPosition, TestPos, PieceType.ROOK));
-                break;
+                continue;
             }
+            if (board.getPiece(TestPos).getTeamColor() != pieceColor) {
+                validMoves.add(new ChessMove(myPosition, TestPos, null));
+            }
+            change = 1;
+            break;
         }
-        change = 1;
         while(row - change >= 1){
             ChessPosition TestPos = new ChessPosition(row - change, col);
-            if(board.IsAvailable(TestPos) == 0){
-                validMoves.add(new ChessMove(myPosition, TestPos, PieceType.ROOK));
+            if(board.getPiece(TestPos) == null){
+                validMoves.add(new ChessMove(myPosition, TestPos, null));
                 change++;
-            } else if (board.IsAvailable(TestPos) == 1) {
-                validMoves.add(new ChessMove(myPosition, TestPos, PieceType.ROOK));
-                break;
+                continue;
             }
+            if (board.getPiece(TestPos).getTeamColor() != pieceColor) {
+                validMoves.add(new ChessMove(myPosition, TestPos, null));
+            }
+            change = 1;
+            break;
         }
-        change = 1;
-        while(col + change < 8){
+        while(col + change <= 8){
             ChessPosition TestPos = new ChessPosition(row, col + change);
-            if(board.IsAvailable(TestPos) == 0){
-                validMoves.add(new ChessMove(myPosition, TestPos, PieceType.ROOK));
+            if(board.getPiece(TestPos) == null){
+                validMoves.add(new ChessMove(myPosition, TestPos, null));
                 change++;
-            } else if (board.IsAvailable(TestPos) == 1) {
-                validMoves.add(new ChessMove(myPosition, TestPos, PieceType.ROOK));
-                break;
+                continue;
             }
+            if (board.getPiece(TestPos).getTeamColor() != pieceColor) {
+                validMoves.add(new ChessMove(myPosition, TestPos, null));
+            }
+            change = 1;
+            break;
         }
-        change = 1;
         while(col - change >= 1){
             ChessPosition TestPos = new ChessPosition(row, col - change);
-            if(board.IsAvailable(TestPos) == 0){
-                validMoves.add(new ChessMove(myPosition, TestPos, PieceType.ROOK));
+            if(board.getPiece(TestPos) == null){
+                validMoves.add(new ChessMove(myPosition, TestPos, null));
                 change++;
-            } else if (board.IsAvailable(TestPos) == 1) {
-                validMoves.add(new ChessMove(myPosition, TestPos, PieceType.ROOK));
-                break;
+                continue;
             }
+            if (board.getPiece(TestPos).getTeamColor() != pieceColor) {
+                validMoves.add(new ChessMove(myPosition, TestPos, null));
+            }
+            change = 1;
+            break;
         }
+        change = 1;
+
 
         return validMoves;
     }
