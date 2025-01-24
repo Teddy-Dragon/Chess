@@ -444,6 +444,63 @@ public class ChessPiece {
         int col = myPosition.getColumn();
         int change = 1;
 
+        for(int i = 0; i < 2; i++){ /* up and down both negative and positive */
+            if(row - change >= 1 && row - change <= 8){
+                ChessPosition TestPOS = new ChessPosition(row - change, col);
+                if(board.getPiece(TestPOS) != null){
+                    if(board.getPiece(TestPOS).getTeamColor() != pieceColor){
+                        validMoves.add(new ChessMove(myPosition,TestPOS, null));
+                    }
+                }
+                else validMoves.add(new ChessMove(myPosition, TestPOS, null));
+            }
+            change = -change;
+        }
+        for(int i = 0; i < 2; i++){/*Side to side both negative and positive */
+            if(col - change <= 8 && col - change >= 1){
+                ChessPosition TestPOS = new ChessPosition(row, col - change);
+                if(board.getPiece(TestPOS) != null){
+                    if(board.getPiece(TestPOS).getTeamColor() != pieceColor){
+                        validMoves.add(new ChessMove(myPosition,TestPOS, null));
+                    }
+                }
+                else validMoves.add(new ChessMove(myPosition, TestPOS, null));
+            }
+            change = -change;
+        }
+        for(int i = 0; i < 2; i++){ /*Diagonal both same sign */
+            if(row - change >= 1 && row - change <= 8){
+                if(col - change <= 8 && col - change >= 1){
+                    ChessPosition TestPOS = new ChessPosition(row - change, col - change);
+                    if(board.getPiece(TestPOS) != null){
+                        if(board.getPiece(TestPOS).getTeamColor() != pieceColor){
+                            validMoves.add(new ChessMove(myPosition,TestPOS, null));
+                        }
+                    }
+                    else validMoves.add(new ChessMove(myPosition, TestPOS, null));
+
+                }
+            }
+            change = -change;
+        }
+        for(int i = 0; i < 2; i++){ /*Diagonal different sign */
+            if(row - change >= 1 && row - change <= 8){
+                if(col + change <= 8 && col + change >= 1){
+                    ChessPosition TestPOS = new ChessPosition(row - change, col + change);
+                    if(board.getPiece(TestPOS) != null){
+                        if(board.getPiece(TestPOS).getTeamColor() != pieceColor){
+                            validMoves.add(new ChessMove(myPosition,TestPOS, null));
+                        }
+                    }
+                    else validMoves.add(new ChessMove(myPosition, TestPOS, null));
+
+                }
+            }
+            change = -change;
+        }
+
+
+
         return validMoves;
     }
 
