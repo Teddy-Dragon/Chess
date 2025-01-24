@@ -357,7 +357,7 @@ public class ChessPiece {
         int col = myPosition.getColumn();
         int two_change = 2;
         int one_change = 1;
-        for(int i = 0; i < 2; i++) { /* When both categories are the same sign, row is increasing by 2 */
+        for(int i = 0; i < 2; i++) { /* When both categories are the same sign, row is increasing/decrasing by 2 */
             if (row - two_change >= 1 && row - two_change <= 8) {
                 if (col - one_change >= 1 && col - one_change <= 8) {
                     ChessPosition TestPos = new ChessPosition(row - two_change, col - one_change);
@@ -375,7 +375,7 @@ public class ChessPiece {
             one_change = -one_change;
             two_change = -two_change;
         }
-        for(int i = 0; i < 2; i++) { /* When both categories are the opposite sign, row is increasing by 2 */
+        for(int i = 0; i < 2; i++) { /* When both categories are the opposite sign, row is increasing/decreasing by 2 */
             if (row - two_change >= 1 && row - two_change <= 8) {
                 one_change = -one_change;
                 if (col - one_change >= 1 && col - one_change <= 8) {
@@ -394,7 +394,7 @@ public class ChessPiece {
             two_change = -two_change;
         }
         one_change = 1;
-        for(int i = 0; i < 2; i++) { /* When both categories are the same sign, col is increasing by 2 */
+        for(int i = 0; i < 2; i++) { /* When both categories are the same sign, col is increasing/decreasing by 2 */
             if (col - two_change >= 1 && col - two_change <= 8) {
                 if (row - one_change >= 1 && row - one_change <= 8) {
                     ChessPosition TestPos = new ChessPosition(row - one_change, col - two_change);
@@ -412,7 +412,7 @@ public class ChessPiece {
             one_change = -one_change;
             two_change = -two_change;
         }
-        for(int i = 0; i < 2; i++) { /* When both categories have opposite signs, col is increasing by 2 */
+        for(int i = 0; i < 2; i++) { /* When both categories have opposite signs, col is increasing/decreasing by 2 */
             if (col - two_change >= 1 && col - two_change <= 8) {
                 one_change = -one_change;
                 if (row - one_change >= 1 && row - one_change <= 8) {
