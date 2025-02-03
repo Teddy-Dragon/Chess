@@ -356,86 +356,49 @@ public class ChessPiece {
     }
 
 
-    public Collection<ChessMove>KnightCalc(ChessBoard board, ChessPosition myPosition){
-        /* Knight: +-2, +-1 in either category but neither can be the same number. No one can be in the way and the board cannot be over */
+    public Collection<ChessMove> KnightCalc(ChessBoard board, ChessPosition myPosition){
         Collection<ChessMove> validMoves = new ArrayList<>();
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         int two_change = 2;
         int one_change = 1;
-        for(int i = 0; i < 2; i++) { /* When both categories are the same sign, row is increasing/decrasing by 2 */
-            if (row - two_change >= 1 && row - two_change <= 8) {
-                if (col - one_change >= 1 && col - one_change <= 8) {
-                    ChessPosition TestPos = new ChessPosition(row - two_change, col - one_change);
-                    if (board.getPiece(TestPos) == null) {
-                        validMoves.add(new ChessMove(myPosition, TestPos, null));
-                    }
-                    if (board.getPiece(TestPos) != null) {
-                        if (board.getPiece(TestPos).getTeamColor() != pieceColor) {
-                            validMoves.add(new ChessMove(myPosition, TestPos, null));
+        for(int k = 0; k < 2; k++) {
 
+            for (int i = 0; i < 2; i++) {
+                if (row - one_change <= 8 && row - one_change >= 1) {
+                    if (col - two_change <= 8 && col - two_change >= 1) {
+                        ChessPosition test = new ChessPosition(row - one_change, col - two_change);
+                        if (board.getPiece(test) != null) {
+                            if (board.getPiece(test).getTeamColor() != pieceColor) {
+                                validMoves.add(new ChessMove(myPosition, test, null));
+                            }
+                        } else {
+                            validMoves.add(new ChessMove(myPosition, test, null));
                         }
                     }
                 }
+                one_change = -one_change;
+                two_change = -two_change;
             }
-            one_change = -one_change;
-            two_change = -two_change;
-        }
-        for(int i = 0; i < 2; i++) { /* When both categories are the same sign, col is increasing/decrasing by 2 */
-            if (col - two_change >= 1 && col - two_change <= 8) {
-                if (row - one_change >= 1 && row - one_change <= 8) {
-                    ChessPosition TestPos = new ChessPosition(row - one_change, col - two_change);
-                    if (board.getPiece(TestPos) == null) {
-                        validMoves.add(new ChessMove(myPosition, TestPos, null));
-                    }
-                    if (board.getPiece(TestPos) != null) {
-                        if (board.getPiece(TestPos).getTeamColor() != pieceColor) {
-                            validMoves.add(new ChessMove(myPosition, TestPos, null));
-
+            for (int i = 0; i < 2; i++) {
+                if (row - two_change <= 8 && row - two_change >= 1) {
+                    if (col - one_change <= 8 && col - one_change >= 1) {
+                        ChessPosition test = new ChessPosition(row - two_change, col - one_change);
+                        if (board.getPiece(test) != null) {
+                            if (board.getPiece(test).getTeamColor() != pieceColor) {
+                                validMoves.add(new ChessMove(myPosition, test, null));
+                            }
+                        } else {
+                            validMoves.add(new ChessMove(myPosition, test, null));
                         }
                     }
                 }
+                one_change = -one_change;
+                two_change = -two_change;
             }
             one_change = -one_change;
-            two_change = -two_change;
         }
-        one_change = -one_change;
-        for(int i = 0; i < 2; i++) { /* When both categories are the opposite sign, col is increasing/decrasing by 2 */
-            if (col - two_change >= 1 && col - two_change <= 8) {
-                if (row - one_change >= 1 && row - one_change <= 8) {
-                    ChessPosition TestPos = new ChessPosition(row - one_change, col - two_change);
-                    if (board.getPiece(TestPos) == null) {
-                        validMoves.add(new ChessMove(myPosition, TestPos, null));
-                    }
-                    if (board.getPiece(TestPos) != null) {
-                        if (board.getPiece(TestPos).getTeamColor() != pieceColor) {
-                            validMoves.add(new ChessMove(myPosition, TestPos, null));
 
-                        }
-                    }
-                }
-            }
-            one_change = -one_change;
-            two_change = -two_change;
-        }
-        for(int i = 0; i < 2; i++) { /* When both categories are the opposite sign, row is increasing/decrasing by 2 */
-            if (row - two_change >= 1 && row - two_change <= 8) {
-                if (col - one_change >= 1 && col - one_change <= 8) {
-                    ChessPosition TestPos = new ChessPosition(row - two_change, col - one_change);
-                    if (board.getPiece(TestPos) == null) {
-                        validMoves.add(new ChessMove(myPosition, TestPos, null));
-                    }
-                    if (board.getPiece(TestPos) != null) {
-                        if (board.getPiece(TestPos).getTeamColor() != pieceColor) {
-                            validMoves.add(new ChessMove(myPosition, TestPos, null));
-
-                        }
-                    }
-                }
-            }
-            one_change = -one_change;
-            two_change = -two_change;
-        }
 
 
 
