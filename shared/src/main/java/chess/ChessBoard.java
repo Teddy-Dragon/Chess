@@ -38,7 +38,12 @@ public class ChessBoard {
     }
 
     public void removePiece(ChessPosition position){
-        squares[position.getRow()][position.getColumn()] = null;
+        squares[position.getRow() - 1][position.getColumn() - 1] = null;
+    }
+
+    public void commitMove(ChessMove move, ChessPiece piece){
+        removePiece(move.getStartPosition());
+        addPiece(move.getEndPosition(), piece);
     }
 
     /**
