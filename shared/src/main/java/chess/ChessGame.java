@@ -1,9 +1,6 @@
 package chess;
 
-import jdk.jshell.Snippet;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -18,6 +15,7 @@ public class ChessGame {
     private TeamColor teamCheck;
 
     public ChessGame() {
+        game_board.resetBoard();
 
     }
 
@@ -62,6 +60,10 @@ public class ChessGame {
         }
         if(teamCheck != current_player){
             validMoves.addAll(currentPiece.pieceMoves(game_board, startPosition));
+            /*Piece can go anywhere so long as it doesn't put king in check */
+        }
+        if(teamCheck == current_player){
+            /*Can only move to get out of Check */
         }
 
         return validMoves;
@@ -88,6 +90,16 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+        ChessPosition king = findKing(teamColor);
+        Collection<ChessMove> enemyMoves = TeamMoves(enemy(teamColor));
+        for(ChessMove move : enemyMoves){
+            ChessPosition attack = move.getEndPosition();
+            if(attack.getRow() == king.getRow() && attack.getColumn() == king.getColumn()){
+                teamCheck = teamColor;
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -98,6 +110,9 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        ChessPosition kingSpot = findKing(teamColor);
+        Collection<ChessMove> enemyMoves = TeamMoves(enemy(teamColor));
+        Collection<ChessMove> allyMoves = TeamMoves(teamColor);
         return false;
     }
 
@@ -109,7 +124,8 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return false;
+        Collection<ChessMove> allyMoves = TeamMoves(teamColor);
+        return allyMoves == null;
     }
 
     /**
@@ -143,10 +159,25 @@ public class ChessGame {
         }
         return null;
     }
-    public TeamColor enemy(){
-        if(current_player == TeamColor.WHITE){
+    public Collection<ChessMove> TeamMoves(TeamColor team){
+        Collection<ChessMove> validTeamMoves = new ArrayList<>();
+        for(int k = 1; k <= 8; k++ ){
+            for(int i = 1; i <= 8; i++){
+                ChessPosition testPOS = new ChessPosition(k, i);
+                if(game_board.getPiece(testPOS) != null && game_board.getPiece(testPOS).getTeamColor() == team){
+                    ChessPiece checkMoves = game_board.getPiece(testPOS);
+                    validTeamMoves.addAll(checkMoves.pieceMoves(game_board, testPOS));
+                }
+            }
+        }
+        return validTeamMoves;
+    }
+
+    public TeamColor enemy(TeamColor color){
+        if(color == TeamColor.WHITE){
             return TeamColor.BLACK;
         }
-        else return TeamColor.WHITE;
+        else return  TeamColor.WHITE;
     }
+
 }
