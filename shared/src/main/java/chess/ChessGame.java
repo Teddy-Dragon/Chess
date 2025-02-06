@@ -1,5 +1,9 @@
 package chess;
 
+import jdk.jshell.Snippet;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -9,8 +13,9 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private ChessBoard game_board;
+    private ChessBoard game_board = new ChessBoard();
     private TeamColor current_player = TeamColor.WHITE;
+    private TeamCheck teamCheck;
 
     public ChessGame() {
 
@@ -40,6 +45,10 @@ public class ChessGame {
         WHITE,
         BLACK
     }
+    public enum TeamCheck{
+        WHITE,
+        BLACK
+    }
 
     /**
      * Gets a valid moves for a piece at the given location
@@ -49,7 +58,13 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        if(game_board.getPiece(startPosition) == null){
+            return null;
+        }
+        System.out.println(findKing());
+        return null;
+
     }
 
     /**
@@ -109,5 +124,19 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return game_board;
+    }
+
+    public ChessPosition findKing(){
+        for(int k = 1; k <= 8; k++ ){
+            for(int i = 1; i <= 8; i++){
+                ChessPosition testPOS = new ChessPosition(k, i);
+                if(game_board.getPiece(testPOS) != null && game_board.getPiece(testPOS).getPieceType() == ChessPiece.PieceType.KING){
+                    if(game_board.getPiece(testPOS).getTeamColor() == current_player){
+                        return testPOS;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }
