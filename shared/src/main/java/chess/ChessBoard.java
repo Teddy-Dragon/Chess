@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -102,9 +103,7 @@ public class ChessBoard implements Cloneable {
     }
     @Override
     public ChessBoard clone(){
-        try{
-            ChessBoard boardClone = (ChessBoard) super.clone();
-
+        ChessBoard boardClone = new ChessBoard();
             for(int k = 1; k <= 8; k++){
                 for(int i = 1; i <= 8; i ++){
                     ChessPosition testPOS = new ChessPosition(k, i);
@@ -116,9 +115,5 @@ public class ChessBoard implements Cloneable {
             }
             return boardClone;
 
-        }
-        catch (CloneNotSupportedException e){
-            throw new RuntimeException(e);
-        }
     }
 }

@@ -125,6 +125,9 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition king = findKing(teamColor, game_board);
         Collection<ChessMove> enemyMoves = TeamMoves(enemy(teamColor));
+        if(king == null){
+            return true;
+        }
         for(ChessMove move : enemyMoves){
             ChessPosition attack = move.getEndPosition();
             if(attack.getRow() == king.getRow() && attack.getColumn() == king.getColumn()){
@@ -161,6 +164,8 @@ public class ChessGame {
         }
 
         this.setBoard(boardCopy);
+
+
         return true;
 
     }
@@ -172,10 +177,18 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        ChessPosition kingSpot = findKing(teamColor, game_board);
-        Collection<ChessMove> enemyMoves = TeamMoves(enemy(teamColor));
         Collection<ChessMove> allyMoves = TeamMoves(teamColor);
-        return false;
+        if(isInCheck(teamColor)){
+            for(ChessMove moves: allyMoves){
+                if(isAValidMove(moves, teamColor)){
+                    return false;
+                }
+
+            }
+            return true;
+        }
+        return isInStalemate(teamColor);
+
     }
 
     /**
@@ -187,7 +200,13 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         Collection<ChessMove> allyMoves = TeamMoves(teamColor);
-        return allyMoves == null;
+        for(ChessMove moves: allyMoves){
+            if(isAValidMove(moves, teamColor)){
+                return false;
+            }
+
+        }
+        return true;
     }
 
     /**
@@ -196,11 +215,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        System.out.println(Arrays.deepToString(new String[]{"COPY " + board}));
-        System.out.println(Arrays.deepToString(new String[]{"ORIGINAL " + game_board}));
         game_board = board;
-        System.out.println(Arrays.deepToString(new String[]{"COPY AFTER " + board}));
-        System.out.println(Arrays.deepToString(new String[]{"ORIGINAL AFTER " + game_board}));
     }
 
     /**
