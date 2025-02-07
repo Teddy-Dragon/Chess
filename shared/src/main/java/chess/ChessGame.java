@@ -77,7 +77,7 @@ public class ChessGame {
             return null;
         }
         for(ChessMove move: possibleMoves){ /*For all moves check to see if it puts the king in check */
-            if(isAValidMove(move, current_player)){
+            if(isAValidMove(move)){
                 validMoves.add(move);
             }
 
@@ -96,17 +96,26 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = game_board.getPiece(move.getStartPosition());
+
+
         if(move.getPromotionPiece() != null){
             ChessPiece promotion = new ChessPiece(current_player, move.getPromotionPiece());
-            if(isAValidMove(move, current_player)){
+            if(isAValidMove(move)){
+                if(game_board.getPiece(move.getStartPosition()).getTeamColor() != current_player){
+                    throw new InvalidMoveException();
+                }
                 game_board.commitMove(move, promotion);
                 setTeamTurn(enemy(current_player));
             }
             else{
                 throw new InvalidMoveException();
             }
-        }else {
-            if(isAValidMove(move, current_player)){
+        }
+        else {
+            if(isAValidMove(move)){
+                if(game_board.getPiece(move.getStartPosition()).getTeamColor() != current_player){
+                    throw new InvalidMoveException();
+                }
                 game_board.commitMove(move, piece);
                 setTeamTurn(enemy(current_player));
             }
@@ -138,27 +147,25 @@ public class ChessGame {
         return false;
     }
 
-    public boolean isAValidMove(ChessMove move, TeamColor color){
+    public boolean isAValidMove(ChessMove move){
         ChessBoard boardCopy = game_board.clone();
+
         assert boardCopy.equals(game_board);
-        if(game_board.getPiece(move.getStartPosition()) == null){
+        if(game_board.getPiece(move.getStartPosition()) == null){ /*No piece to move */
             return false;
         }
+        TeamColor color = game_board.getPiece(move.getStartPosition()).getTeamColor();
         Collection<ChessMove> possibleMoves = game_board.getPiece(move.getStartPosition()).pieceMoves(game_board, move.getStartPosition());
         ChessPosition endPOS = move.getEndPosition();
         if(game_board.getPiece(move.getEndPosition()) != null && game_board.getPiece(move.getEndPosition()).getTeamColor() == color){ /* Can't capture own piece */
             return false;
         }
-        if(game_board.getPiece(move.getStartPosition()).getTeamColor() != color){ /* Can't move a piece that isn't yours or that doesn't exist */
-            return false;
-        }
+
         if(!possibleMoves.contains(move)){ /*You can't move your piece beyond what it can do */
             return false;
         }
-
         game_board.commitMove(move, game_board.getPiece(move.getStartPosition()));
-
-        if(isInCheck(current_player)){ /*Can't put yourself into check */
+        if(isInCheck(color)){ /*Can't put yourself into check nor keep yourself in check */
             this.setBoard(boardCopy);
             return false;
         }
@@ -177,17 +184,17 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        Collection<ChessMove> allyMoves = TeamMoves(teamColor);
-        if(isInCheck(teamColor)){
+        Collection<ChessMove> allyMoves = TeamMoves(teamColor); /* Every move you can make */
+        if(isInCheck(teamColor)){ /*Are we in a stalemate or not */
             for(ChessMove moves: allyMoves){
-                if(isAValidMove(moves, teamColor)){
+                if(isAValidMove(moves)){ /*Is there a move you can make that does not break the rules and also gets you out of check */
                     return false;
                 }
 
             }
             return true;
         }
-        return isInStalemate(teamColor);
+        return false; /*if you're not in check, are you in a stalemate? */
 
     }
 
@@ -199,14 +206,17 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        Collection<ChessMove> allyMoves = TeamMoves(teamColor);
+        Collection<ChessMove> allyMoves = TeamMoves(teamColor); /*All the moves your pieces can make */
+        if(isInCheck(teamColor)){
+            return false;
+        }
         for(ChessMove moves: allyMoves){
-            if(isAValidMove(moves, teamColor)){
-                return false;
+            if(isAValidMove(moves)){
+                return false; /*if any of them are valid, you can do something, so it's not a stalemate */
             }
 
         }
-        return true;
+        return true; /* otherwise you can't move, but you aren't in check, so it's a stalemate*/
     }
 
     /**
