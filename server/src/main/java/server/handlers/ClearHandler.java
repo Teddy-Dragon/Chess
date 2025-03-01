@@ -9,4 +9,8 @@ public class ClearHandler implements Route {
         return null;
     }
     //only have to worry about delete, this is the nuke function
+    //call AuthDAO.clearAllAuth
+    //call UserDAO.clearAllUsers
+    //call GameDAO.clearAllGames
+    //profit
 }
