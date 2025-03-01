@@ -2,6 +2,8 @@ package server;
 
 import spark.*;
 
+import server.handlers.*;
+
 
 public class Server {
 
@@ -10,10 +12,14 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here.
+        Spark.post("/user", new UserHandler()); //register
+        Spark.post("/session", new SessionHandler()); //login
+        Spark.delete("/session", new SessionHandler()); //logout
+        Spark.get("/game", new GameHandler()); //list games
+        Spark.post("/game", new GameHandler()); //create game
+        Spark.put("/game", new GameHandler()); //join game
+        Spark.delete("/db", new ClearHandler()); //nuke it all
 
-        //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -24,3 +30,4 @@ public class Server {
         Spark.awaitStop();
     }
 }
+

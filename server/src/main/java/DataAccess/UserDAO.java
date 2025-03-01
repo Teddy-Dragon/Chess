@@ -1,5 +1,7 @@
 package DataAccess;
 
+import model.UserData;
+
 public class UserDAO {
     public void clearAllUsers(){
         //clears all User data from database
@@ -7,13 +9,14 @@ public class UserDAO {
     public void createUser(){
         //puts not previously existing UserData in database
     }
-    public void getUser(/*userName*/){
+    public UserData getUser(String username){
         //void temporarily, will return user data from database
+        return null;
     }
-    public void updateUser(/*userName*/){
+    public void updateUser(String username){
         // will update userdata i.e password or username changes
     }
-    public void deleteUser(/*userName*/){
+    public void deleteUser(String username){
         // deletes one user
     }
 
