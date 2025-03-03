@@ -4,6 +4,8 @@ import DataAccess.MemoryAuthDAO;
 import DataAccess.MemoryGameDAO;
 import DataAccess.MemoryUserDAO;
 import model.GameData;
+import model.IncorrectResponse;
+import model.JoinRequest;
 import server.handlers.services.CreateGameService;
 import server.handlers.services.JoinGameService;
 import server.handlers.services.ListGamesService;
@@ -22,6 +24,7 @@ public class GameHandler implements Route {
     private final MemoryUserDAO userMap;
     private final MemoryGameDAO gameMap;
     private final MemoryAuthDAO authMap;
+    private String currentUser = null;
 
     public GameHandler(MemoryUserDAO userMap, MemoryGameDAO gameMap, MemoryAuthDAO authMap) {
         this.userMap = userMap;
@@ -31,32 +34,43 @@ public class GameHandler implements Route {
 
     public Object handle(Request request, Response response) throws Exception {
         //check authorization in request and verify with AuthDAO
-
-
-
-        if(request.headers("authorization") == null){
-            response.status(401);
-            return response;
-        }
-        else{
-            if(authMap.getAuth(UUID.fromString(request.headers("authorization"))) == null){
-                response.status(401);
-                System.out.println("This what get auth is checking for in GameHandler " + authMap.getAuth(UUID.fromString(request.headers("authorization"))));
-                return response;
-            }
-        }
-
+        checkAuth(request, response);
+        //Create Game
         if(Objects.equals(request.requestMethod(), "POST")){
             CreateGameService createGame = new CreateGameService(userMap, gameMap, authMap);
             GameData body = new Gson().fromJson(request.body(), GameData.class);
             GameData newGame = createGame.makeGame(body.gameName());
             return new Gson().toJson(newGame);
         }
+
+        //Join Game
         if(Objects.equals(request.requestMethod(), "PUT")){
            // System.out.println("In PUT");
-            JoinGameService join = new JoinGameService(userMap, gameMap, authMap);
-             return new Gson().toJson(join);
+            JoinRequest joiningUser = new Gson().fromJson(request.body(), JoinRequest.class);
+            IncorrectResponse join = new JoinGameService(userMap, gameMap, authMap).joinGame(joiningUser.playerColor(), joiningUser.gameID(), currentUser);
+            if(join == null){
+                return new Gson().toJson(null);
+            }
+            else {
+                if(join.alreadyTaken()){
+                    response.status(403);
+                    throw new Exception("Error: already taken");
+                }
+                if(join.badRequest()){
+                    response.status(400);
+                    throw new Exception("Error: bad request");
+                }
+                if(join.unauthorized()){
+                    response.status(401);
+                    throw new Exception("Error: unauthorized");
+                }
+                if(join.ErrorMessage() != null){
+                    throw new Exception(join.ErrorMessage());
+                }
+            }
         }
+
+        //List Games
         if(Objects.equals(request.requestMethod(), "GET")){
             // System.out.println("In GET");
             HashMap<String, List<GameData>> listGames = new ListGamesService(gameMap).ListGames();
@@ -65,7 +79,19 @@ public class GameHandler implements Route {
         response.status(405);
         return response;
     }
-    //post method means create game
-    //get method means list all games
-    //put method means join game
+    public void checkAuth(Request request, Response response) throws Exception{
+        if(request.headers("authorization") == ""){
+            response.status(401);
+            throw new Exception("Error: unauthorized");
+        }
+        else{
+            if(authMap.getAuth(UUID.fromString(request.headers("authorization"))) == null){
+                response.status(401);
+                throw new Exception("Error: unauthorized- invalid authToken");
+            }
+            currentUser = authMap.getAuth(UUID.fromString(request.headers("authorization"))).username();
+
+        }
+    }
+
 }

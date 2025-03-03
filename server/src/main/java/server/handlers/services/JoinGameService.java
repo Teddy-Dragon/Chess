@@ -3,7 +3,10 @@ package server.handlers.services;
 import DataAccess.MemoryAuthDAO;
 import DataAccess.MemoryGameDAO;
 import DataAccess.MemoryUserDAO;
+import model.IncorrectResponse;
 import model.GameData;
+
+import java.util.Objects;
 
 public class JoinGameService {
     // if GameHandler is met with a put request it comes here
@@ -20,8 +23,26 @@ public class JoinGameService {
         this.authMap = authMap;
     }
 
-    public void joinGame(String playerColor, int gameID){
+    public IncorrectResponse joinGame(String playerColor, int gameID, String username){
         GameData game = gameMap.getGameByID(gameID);
+        if(game.blackUsername() != null && Objects.equals(playerColor, "BLACK")){
+            IncorrectResponse newError = new IncorrectResponse(false, false, true, null);
+            return newError;
+        }
+        if(game.whiteUsername() != null && Objects.equals(playerColor, "WHITE")){
+            IncorrectResponse newError = new IncorrectResponse(false, false, true, null);
+            return newError;
+        }
+        if(Objects.equals(playerColor, "WHITE")) {
+            GameData newData = new GameData(gameID, username, game.blackUsername(), game.gameName(), game.game());
+            gameMap.updateGame(gameID, newData);
+        }
+        if(Objects.equals(playerColor, "BLACK")){
+            GameData newData = new GameData(gameID, game.whiteUsername(), username, game.gameName(), game.game());
+            gameMap.updateGame(gameID, newData);
+        }
+
+        return null;
 
 
     }
