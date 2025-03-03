@@ -14,6 +14,8 @@ import spark.Route;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
+
 import com.google.gson.*;
 
 public class GameHandler implements Route {
@@ -32,17 +34,17 @@ public class GameHandler implements Route {
 
 
 
-//        if(request.headers("authorization") == null){
-//            response.status(401);
-//            return response;
-//        }
-//        else{
-//            if(authMap.getAuth(request.headers("authorization")) == null){
-//                response.status(401);
-//                System.out.println("This what get auth is checking for in GameHandler " + authMap.getAuth(request.headers("authorization")));
-//                return response;
-//            }
-//        }
+        if(request.headers("authorization") == null){
+            response.status(401);
+            return response;
+        }
+        else{
+            if(authMap.getAuth(UUID.fromString(request.headers("authorization"))) == null){
+                response.status(401);
+                System.out.println("This what get auth is checking for in GameHandler " + authMap.getAuth(UUID.fromString(request.headers("authorization"))));
+                return response;
+            }
+        }
 
         if(Objects.equals(request.requestMethod(), "POST")){
             CreateGameService createGame = new CreateGameService(userMap, gameMap, authMap);
@@ -53,13 +55,14 @@ public class GameHandler implements Route {
         if(Objects.equals(request.requestMethod(), "PUT")){
            // System.out.println("In PUT");
             JoinGameService join = new JoinGameService(userMap, gameMap, authMap);
-             return join;
+             return new Gson().toJson(join);
         }
         if(Objects.equals(request.requestMethod(), "GET")){
             // System.out.println("In GET");
             HashMap<String, List<GameData>> listGames = new ListGamesService(gameMap).ListGames();
             return new Gson().toJson(listGames);
         }
+        response.status(405);
         return response;
     }
     //post method means create game

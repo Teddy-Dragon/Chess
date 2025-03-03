@@ -1,22 +1,41 @@
 package server.handlers.services;
 
+import DataAccess.MemoryAuthDAO;
+import DataAccess.MemoryUserDAO;
+import model.AuthData;
+import model.UserData;
+
+import java.util.UUID;
+
 public class UserServices {
     //UserHandler will refer to this regardless of method, this is just to make it nice and separate
 
     //Call UserDAO.getUser, if it returns null, create authToken and send UserData model to UserDAO.createUser
-    public Object checkUsername(){
-        //Check username to make sure that it is available
-        return null;
+    private final MemoryUserDAO userMap;
+    private final MemoryAuthDAO authMap;
+
+    public UserServices(MemoryUserDAO userMap, MemoryAuthDAO authMap) {
+        this.userMap = userMap;
+        this.authMap = authMap;
     }
 
-    public Object createUser(){
+    public Object checkUsername(String username){
+        return userMap.getUser(username);
+
+    }
+
+    public Object createUser(String username, String password, String email){
         //checkUsername();
-        //create user model
-        //call UserDAO.addUser(new user model)
-        //generate authToken with CreateAuth.newToken()
-        //create auth Model
-        //call AuthDAO.addAuth(new auth model)
-        return null;
+        if(checkUsername(username) != null){
+            return null;
+        }
+        UserData newUser = new UserData(username, password, email);
+        userMap.addUser(username, newUser);
+        UUID authToken = new CreateAuth().newToken();
+        AuthData newAuth = new AuthData(authToken, username);
+        authMap.addAuth(authToken, newAuth);
+
+        return newAuth;
 
     }
 }

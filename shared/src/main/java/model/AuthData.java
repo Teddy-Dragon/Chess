@@ -1,7 +1,7 @@
 package model;
 
 public record AuthData(
-        String authToken,
+        java.util.UUID authToken,
         String username
 ) {
 }
