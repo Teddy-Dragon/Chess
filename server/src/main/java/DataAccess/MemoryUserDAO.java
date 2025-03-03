@@ -4,7 +4,7 @@ import model.UserData;
 
 import java.util.HashMap;
 
-public class MemoryUserDAO implements UserDAO {
+public class MemoryUserDAO{
 
     private final HashMap<String, UserData> userMap;
 
@@ -15,18 +15,24 @@ public class MemoryUserDAO implements UserDAO {
     public void clearAllUsers(){
         userMap.clear();
     }
-    public void addUser(){
+    public void addUser(String username, UserData userData){
         //puts not previously existing UserData in database
+        userMap.put(username, userData);
     }
     public UserData getUser(String username){
         //void temporarily, will return user data from database
-        return null;
+        return userMap.get(username);
     }
-    public void updateUser(String username){
+    public void updateUser(String username, UserData newUserData){
         // will update userdata i.e password or username changes
+        UserData oldData = userMap.get(username);
+        userMap.remove(username, oldData);
+        userMap.put(username, newUserData);
+
     }
     public void deleteUser(String username){
-        // deletes one user
+        UserData data = userMap.get(username);
+        userMap.remove(username, data);
     }
 
 }
