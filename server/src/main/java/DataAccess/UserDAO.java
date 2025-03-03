@@ -6,7 +6,7 @@ public class UserDAO {
     public void clearAllUsers(){
         //clears all User data from database
     }
-    public void createUser(){
+    public void addUser(){
         //puts not previously existing UserData in database
     }
     public UserData getUser(String username){
