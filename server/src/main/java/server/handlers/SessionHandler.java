@@ -21,7 +21,7 @@ public class SessionHandler implements Route {
             System.out.println("In Logout");
 
         }
-        return null;
+        return response;
     }
 
 }

@@ -2,19 +2,9 @@ package DataAccess;
 
 import model.AuthData;
 
-public class AuthDAO {
-    public void clearAllAuth(){
-        //clear database of authData;
-    }
-    public AuthData getAuth(){
-
-        return null;
-        //Returns authData from database
-    }
-    public void removeAuth(){
-        //removes one individual's authData
-    }
-    public void addAuth(AuthData authData){
-        // adds authData to database
-    }
+public interface AuthDAO {
+    public void clearAllAuth();
+    public AuthData getAuth();
+    public void removeAuth();
+    public void addAuth(AuthData authData);
 }

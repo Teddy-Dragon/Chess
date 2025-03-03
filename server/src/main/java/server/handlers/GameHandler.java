@@ -27,7 +27,7 @@ public class GameHandler implements Route {
             ListGamesService listGames = new ListGamesService();
             return listGames;
         }
-        return null;
+        return response;
     }
     //post method means create game
     //get method means list all games

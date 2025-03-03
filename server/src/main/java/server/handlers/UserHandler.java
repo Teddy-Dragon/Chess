@@ -8,10 +8,7 @@ import spark.Route;
 public class UserHandler implements Route {
     public Object handle(Request request, Response response){
         System.out.println(request.body() + "\n");
-        System.out.println(request.attributes()+ "\n");
-        System.out.println(request.contentType()+"\n");
-        System.out.println(request.contextPath()+"\n");
-        System.out.println(request.headers()+"\n");
+        System.out.println(request.headers("authorization")+"\n");
         System.out.println(request.requestMethod() + "\n");
         System.out.println(response.body());
         return response;
