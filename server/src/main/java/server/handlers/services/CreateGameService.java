@@ -1,8 +1,8 @@
 package server.handlers.services;
 
-import DataAccess.MemoryAuthDAO;
-import DataAccess.MemoryGameDAO;
-import DataAccess.MemoryUserDAO;
+import data.MemoryAuthDAO;
+import data.MemoryGameDAO;
+import data.MemoryUserDAO;
 import chess.ChessGame;
 import model.GameData;
 

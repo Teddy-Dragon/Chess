@@ -1,4 +1,4 @@
-package DataAccess;
+package data;
 
 public interface UserDAO {
 }

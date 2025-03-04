@@ -1,11 +1,10 @@
 package server.handlers;
 
-import DataAccess.MemoryAuthDAO;
-import DataAccess.MemoryUserDAO;
+import data.MemoryAuthDAO;
+import data.MemoryUserDAO;
 import com.google.gson.Gson;
 import model.AuthData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import server.handlers.services.LoginService;
 import server.handlers.services.LogoutService;
 import spark.Request;

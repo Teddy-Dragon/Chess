@@ -1,6 +1,6 @@
 package server.handlers.services;
 
-import DataAccess.MemoryAuthDAO;
+import data.MemoryAuthDAO;
 
 import java.util.UUID;
 

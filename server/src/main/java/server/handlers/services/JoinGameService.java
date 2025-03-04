@@ -1,9 +1,8 @@
 package server.handlers.services;
 
-import DataAccess.MemoryAuthDAO;
-import DataAccess.MemoryGameDAO;
-import DataAccess.MemoryUserDAO;
-import model.IncorrectResponse;
+import data.MemoryAuthDAO;
+import data.MemoryGameDAO;
+import data.MemoryUserDAO;
 import model.GameData;
 import spark.Response;
 

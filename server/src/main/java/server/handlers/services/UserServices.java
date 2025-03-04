@@ -1,7 +1,7 @@
 package server.handlers.services;
 
-import DataAccess.MemoryAuthDAO;
-import DataAccess.MemoryUserDAO;
+import data.MemoryAuthDAO;
+import data.MemoryUserDAO;
 import model.AuthData;
 import model.UserData;
 import spark.Response;

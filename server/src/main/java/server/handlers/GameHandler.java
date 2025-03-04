@@ -1,8 +1,8 @@
 package server.handlers;
 
-import DataAccess.MemoryAuthDAO;
-import DataAccess.MemoryGameDAO;
-import DataAccess.MemoryUserDAO;
+import data.MemoryAuthDAO;
+import data.MemoryGameDAO;
+import data.MemoryUserDAO;
 import model.GameData;
 import model.JoinRequest;
 import server.handlers.services.CreateGameService;
@@ -53,7 +53,8 @@ public class GameHandler implements Route {
             JoinRequest joiningUser = new Gson().fromJson(request.body(), JoinRequest.class);
 
             try{
-                Object join = new JoinGameService(userMap, gameMap, authMap).joinGame(joiningUser.playerColor(), joiningUser.gameID(), currentUser, response);
+                Object join = new JoinGameService(userMap, gameMap, authMap)
+                        .joinGame(joiningUser.playerColor(), joiningUser.gameID(), currentUser, response);
                 if(join == null){
                     return new Gson().toJson(null);
                 }

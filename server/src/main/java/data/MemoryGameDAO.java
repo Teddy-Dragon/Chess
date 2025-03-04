@@ -1,4 +1,4 @@
-package DataAccess;
+package data;
 
 import model.GameData;
 
@@ -33,11 +33,11 @@ public class MemoryGameDAO{
         allGames.put("games", gameData);
         return allGames;
     }
-    public void deleteGame(int gameID){
-        GameData data = gameMap.get(gameID);
-        gameMap.remove(gameID, data);
-        //deletes one individual game from the database
-    }
+//    public void deleteGame(int gameID){
+//        GameData data = gameMap.get(gameID);
+//        gameMap.remove(gameID, data);
+//        //deletes one individual game from the database
+//    }
     public void updateGame(int gameID, GameData newGameData){
         // updates a currently active game based off of game ID
         GameData oldData = gameMap.get(gameID);
