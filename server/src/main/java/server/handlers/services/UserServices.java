@@ -31,7 +31,7 @@ public class UserServices {
         }
         UserData newUser = new UserData(username, password, email);
         userMap.addUser(username, newUser);
-        UUID authToken = new CreateAuth().newToken();
+        UUID authToken = new CreateAuth(authMap).newToken();
         AuthData newAuth = new AuthData(authToken, username);
         authMap.addAuth(authToken, newAuth);
 

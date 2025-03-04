@@ -26,6 +26,7 @@ public class ClearHandler implements Route {
         userMap.clearAllUsers();
 
 
+
         return new Gson().toJson(null);
     }
     //only have to worry about delete, this is the nuke function

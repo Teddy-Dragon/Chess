@@ -20,7 +20,7 @@ public class LoginService {
         UserData returningUser = userMap.getUser(username);
         if(returningUser != null) {
             if(Objects.equals(returningUser.password(), password)){
-                UUID authToken = new CreateAuth().newToken();
+                UUID authToken = new CreateAuth(authMap).newToken();
                 AuthData authData = new AuthData(authToken, username);
                 authMap.addAuth(authToken, authData);
                 return authData;
