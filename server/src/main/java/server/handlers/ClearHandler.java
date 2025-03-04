@@ -20,9 +20,9 @@ public class ClearHandler implements Route {
     }
 
     public Object handle(Request request, Response response) throws Exception {
-        authMap.clearAllAuth();
-        gameMap.clearAllGames();
         userMap.clearAllUsers();
+        gameMap.clearAllGames();
+        authMap.clearAllAuth();
 
 
 

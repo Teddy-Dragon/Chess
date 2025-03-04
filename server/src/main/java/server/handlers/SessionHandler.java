@@ -1,5 +1,6 @@
 package server.handlers;
 
+import com.google.gson.JsonObject;
 import data.MemoryAuthDAO;
 import data.MemoryUserDAO;
 import com.google.gson.Gson;
@@ -30,7 +31,9 @@ public class SessionHandler implements Route {
                 AuthData login = new LoginService(userMap, authMap).login(loginInfo.username(), loginInfo.password(), response);
                 return new Gson().toJson(login);
             }catch (Exception e){
-                return new Gson().toJson(e.getMessage());
+                JsonObject answer = new JsonObject();
+                answer.addProperty("message", e.getMessage());
+                return answer;
             }
 
         }
@@ -39,7 +42,9 @@ public class SessionHandler implements Route {
             try{Object logout = new LogoutService(userMap, authMap).logout(authToken, response);
                 return new Gson().toJson(logout);}
             catch (Exception e){
-                return new Gson().toJson(e.getMessage());
+                JsonObject answer = new JsonObject();
+                answer.addProperty("message", e.getMessage());
+                return answer;
             }
 
 

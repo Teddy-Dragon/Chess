@@ -33,15 +33,20 @@ public class GameHandler implements Route {
 
     public Object handle(Request request, Response response) throws Exception {
         //check authorization in request and verify with AuthDAO
-        checkAuth(request, response);
+
+
         //Create Game
         if(Objects.equals(request.requestMethod(), "POST")){
 
-            try{CreateGameService createGame = new CreateGameService(userMap, gameMap, authMap);
+            try{
+                checkAuth(request, response);
+                CreateGameService createGame = new CreateGameService(userMap, gameMap, authMap);
                 GameData body = new Gson().fromJson(request.body(), GameData.class);
                 GameData newGame = createGame.makeGame(body.gameName());
                 return new Gson().toJson(newGame);} catch (Exception e){
-                return new Gson().toJson(e.getMessage());
+                JsonObject answer = new JsonObject();
+                answer.addProperty("message", e.getMessage());
+                return answer;
             }
 
 
@@ -53,13 +58,16 @@ public class GameHandler implements Route {
             JoinRequest joiningUser = new Gson().fromJson(request.body(), JoinRequest.class);
 
             try{
+                checkAuth(request, response);
                 Object join = new JoinGameService(userMap, gameMap, authMap)
                         .joinGame(joiningUser.playerColor(), joiningUser.gameID(), currentUser, response);
                 if(join == null){
                     return new Gson().toJson(null);
                 }
             }catch (Exception e){
-                return new Gson().toJson(e.getMessage());
+                JsonObject answer = new JsonObject();
+                answer.addProperty("message", e.getMessage());
+                return answer;
 
             }
         }
@@ -78,12 +86,17 @@ public class GameHandler implements Route {
             response.status(401);
             throw new Exception("Error: unauthorized");
         }
+        if(request.headers("authorization").length() > 36){
+            response.status(401);
+            throw new Exception("Error: unauthorized");
+        }
         else{
             if(authMap.getAuth(UUID.fromString(request.headers("authorization"))) == null){
                 response.status(401);
-                throw new Exception("Error: unauthorized- invalid authToken");
+                throw new Exception("Error: unauthorized");
             }
-            currentUser = authMap.getAuth(UUID.fromString(request.headers("authorization"))).username();
+                currentUser = authMap.getAuth(UUID.fromString(request.headers("authorization"))).username();
+
 
         }
     }
