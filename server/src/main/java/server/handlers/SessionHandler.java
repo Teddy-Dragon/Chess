@@ -25,6 +25,7 @@ public class SessionHandler implements Route {
     }
 
     public Object handle(Request request, Response response){
+        //login
         if(Objects.equals(request.requestMethod(), "POST")){
             UserData loginInfo = new Gson().fromJson(request.body(), UserData.class);
             try{
@@ -37,6 +38,7 @@ public class SessionHandler implements Route {
             }
 
         }
+        //logout
         if(Objects.equals(request.requestMethod(), "DELETE")){
             UUID authToken = UUID.fromString(request.headers("authorization"));
             try{Object logout = new LogoutService(userMap, authMap).logout(authToken, response);
