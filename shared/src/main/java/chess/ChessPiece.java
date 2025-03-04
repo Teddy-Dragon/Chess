@@ -109,15 +109,15 @@ public class ChessPiece {
 
         for(int i = 0; i < 2; i++){ /*Checking side to side and forward and back */
             if(row - change <=8 && row - change >=1){
-                ChessPosition Forward = new ChessPosition(row - change, col);
-                if(board.getPiece(Forward) == null || board.getPiece(Forward).getTeamColor() != pieceColor){
-                    validMoves.add(new ChessMove(myPosition, Forward, null));
+                ChessPosition forward = new ChessPosition(row - change, col);
+                if(board.getPiece(forward) == null || board.getPiece(forward).getTeamColor() != pieceColor){
+                    validMoves.add(new ChessMove(myPosition, forward, null));
                 }
             }
             if(col - change <=8 && col - change >=1){
-                ChessPosition Forward = new ChessPosition(row, col - change);
-                if(board.getPiece(Forward) == null || board.getPiece(Forward).getTeamColor() != pieceColor){
-                    validMoves.add(new ChessMove(myPosition, Forward, null));
+                ChessPosition forward = new ChessPosition(row, col - change);
+                if(board.getPiece(forward) == null || board.getPiece(forward).getTeamColor() != pieceColor){
+                    validMoves.add(new ChessMove(myPosition, forward, null));
                 }
             }
             change = -change;
@@ -125,17 +125,17 @@ public class ChessPiece {
         for(int i  = 0; i < 2; i++){ /*Checking Diagonals */
             if(row - change <=8 && row - change >= 1){
                 if(col - change <=8 && col - change >= 1){
-                    ChessPosition Diagonal = new ChessPosition(row - change, col - change);
-                    if(board.getPiece(Diagonal) == null || board.getPiece(Diagonal).getTeamColor() != pieceColor){
-                        validMoves.add(new ChessMove(myPosition, Diagonal, null));
+                    ChessPosition diagonal = new ChessPosition(row - change, col - change);
+                    if(board.getPiece(diagonal) == null || board.getPiece(diagonal).getTeamColor() != pieceColor){
+                        validMoves.add(new ChessMove(myPosition, diagonal, null));
                     }
                 }
             }
             if(row - change <=8 && row - change >= 1){
                 if(col + change <=8 && col + change >= 1){
-                    ChessPosition Diagonal = new ChessPosition(row - change, col + change);
-                    if(board.getPiece(Diagonal) == null || board.getPiece(Diagonal).getTeamColor() != pieceColor){
-                        validMoves.add(new ChessMove(myPosition, Diagonal, null));
+                    ChessPosition diagonal = new ChessPosition(row - change, col + change);
+                    if(board.getPiece(diagonal) == null || board.getPiece(diagonal).getTeamColor() != pieceColor){
+                        validMoves.add(new ChessMove(myPosition, diagonal, null));
                     }
                 }
             }
@@ -154,6 +154,23 @@ public class ChessPiece {
 
         return validMoves;
     }
+
+    public boolean bishopCapture(int row, int col, Collection<ChessMove> validMoves, ChessPosition myPosition,
+     ChessBoard board, ChessPosition test, int change, int sign){
+
+        if(board.getPiece(test) != null){
+            if(board.getPiece(test).getTeamColor() != pieceColor){
+                validMoves.add(new ChessMove(myPosition, test, null));
+                return true;
+            }
+            return true;
+        }
+        else{
+            validMoves.add(new ChessMove(myPosition, test, null));
+            return false;
+        }
+
+    }
     public Collection<ChessMove> bishopCalc(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
         int row = myPosition.getRow();
@@ -164,17 +181,13 @@ public class ChessPiece {
             while(row - change <=8 && row - change >=1){
                 if (col - change <=8 && col - change >=1){
                     ChessPosition test = new ChessPosition(row - change, col - change);
-                    if(board.getPiece(test) != null){
-                        if(board.getPiece(test).getTeamColor() != pieceColor){
-                            validMoves.add(new ChessMove(myPosition, test, null));
-                            break;
-                        }
+                    if(bishopCapture(row, col, validMoves, myPosition, board, test, change, sign)){
                         break;
                     }
                     else{
-                        validMoves.add(new ChessMove(myPosition, test, null));
                         change = change + sign;
                     }
+
                 }else{
                     break;}
             }
@@ -188,15 +201,10 @@ public class ChessPiece {
             while(row - change <=8 && row - change >=1){
                 if (col + change <=8 && col + change >=1){
                     ChessPosition test = new ChessPosition(row - change, col + change);
-                    if(board.getPiece(test) != null){
-                        if(board.getPiece(test).getTeamColor() != pieceColor){
-                            validMoves.add(new ChessMove(myPosition, test, null));
-                            break;
-                        }
+                    if(bishopCapture(row, col, validMoves, myPosition, board, test, change, sign)){
                         break;
                     }
                     else{
-                        validMoves.add(new ChessMove(myPosition, test, null));
                         change = change + sign;
                     }
                 }else{
@@ -320,6 +328,12 @@ public class ChessPiece {
         }
 
     }
+    public void pawnMove(int row, Collection<ChessMove> validMoves, ChessPosition myPosition, ChessPosition newPosition, ChessBoard board){
+        if(board.getPiece(newPosition) != null && board.getPiece(newPosition).getTeamColor() != pieceColor){
+            pawnPromotion(row, validMoves, myPosition, newPosition);
+        }
+
+    }
     public Collection<ChessMove> pawnCalc(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
         int row = myPosition.getRow();
@@ -334,14 +348,11 @@ public class ChessPiece {
                     validMoves.add(new ChessMove(myPosition, doubleJump, null));
                 }
             }
-
             for(int i = 0; i < 2; i++){
                 if(row + 1 <= 8){
                     if(col - change <=8 && col - change >=1){
                         ChessPosition capture = new ChessPosition(row + 1, col - change);
-                        if(board.getPiece(capture) != null && board.getPiece(capture).getTeamColor() != pieceColor){
-                            pawnPromotion(row, validMoves, myPosition, capture);
-                        }
+                        pawnMove(row, validMoves, myPosition, capture, board);
                     }
                 }
                 change = -change;
@@ -369,9 +380,7 @@ public class ChessPiece {
                 if(row - 1 >= 1){
                     if(col - change <=8 && col - change >=1){
                         ChessPosition capture = new ChessPosition(row - 1, col - change);
-                        if(board.getPiece(capture) != null && board.getPiece(capture).getTeamColor() != pieceColor){
-                           pawnPromotion(row, validMoves, myPosition, capture);
-                        }
+                        pawnMove(row, validMoves, myPosition, capture, board);
                     }
                 }
                 change = -change;
