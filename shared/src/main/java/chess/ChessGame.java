@@ -132,7 +132,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition king = findKing(teamColor, gameBoard);
-        Collection<ChessMove> enemyMoves = TeamMoves(enemy(teamColor));
+        Collection<ChessMove> enemyMoves = teamMoves(enemy(teamColor));
         if(king == null){
             return true;
         }
@@ -185,7 +185,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        Collection<ChessMove> allyMoves = TeamMoves(teamColor); /* Every move you can make */
+        Collection<ChessMove> allyMoves = teamMoves(teamColor); /* Every move you can make */
         if(isInCheck(teamColor)){ /*Are we in a stalemate or not */
             for(ChessMove moves: allyMoves){
                 if(isAValidMove(moves)){ /*Is there a move you can make that does not break the rules and also gets you out of check */
@@ -207,7 +207,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        Collection<ChessMove> allyMoves = TeamMoves(teamColor); /*All the moves your pieces can make */
+        Collection<ChessMove> allyMoves = teamMoves(teamColor); /*All the moves your pieces can make */
         if(isInCheck(teamColor)){
             return false;
         }
@@ -251,7 +251,7 @@ public class ChessGame {
         }
         return null;
     }
-    public Collection<ChessMove> TeamMoves(TeamColor team){
+    public Collection<ChessMove> teamMoves(TeamColor team){
         Collection<ChessMove> validTeamMoves = new ArrayList<>();
         for(int k = 1; k <= 8; k++ ){
             for(int i = 1; i <= 8; i++){

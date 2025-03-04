@@ -67,7 +67,7 @@ public class GameHandler implements Route {
         //List Games
         if(Objects.equals(request.requestMethod(), "GET")){
             // System.out.println("In GET");
-            HashMap<String, List<GameData>> listGames = new ListGamesService(gameMap).ListGames();
+            HashMap<String, List<GameData>> listGames = new ListGamesService(gameMap).listGames();
             return new Gson().toJson(listGames);
         }
         response.status(405);
