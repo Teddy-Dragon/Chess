@@ -23,5 +23,16 @@ public class MemoryUserDAO{
         //void temporarily, will return user data from database
         return userMap.get(username);
     }
+//    public void updateUser(String username, UserData newUserData){
+//        // will update userdata i.e password or username changes
+//        UserData oldData = userMap.get(username);
+//        userMap.remove(username, oldData);
+//        userMap.put(username, newUserData);
+//
+//    }
+    public void deleteUser(String username){
+        UserData data = userMap.get(username);
+        userMap.remove(username, data);
+    }
 
 }
