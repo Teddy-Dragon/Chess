@@ -5,6 +5,7 @@ import DataAccess.MemoryGameDAO;
 import DataAccess.MemoryUserDAO;
 import model.IncorrectResponse;
 import model.GameData;
+import spark.Response;
 
 import java.util.Objects;
 
@@ -23,15 +24,26 @@ public class JoinGameService {
         this.authMap = authMap;
     }
 
-    public IncorrectResponse joinGame(String playerColor, int gameID, String username){
+    public Object joinGame(String playerColor, int gameID, String username, Response response) throws Exception{
+
+
         GameData game = gameMap.getGameByID(gameID);
+        if(game == null){
+            response.status(400);
+            throw new Exception("Error: bad request");
+        }
+        if(!Objects.equals(playerColor, "WHITE") && !Objects.equals(playerColor, "BLACK")){
+            response.status(400);
+            throw new Exception("Error: bad request");
+        }
         if(game.blackUsername() != null && Objects.equals(playerColor, "BLACK")){
-            IncorrectResponse newError = new IncorrectResponse(false, false, true, null);
-            return newError;
+            response.status(403);
+            throw new Exception("Error: already taken");
+
         }
         if(game.whiteUsername() != null && Objects.equals(playerColor, "WHITE")){
-            IncorrectResponse newError = new IncorrectResponse(false, false, true, null);
-            return newError;
+            response.status(403);
+            throw new Exception("Error: already taken");
         }
         if(Objects.equals(playerColor, "WHITE")) {
             GameData newData = new GameData(gameID, username, game.blackUsername(), game.gameName(), game.game());

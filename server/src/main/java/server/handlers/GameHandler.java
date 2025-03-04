@@ -4,7 +4,6 @@ import DataAccess.MemoryAuthDAO;
 import DataAccess.MemoryGameDAO;
 import DataAccess.MemoryUserDAO;
 import model.GameData;
-import model.IncorrectResponse;
 import model.JoinRequest;
 import server.handlers.services.CreateGameService;
 import server.handlers.services.JoinGameService;
@@ -37,36 +36,30 @@ public class GameHandler implements Route {
         checkAuth(request, response);
         //Create Game
         if(Objects.equals(request.requestMethod(), "POST")){
-            CreateGameService createGame = new CreateGameService(userMap, gameMap, authMap);
-            GameData body = new Gson().fromJson(request.body(), GameData.class);
-            GameData newGame = createGame.makeGame(body.gameName());
-            return new Gson().toJson(newGame);
+
+            try{CreateGameService createGame = new CreateGameService(userMap, gameMap, authMap);
+                GameData body = new Gson().fromJson(request.body(), GameData.class);
+                GameData newGame = createGame.makeGame(body.gameName());
+                return new Gson().toJson(newGame);} catch (Exception e){
+                return new Gson().toJson(e.getMessage());
+            }
+
+
         }
 
         //Join Game
         if(Objects.equals(request.requestMethod(), "PUT")){
            // System.out.println("In PUT");
             JoinRequest joiningUser = new Gson().fromJson(request.body(), JoinRequest.class);
-            IncorrectResponse join = new JoinGameService(userMap, gameMap, authMap).joinGame(joiningUser.playerColor(), joiningUser.gameID(), currentUser);
-            if(join == null){
-                return new Gson().toJson(null);
-            }
-            else {
-                if(join.alreadyTaken()){
-                    response.status(403);
-                    throw new Exception("Error: already taken");
+
+            try{
+                Object join = new JoinGameService(userMap, gameMap, authMap).joinGame(joiningUser.playerColor(), joiningUser.gameID(), currentUser, response);
+                if(join == null){
+                    return new Gson().toJson(null);
                 }
-                if(join.badRequest()){
-                    response.status(400);
-                    throw new Exception("Error: bad request");
-                }
-                if(join.unauthorized()){
-                    response.status(401);
-                    throw new Exception("Error: unauthorized");
-                }
-                if(join.ErrorMessage() != null){
-                    throw new Exception(join.ErrorMessage());
-                }
+            }catch (Exception e){
+                return new Gson().toJson(e.getMessage());
+
             }
         }
 
@@ -93,5 +86,7 @@ public class GameHandler implements Route {
 
         }
     }
+
+
 
 }

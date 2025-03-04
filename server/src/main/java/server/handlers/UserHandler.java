@@ -22,8 +22,12 @@ public class UserHandler implements Route {
 
     public Object handle(Request request, Response response){
         UserData newUserData = new Gson().fromJson(request.body(), UserData.class);
-        AuthData newUser = (AuthData) new UserServices(userMap, authMap).createUser(newUserData.username(), newUserData.password(), newUserData.email());
-        return new Gson().toJson(newUser);
+        try{AuthData newUser = (AuthData) new UserServices(userMap, authMap).createUser(newUserData.username(), newUserData.password(), newUserData.email(), response);
+            return new Gson().toJson(newUser);}
+        catch (Exception e){
+            return new Gson().toJson(e.getMessage());
+        }
+
     }
     //only have to worry about post, aka registering
 }

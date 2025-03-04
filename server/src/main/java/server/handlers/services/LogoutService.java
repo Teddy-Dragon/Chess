@@ -3,6 +3,7 @@ package server.handlers.services;
 import DataAccess.AuthDAO;
 import DataAccess.MemoryAuthDAO;
 import DataAccess.MemoryUserDAO;
+import spark.Response;
 
 import java.util.UUID;
 
@@ -17,7 +18,11 @@ public class LogoutService {
         this.userMap = userMap;
         this.authMap = authMap;
     }
-    public Object logout(UUID authToken){
+    public Object logout(UUID authToken, Response response) throws Exception{
+        if(authMap.getAuth(authToken) == null){
+            response.status(401);
+            throw new Exception("Error: unauthorized");
+        }
         authMap.removeAuth(authToken);
         return null;
     }

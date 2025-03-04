@@ -22,7 +22,7 @@ public class CreateGameService {
         this.authMap = authMap;
     }
 
-    public GameData makeGame(String gameName){
+    public GameData makeGame(String gameName) throws Exception{
         Random random = new Random();
         int id = random.nextInt(100000, 999999);
         while(gameMap.getGameByID(id) != null){

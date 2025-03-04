@@ -27,13 +27,22 @@ public class SessionHandler implements Route {
     public Object handle(Request request, Response response){
         if(Objects.equals(request.requestMethod(), "POST")){
             UserData loginInfo = new Gson().fromJson(request.body(), UserData.class);
-            AuthData login = new LoginService(userMap, authMap).login(loginInfo.username(), loginInfo.password());
-            return new Gson().toJson(login);
+            try{
+                AuthData login = new LoginService(userMap, authMap).login(loginInfo.username(), loginInfo.password(), response);
+                return new Gson().toJson(login);
+            }catch (Exception e){
+                return new Gson().toJson(e.getMessage());
+            }
+
         }
         if(Objects.equals(request.requestMethod(), "DELETE")){
             UUID authToken = UUID.fromString(request.headers("authorization"));
-            Object logout = new LogoutService(userMap, authMap).logout(authToken);
-            return new Gson().toJson(logout);
+            try{Object logout = new LogoutService(userMap, authMap).logout(authToken, response);
+                return new Gson().toJson(logout);}
+            catch (Exception e){
+                return new Gson().toJson(e.getMessage());
+            }
+
 
         }
         response.status(405);

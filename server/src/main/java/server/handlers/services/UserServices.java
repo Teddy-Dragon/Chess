@@ -4,6 +4,7 @@ import DataAccess.MemoryAuthDAO;
 import DataAccess.MemoryUserDAO;
 import model.AuthData;
 import model.UserData;
+import spark.Response;
 
 import java.util.UUID;
 
@@ -24,10 +25,16 @@ public class UserServices {
 
     }
 
-    public Object createUser(String username, String password, String email){
+    public Object createUser(String username, String password, String email, Response response) throws Exception{
         //checkUsername();
         if(checkUsername(username) != null){
-            return null;
+            response.status(403);
+            throw new Exception("Error: already taken");
+        }
+        if(username == null || password == null || email == null){
+            response.status(400);
+            throw new Exception("Error: bad request");
+
         }
         UserData newUser = new UserData(username, password, email);
         userMap.addUser(username, newUser);

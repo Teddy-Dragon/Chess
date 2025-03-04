@@ -4,6 +4,7 @@ import DataAccess.MemoryAuthDAO;
 import DataAccess.MemoryUserDAO;
 import model.AuthData;
 import model.UserData;
+import spark.Response;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -16,7 +17,7 @@ public class LoginService {
         this.userMap = userMap;
         this.authMap = authMap;
     }
-    public AuthData login(String username, String password){
+    public AuthData login(String username, String password, Response response) throws Exception{
         UserData returningUser = userMap.getUser(username);
         if(returningUser != null) {
             if(Objects.equals(returningUser.password(), password)){
@@ -25,8 +26,16 @@ public class LoginService {
                 authMap.addAuth(authToken, authData);
                 return authData;
             }
+            else {
+                response.status(401);
+                throw new Exception("Error: unauthorized");
+            }
         }
-        return null;
+        else{
+            response.status(401);
+            throw new Exception("Error: unauthorized");
+        }
+
 
 
     }
