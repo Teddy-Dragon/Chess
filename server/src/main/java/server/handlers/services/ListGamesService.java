@@ -1,12 +1,10 @@
 package server.handlers.services;
 
-import DataAccess.MemoryGameDAO;
+import data.MemoryGameDAO;
 import model.GameData;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class ListGamesService {
     //if GameHandler is faced with a get method it calls this

@@ -12,8 +12,8 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private ChessBoard game_board = new ChessBoard();
-    private TeamColor current_player = TeamColor.WHITE;
+    private static ChessBoard game_board = new ChessBoard();
+    private static TeamColor current_player = TeamColor.WHITE;
 
     public ChessGame() {
         game_board.resetBoard();
@@ -157,7 +157,8 @@ public class ChessGame {
         TeamColor color = game_board.getPiece(move.getStartPosition()).getTeamColor();
         Collection<ChessMove> possibleMoves = game_board.getPiece(move.getStartPosition()).pieceMoves(game_board, move.getStartPosition());
         ChessPosition endPOS = move.getEndPosition();
-        if(game_board.getPiece(move.getEndPosition()) != null && game_board.getPiece(move.getEndPosition()).getTeamColor() == color){ /* Can't capture own piece */
+        if(game_board.getPiece(move.getEndPosition()) != null
+                && game_board.getPiece(move.getEndPosition()).getTeamColor() == color){ /* Can't capture own piece */
             return false;
         }
 
@@ -268,7 +269,9 @@ public class ChessGame {
         if(color == TeamColor.WHITE){
             return TeamColor.BLACK;
         }
-        else return  TeamColor.WHITE;
+        else {
+            return  TeamColor.WHITE;
+        }
     }
 
 }
