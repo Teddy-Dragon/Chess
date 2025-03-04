@@ -17,7 +17,7 @@ public class LoginService {
         this.userMap = userMap;
         this.authMap = authMap;
     }
-    public AuthData login(String username, String password, Response response) throws Exception{
+    public AuthData login(String username, String password) throws Exception{
         UserData returningUser = userMap.getUser(username);
         if(returningUser != null) {
             if(Objects.equals(returningUser.password(), password)){
@@ -27,12 +27,10 @@ public class LoginService {
                 return authData;
             }
             else {
-                response.status(401);
                 throw new Exception("Error: unauthorized");
             }
         }
         else{
-            response.status(401);
             throw new Exception("Error: unauthorized");
         }
 

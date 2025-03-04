@@ -23,25 +23,21 @@ public class JoinGameService {
         this.authMap = authMap;
     }
 
-    public Object joinGame(String playerColor, int gameID, String username, Response response) throws Exception{
+    public Object joinGame(String playerColor, int gameID, String username) throws Exception{
 
 
         GameData game = gameMap.getGameByID(gameID);
         if(game == null){
-            response.status(400);
             throw new Exception("Error: bad request");
         }
         if(!Objects.equals(playerColor, "WHITE") && !Objects.equals(playerColor, "BLACK")){
-            response.status(400);
             throw new Exception("Error: bad request");
         }
         if(game.blackUsername() != null && Objects.equals(playerColor, "BLACK")){
-            response.status(403);
             throw new Exception("Error: already taken");
 
         }
         if(game.whiteUsername() != null && Objects.equals(playerColor, "WHITE")){
-            response.status(403);
             throw new Exception("Error: already taken");
         }
         if(Objects.equals(playerColor, "WHITE")) {

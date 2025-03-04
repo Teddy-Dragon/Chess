@@ -17,9 +17,8 @@ public class LogoutService {
         this.userMap = userMap;
         this.authMap = authMap;
     }
-    public Object logout(UUID authToken, Response response) throws Exception{
+    public Object logout(UUID authToken) throws Exception{
         if(authMap.getAuth(authToken) == null){
-            response.status(401);
             throw new Exception("Error: unauthorized");
         }
         authMap.removeAuth(authToken);

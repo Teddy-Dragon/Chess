@@ -60,11 +60,12 @@ public class GameHandler implements Route {
             try{
                 checkAuth(request, response);
                 Object join = new JoinGameService(userMap, gameMap, authMap)
-                        .joinGame(joiningUser.playerColor(), joiningUser.gameID(), currentUser, response);
+                        .joinGame(joiningUser.playerColor(), joiningUser.gameID(), currentUser);
                 if(join == null){
                     return new Gson().toJson(null);
                 }
             }catch (Exception e){
+                new ExceptionHandler().changeStatus(response, e);
                 JsonObject answer = new JsonObject();
                 answer.addProperty("message", e.getMessage());
                 return answer;
@@ -86,6 +87,8 @@ public class GameHandler implements Route {
         response.status(405);
         return response;
     }
+
+
     private void checkAuth(Request request, Response response) throws Exception{
         if(request.headers("authorization") == ""){
             response.status(401);
