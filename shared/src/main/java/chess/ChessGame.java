@@ -154,9 +154,11 @@ public class ChessGame {
             return false;
         }
         TeamColor color = gameBoard.getPiece(move.getStartPosition()).getTeamColor();
-        Collection<ChessMove> possibleMoves = gameBoard.getPiece(move.getStartPosition()).pieceMoves(gameBoard, move.getStartPosition());
+        Collection<ChessMove> possibleMoves = gameBoard.getPiece(move.getStartPosition()).pieceMoves(gameBoard,
+                move.getStartPosition());
         ChessPosition endPOS = move.getEndPosition();
-        if(gameBoard.getPiece(move.getEndPosition()) != null && gameBoard.getPiece(move.getEndPosition()).getTeamColor() == color){ /* Can't capture own piece */
+        if(gameBoard.getPiece(move.getEndPosition()) != null &&
+                gameBoard.getPiece(move.getEndPosition()).getTeamColor() == color){ /* Can't capture own piece */
             return false;
         }
 
@@ -267,7 +269,9 @@ public class ChessGame {
         if(color == TeamColor.WHITE){
             return TeamColor.BLACK;
         }
-        else return  TeamColor.WHITE;
+        else {
+            return  TeamColor.WHITE;
+        }
     }
 
 }
