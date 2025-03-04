@@ -16,7 +16,7 @@ public class ListGamesService {
     public ListGamesService(MemoryGameDAO gameMap) {
         this.gameMap = gameMap;
     }
-    public HashMap<String, List<GameData>> ListGames(){
+    public HashMap<String, List<GameData>> listGames(){
         return gameMap.getAllGames();
 
     }
