@@ -74,14 +74,19 @@ public class GameHandler implements Route {
 
         //List Games
         if(Objects.equals(request.requestMethod(), "GET")){
+            try {checkAuth(request, response);
             // System.out.println("In GET");
             HashMap<String, List<GameData>> listGames = new ListGamesService(gameMap).listGames();
-            return new Gson().toJson(listGames);
+            return new Gson().toJson(listGames);}catch (Exception e){
+                JsonObject answer = new JsonObject();
+                answer.addProperty("message", e.getMessage());
+                return answer;
+            }
         }
         response.status(405);
         return response;
     }
-    public void checkAuth(Request request, Response response) throws Exception{
+    private void checkAuth(Request request, Response response) throws Exception{
         if(request.headers("authorization") == ""){
             response.status(401);
             throw new Exception("Error: unauthorized");

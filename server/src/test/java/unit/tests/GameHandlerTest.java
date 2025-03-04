@@ -1,28 +1,39 @@
 package unit.tests;
 
+import chess.ChessGame;
+import model.GameData;
 import org.junit.jupiter.api.*;
-import passoff.model.TestAuthResult;
-import passoff.model.TestCreateRequest;
-import passoff.model.TestUser;
 import passoff.server.TestServerFacade;
 import server.Server;
 
 public class GameHandlerTest {
+    private static Server testServer;
+    private static TestServerFacade serverFacade;
+    private static GameData testGameData;
+
+    @BeforeAll
+    public static void init(){
+        testServer = new Server();
+        var port = testServer.run(8080);
+
+        serverFacade = new TestServerFacade("localhost", Integer.toString(port));
+        testGameData = new GameData(123456, null, null, "gameName", new ChessGame());
+    }
+    @AfterAll
+    public static void stop(){
+        testServer.stop();
+    }
+
     @Test
     @DisplayName("Successful Game Made")
     public void createGame(){
-     assert true;
+
+        assert true;
     }
 
     @Test
     @DisplayName("Unsuccessful Game Creation- Unauthorized")
     public void createBadGame(){
-        assert false;
-    }
-
-    @Test
-    @DisplayName("Unsuccessful Game Creation- ")
-    public void createBadGameTwo(){
         assert false;
     }
 

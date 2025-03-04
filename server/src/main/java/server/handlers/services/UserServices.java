@@ -20,7 +20,7 @@ public class UserServices {
         this.authMap = authMap;
     }
 
-    public Object checkUsername(String username){
+    private Object checkUsername(String username){
         return userMap.getUser(username);
 
     }
