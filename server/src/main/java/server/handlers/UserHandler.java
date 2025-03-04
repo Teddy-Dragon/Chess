@@ -1,10 +1,13 @@
 package server.handlers;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import data.MemoryAuthDAO;
 import data.MemoryUserDAO;
 import com.google.gson.Gson;
 import model.AuthData;
 import model.UserData;
+import netscape.javascript.JSObject;
 import server.handlers.services.UserServices;
 import spark.Request;
 import spark.Response;
@@ -20,12 +23,17 @@ public class UserHandler implements Route {
     }
 
     public Object handle(Request request, Response response){
-        UserData newUserData = new Gson().fromJson(request.body(), UserData.class);
-        try{AuthData newUser = (AuthData) new UserServices(userMap, authMap).createUser(newUserData.username(),
-                newUserData.password(), newUserData.email(), response);
-            return new Gson().toJson(newUser);}
+
+        try{
+            UserData newUserData = new Gson().fromJson(request.body(), UserData.class);
+            AuthData newUser = (AuthData) new UserServices(userMap, authMap).createUser(newUserData.username(),
+                    newUserData.password(), newUserData.email(), response);
+            return new Gson().toJson(newUser);
+        }
         catch (Exception e){
-            return new Gson().toJson(e.getMessage());
+            JsonObject answer = new JsonObject();
+            answer.addProperty("message", e.getMessage());
+            return answer;
         }
 
     }
