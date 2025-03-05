@@ -27,10 +27,11 @@ public class UserHandler implements Route {
         try{
             UserData newUserData = new Gson().fromJson(request.body(), UserData.class);
             AuthData newUser = (AuthData) new UserServices(userMap, authMap).createUser(newUserData.username(),
-                    newUserData.password(), newUserData.email(), response);
+                    newUserData.password(), newUserData.email());
             return new Gson().toJson(newUser);
         }
         catch (Exception e){
+            new ExceptionHandler().changeStatus(response, e);
             JsonObject answer = new JsonObject();
             answer.addProperty("message", e.getMessage());
             return answer;

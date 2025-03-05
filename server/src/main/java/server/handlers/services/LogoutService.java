@@ -9,17 +9,14 @@ import java.util.UUID;
 public class LogoutService {
     //if session handler is faced with a delete request
     //AuthDAO.getAuth to find authToken, then AuthDAO.removeAuth with the provided authToken to delete
-    private final MemoryUserDAO userMap;
     private final MemoryAuthDAO authMap;
 
 
-    public LogoutService(MemoryUserDAO userMap, MemoryAuthDAO authMap) {
-        this.userMap = userMap;
+    public LogoutService(MemoryAuthDAO authMap) {
         this.authMap = authMap;
     }
-    public Object logout(UUID authToken, Response response) throws Exception{
+    public Object logout(UUID authToken) throws Exception{
         if(authMap.getAuth(authToken) == null){
-            response.status(401);
             throw new Exception("Error: unauthorized");
         }
         authMap.removeAuth(authToken);

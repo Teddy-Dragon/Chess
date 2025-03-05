@@ -25,14 +25,12 @@ public class UserServices {
 
     }
 
-    public Object createUser(String username, String password, String email, Response response) throws Exception{
+    public AuthData createUser(String username, String password, String email) throws Exception{
         //checkUsername();
         if(checkUsername(username) != null){
-            response.status(403);
             throw new Exception("Error: already taken");
         }
         if(username == null || password == null || email == null){
-            response.status(400);
             throw new Exception("Error: bad request");
 
         }

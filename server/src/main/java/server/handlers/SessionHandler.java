@@ -29,9 +29,10 @@ public class SessionHandler implements Route {
         if(Objects.equals(request.requestMethod(), "POST")){
             UserData loginInfo = new Gson().fromJson(request.body(), UserData.class);
             try{
-                AuthData login = new LoginService(userMap, authMap).login(loginInfo.username(), loginInfo.password(), response);
+                AuthData login = new LoginService(userMap, authMap).login(loginInfo.username(), loginInfo.password());
                 return new Gson().toJson(login);
             }catch (Exception e){
+                new ExceptionHandler().changeStatus(response, e);
                 JsonObject answer = new JsonObject();
                 answer.addProperty("message", e.getMessage());
                 return answer;
@@ -41,9 +42,10 @@ public class SessionHandler implements Route {
         //logout
         if(Objects.equals(request.requestMethod(), "DELETE")){
             UUID authToken = UUID.fromString(request.headers("authorization"));
-            try{Object logout = new LogoutService(userMap, authMap).logout(authToken, response);
+            try{Object logout = new LogoutService(authMap).logout(authToken);
                 return new Gson().toJson(logout);}
             catch (Exception e){
+                new ExceptionHandler().changeStatus(response, e);
                 JsonObject answer = new JsonObject();
                 answer.addProperty("message", e.getMessage());
                 return answer;
@@ -54,5 +56,6 @@ public class SessionHandler implements Route {
         response.status(405);
         return response;
     }
+
 
 }
