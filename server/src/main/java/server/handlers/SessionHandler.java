@@ -42,7 +42,7 @@ public class SessionHandler implements Route {
         //logout
         if(Objects.equals(request.requestMethod(), "DELETE")){
             UUID authToken = UUID.fromString(request.headers("authorization"));
-            try{Object logout = new LogoutService(userMap, authMap).logout(authToken);
+            try{Object logout = new LogoutService(authMap).logout(authToken);
                 return new Gson().toJson(logout);}
             catch (Exception e){
                 new ExceptionHandler().changeStatus(response, e);
