@@ -25,7 +25,7 @@ public class JoinServiceTests {
     static MemoryAuthDAO authMap = new MemoryAuthDAO(new HashMap<UUID, AuthData>());
 
     @AfterAll
-    public static void cleanup(){
+    public static void cleanUp(){
         userMap.clearAllUsers();
         gameMap.clearAllGames();
         authMap.clearAllAuth();
@@ -36,7 +36,7 @@ public class JoinServiceTests {
     public void joinFailWhite(){
 
         try {
-            GameData testGame = new CreateGameService(userMap, gameMap, authMap).makeGame("testGame");
+            GameData testGame = new CreateGameService(gameMap).makeGame("testGame");
             new JoinGameService(userMap, gameMap, authMap).joinGame("WHITE", testGame.gameID(), "OriginalUser");
             new JoinGameService(userMap, gameMap, authMap).joinGame("WHITE", testGame.gameID(), "OtherUser");
 
@@ -51,7 +51,7 @@ public class JoinServiceTests {
     @DisplayName("Fail To Join- Black Taken")
     public void joinFailBlack()  {
         try{
-            GameData testGame = new CreateGameService(userMap, gameMap, authMap).makeGame("testGame");
+            GameData testGame = new CreateGameService(gameMap).makeGame("testGame");
             new JoinGameService(userMap, gameMap, authMap).joinGame("BLACK", testGame.gameID(), "OriginalUser");
             new JoinGameService(userMap, gameMap, authMap).joinGame("BLACK", testGame.gameID(), "OtherUser");
         }catch(Exception e){
@@ -76,7 +76,7 @@ public class JoinServiceTests {
 
     public void joinSuccess(){
         try{
-            GameData testGame = new CreateGameService(userMap, gameMap, authMap).makeGame("testGame");
+            GameData testGame = new CreateGameService(gameMap).makeGame("testGame");
             new JoinGameService(userMap, gameMap, authMap).joinGame("BLACK", testGame.gameID(), "OriginalUser");
             new JoinGameService(userMap, gameMap, authMap).joinGame("WHITE", testGame.gameID(), "OtherUser");
             Assertions.assertEquals( "OriginalUser", gameMap.getGameByID(testGame.gameID()).blackUsername());

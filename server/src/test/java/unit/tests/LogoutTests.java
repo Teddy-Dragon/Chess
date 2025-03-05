@@ -17,7 +17,7 @@ import java.util.UUID;
 public class LogoutTests {
     static MemoryAuthDAO authMap = new MemoryAuthDAO(new HashMap<UUID, AuthData>());
     @AfterEach
-    public void cleanup(){
+    public void cleanUp(){
         authMap.clearAllAuth();
     }
 

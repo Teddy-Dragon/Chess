@@ -40,7 +40,7 @@ public class GameHandler implements Route {
 
             try{
                 checkAuth(request, response);
-                CreateGameService createGame = new CreateGameService(userMap, gameMap, authMap);
+                CreateGameService createGame = new CreateGameService(gameMap);
                 GameData body = new Gson().fromJson(request.body(), GameData.class);
                 GameData newGame = createGame.makeGame(body.gameName());
                 return new Gson().toJson(newGame);} catch (Exception e){
@@ -75,9 +75,10 @@ public class GameHandler implements Route {
 
         //List Games
         if(Objects.equals(request.requestMethod(), "GET")){
-            try {checkAuth(request, response);
+            try {
+                checkAuth(request, response);
             // System.out.println("In GET");
-            HashMap<String, List<GameData>> listGames = new ListGamesService(gameMap).listGames();
+                HashMap<String, List<GameData>> listGames = new ListGamesService(gameMap).listGames();
             return new Gson().toJson(listGames);}catch (Exception e){
                 JsonObject answer = new JsonObject();
                 answer.addProperty("message", e.getMessage());

@@ -11,15 +11,11 @@ import java.util.Random;
 public class CreateGameService {
     // if GameHandler is met with a post request, it goes here
     //Generate a gameID and create a GameData model to send to GameDAO.addGame(Created model)
-    private final MemoryUserDAO userMap;
     private final MemoryGameDAO gameMap;
-    private final MemoryAuthDAO authMap;
 
 
-    public CreateGameService(MemoryUserDAO userMap, MemoryGameDAO gameMap, MemoryAuthDAO authMap) {
-        this.userMap = userMap;
+    public CreateGameService(MemoryGameDAO gameMap) {
         this.gameMap = gameMap;
-        this.authMap = authMap;
     }
 
     public GameData makeGame(String gameName) throws Exception{

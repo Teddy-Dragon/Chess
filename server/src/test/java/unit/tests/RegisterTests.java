@@ -15,7 +15,7 @@ public class RegisterTests {
     static MemoryUserDAO userMap = new MemoryUserDAO(new HashMap<String, UserData>());
     static MemoryAuthDAO authMap = new MemoryAuthDAO(new HashMap<UUID, AuthData>());
     @AfterEach
-    public void cleanup(){
+    public void cleanUp(){
         userMap.clearAllUsers();
         authMap.clearAllAuth();
     }
