@@ -1,4 +1,4 @@
-package unit.tests;
+package service;
 
 import data.MemoryAuthDAO;
 import data.MemoryGameDAO;
