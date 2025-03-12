@@ -59,6 +59,14 @@
 
     <dependencies>
         <dependency>
+            <groupId>mysql:mysql-connector-java:8.0.30</groupId>
+            <artifactId>compile</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mindrot:jbcrypt:0.4</groupId>
+            <artifactId>compile</artifactId>
+        </dependency>
+        <dependency>
             <groupId>edu.byu.cs240</groupId>
             <artifactId>shared</artifactId>
             <version>1.0.0</version>
