@@ -1,10 +1,9 @@
 package service;
 
-import data.MemoryAuthDAO;
-import data.MemoryUserDAO;
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryUserDAO;
 import model.AuthData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.*;
 import server.handlers.services.UserServices;
 

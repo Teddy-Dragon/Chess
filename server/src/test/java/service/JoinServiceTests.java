@@ -1,21 +1,16 @@
 package service;
 
-import data.MemoryAuthDAO;
-import data.MemoryGameDAO;
-import data.MemoryUserDAO;
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryGameDAO;
+import dataaccess.MemoryUserDAO;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.handlers.services.CreateGameService;
 import server.handlers.services.JoinGameService;
-import server.handlers.services.LoginService;
-import server.handlers.services.UserServices;
-import spark.Response;
-import spark.ResponseTransformer;
 
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.UUID;
 
 public class JoinServiceTests {

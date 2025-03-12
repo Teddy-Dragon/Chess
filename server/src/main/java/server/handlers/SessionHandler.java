@@ -1,8 +1,8 @@
 package server.handlers;
 
 import com.google.gson.JsonObject;
-import data.MemoryAuthDAO;
-import data.MemoryUserDAO;
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryUserDAO;
 import com.google.gson.Gson;
 import model.AuthData;
 import model.UserData;

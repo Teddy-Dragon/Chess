@@ -1,7 +1,7 @@
 package service;
 
-import data.MemoryAuthDAO;
-import data.MemoryUserDAO;
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryUserDAO;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.AfterEach;
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import server.handlers.services.LoginService;
-import server.handlers.services.LogoutService;
 import server.handlers.services.UserServices;
 
 import java.util.HashMap;

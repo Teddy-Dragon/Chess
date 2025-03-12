@@ -1,13 +1,11 @@
 package server.handlers;
 
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import data.MemoryAuthDAO;
-import data.MemoryUserDAO;
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryUserDAO;
 import com.google.gson.Gson;
 import model.AuthData;
 import model.UserData;
-import netscape.javascript.JSObject;
 import server.handlers.services.UserServices;
 import spark.Request;
 import spark.Response;

@@ -59,6 +59,14 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.slf4j:slf4j-simple:1.7.36</groupId>
+            <artifactId>shared</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sparkjava:spark-core:2.9.3</groupId>
+            <artifactId>shared</artifactId>
+        </dependency>
+        <dependency>
             <groupId>mysql:mysql-connector-java:8.0.30</groupId>
             <artifactId>compile</artifactId>
         </dependency>
@@ -70,14 +78,6 @@
             <groupId>edu.byu.cs240</groupId>
             <artifactId>shared</artifactId>
             <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j:slf4j-simple:1.7.36</groupId>
-            <artifactId>shared</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sparkjava:spark-core:2.9.3</groupId>
-            <artifactId>shared</artifactId>
         </dependency>
         <dependency>
             <groupId>edu.byu.cs240</groupId>

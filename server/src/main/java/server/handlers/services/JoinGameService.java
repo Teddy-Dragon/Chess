@@ -1,10 +1,9 @@
 package server.handlers.services;
 
-import data.MemoryAuthDAO;
-import data.MemoryGameDAO;
-import data.MemoryUserDAO;
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryGameDAO;
+import dataaccess.MemoryUserDAO;
 import model.GameData;
-import spark.Response;
 
 import java.util.Objects;
 

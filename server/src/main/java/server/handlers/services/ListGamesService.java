@@ -1,6 +1,6 @@
 package server.handlers.services;
 
-import data.MemoryGameDAO;
+import dataaccess.MemoryGameDAO;
 import model.GameData;
 
 import java.util.HashMap;

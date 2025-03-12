@@ -1,8 +1,6 @@
 package server.handlers.services;
 
-import data.MemoryAuthDAO;
-import data.MemoryUserDAO;
-import spark.Response;
+import dataaccess.MemoryAuthDAO;
 
 import java.util.UUID;
 
