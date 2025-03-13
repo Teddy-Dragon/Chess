@@ -1,7 +1,7 @@
 package server.handlers.services;
 
-import dataaccess.MemoryGameDAO;
 import chess.ChessGame;
+import dataaccess.GameDAO;
 import model.GameData;
 
 import java.util.Random;
@@ -9,10 +9,10 @@ import java.util.Random;
 public class CreateGameService {
     // if GameHandler is met with a post request, it goes here
     //Generate a gameID and create a GameData model to send to GameDAO.addGame(Created model)
-    private final MemoryGameDAO gameMap;
+    private final GameDAO gameMap;
 
 
-    public CreateGameService(MemoryGameDAO gameMap) {
+    public CreateGameService(GameDAO gameMap) {
         this.gameMap = gameMap;
     }
 

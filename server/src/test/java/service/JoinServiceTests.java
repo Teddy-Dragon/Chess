@@ -1,12 +1,13 @@
 package service;
 
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import server.handlers.services.CreateGameService;
 import server.handlers.services.JoinGameService;
 
@@ -15,9 +16,9 @@ import java.util.UUID;
 
 public class JoinServiceTests {
 
-    static MemoryUserDAO userMap = new MemoryUserDAO(new HashMap<String, UserData>());
-    static MemoryGameDAO gameMap = new MemoryGameDAO(new HashMap<Integer, GameData>());
-    static MemoryAuthDAO authMap = new MemoryAuthDAO(new HashMap<UUID, AuthData>());
+    static UserDAO userMap = new MemoryUserDAO(new HashMap<String, UserData>());
+    static GameDAO gameMap = new MemoryGameDAO(new HashMap<Integer, GameData>());
+    static AuthDAO authMap = new MemoryAuthDAO(new HashMap<UUID, AuthData>());
 
     @AfterAll
     public static void cleanUp(){
