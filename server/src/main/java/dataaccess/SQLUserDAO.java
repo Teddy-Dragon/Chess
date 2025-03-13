@@ -5,6 +5,9 @@ import model.UserData;
 import java.sql.SQLException;
 
 public class SQLUserDAO implements UserDAO{
+    public SQLUserDAO() throws Exception{
+        configureDatabase();
+    }
     public void clearAllUsers() {
         String deleteStatements = "DROP TABLE IF EXISTS users";
         try(var conn = DatabaseManager.getConnection()){
@@ -28,10 +31,10 @@ public class SQLUserDAO implements UserDAO{
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS users(
-            'username' varchar(256) NOT NULL,
-            'password' varchar(256) NOT NULL,
-            'email' varchar(256) NOT NULL,
-             PRIMARY KEY('username'),
+            `username` varchar(256) NOT NULL,
+            `password` varchar(256) NOT NULL,
+            `email` varchar(256) NOT NULL,
+             PRIMARY KEY(`username`),
              INDEX(password),
              INDEX(email)
              )
@@ -47,7 +50,7 @@ public class SQLUserDAO implements UserDAO{
                 }
             }
         }catch(SQLException e){
-            throw new Exception();
+            throw new Exception(e);
         }
 
     }

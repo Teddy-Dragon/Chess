@@ -1,26 +1,28 @@
 package server;
 
 import dataaccess.*;
-import model.AuthData;
-import model.GameData;
-import model.UserData;
 import server.handlers.ClearHandler;
 import server.handlers.GameHandler;
 import server.handlers.SessionHandler;
 import server.handlers.UserHandler;
 import spark.Spark;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 public class Server {
-    private final AuthDAO authMap = new MemoryAuthDAO(new HashMap<UUID, AuthData>());
-    private final GameDAO gameMap = new MemoryGameDAO(new HashMap<Integer, GameData>());
-    private final UserDAO userMap = new MemoryUserDAO(new HashMap<String, UserData>());
+    private AuthDAO authMap;
+    private GameDAO gameMap;
+    private UserDAO userMap;
+
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+        try{
+            authMap = new SQLAuthDAO();
+            gameMap = new SQLGameDAO();
+            userMap = new SQLUserDAO();
+        }catch (Exception e){
+            System.out.println("Can't connect to Database -> " + e);
+        }
 
 
         Spark.post("/user", (request, response) -> new UserHandler(userMap, authMap).handle(request, response)); //register

@@ -40,16 +40,15 @@ public class SQLGameDAO implements GameDAO{
     private final String[] createStatements = {
             """
                 CREATE TABLE IF NOT EXISTS game(
-                 'gameID' int NOT NULL,
-                 'whiteUsername' varchar(256) DEFAULT NULL,
-                 'blackUsername' varchar(256) DEFAULT NULL,
-                 'gameName' varchar(256),
-                 'game' TEXT NOT NULL,
-                 PRIMARY KEY ('gameID'),
+                 `gameID` int NOT NULL,
+                 `whiteUsername` varchar(256) DEFAULT NULL,
+                 `blackUsername` varchar(256) DEFAULT NULL,
+                 `gameName` varchar(256),
+                 `game` TEXT NOT NULL,
+                 PRIMARY KEY (`gameID`),
                  INDEX(whiteUsername),
                  INDEX(blackUsername),
-                 INDEX(gameName),
-                 INDEX(game)            
+                 INDEX(gameName)
                 )"""
     };
 
@@ -62,7 +61,7 @@ public class SQLGameDAO implements GameDAO{
                 }
             }
         }catch(SQLException e){
-            throw new Exception();
+            throw new Exception(e);
         }
 
     }
