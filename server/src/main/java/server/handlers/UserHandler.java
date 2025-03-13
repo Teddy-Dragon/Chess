@@ -1,9 +1,9 @@
 package server.handlers;
 
-import com.google.gson.JsonObject;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import dataaccess.AuthDAO;
+import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
 import server.handlers.services.UserServices;
@@ -12,10 +12,10 @@ import spark.Response;
 import spark.Route;
 
 public class UserHandler implements Route {
-    private final MemoryUserDAO userMap;
-    private final MemoryAuthDAO authMap;
+    private final UserDAO userMap;
+    private final AuthDAO authMap;
 
-    public UserHandler(MemoryUserDAO userMap, MemoryAuthDAO authMap) {
+    public UserHandler(UserDAO userMap, AuthDAO authMap) {
         this.userMap = userMap;
         this.authMap = authMap;
     }

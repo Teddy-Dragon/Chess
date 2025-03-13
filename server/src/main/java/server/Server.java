@@ -1,8 +1,6 @@
 package server;
 
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -16,9 +14,9 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class Server {
-    private final MemoryAuthDAO authMap = new MemoryAuthDAO(new HashMap<UUID, AuthData>());
-    private final MemoryGameDAO gameMap = new MemoryGameDAO(new HashMap<Integer, GameData>());
-    private final MemoryUserDAO userMap = new MemoryUserDAO(new HashMap<String, UserData>());
+    private final AuthDAO authMap = new MemoryAuthDAO(new HashMap<UUID, AuthData>());
+    private final GameDAO gameMap = new MemoryGameDAO(new HashMap<Integer, GameData>());
+    private final UserDAO userMap = new MemoryUserDAO(new HashMap<String, UserData>());
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
@@ -37,7 +35,6 @@ public class Server {
         Spark.awaitInitialization();
         return Spark.port();
     }
-
 
 
 

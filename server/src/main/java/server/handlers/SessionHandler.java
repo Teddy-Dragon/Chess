@@ -1,9 +1,9 @@
 package server.handlers;
 
-import com.google.gson.JsonObject;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import dataaccess.AuthDAO;
+import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
 import server.handlers.services.LoginService;
@@ -16,10 +16,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class SessionHandler implements Route {
-    private final MemoryAuthDAO authMap;
-    private final MemoryUserDAO userMap;
+    private final AuthDAO authMap;
+    private final UserDAO userMap;
 
-    public SessionHandler(MemoryUserDAO userMap, MemoryAuthDAO authMap) {
+    public SessionHandler(UserDAO userMap, AuthDAO authMap) {
         this.authMap = authMap;
         this.userMap = userMap;
     }

@@ -1,8 +1,10 @@
 package server.handlers;
 
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
+import dataaccess.UserDAO;
 import model.GameData;
 import model.JoinRequest;
 import server.handlers.services.CreateGameService;
@@ -17,15 +19,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import com.google.gson.*;
-
 public class GameHandler implements Route {
-    private final MemoryUserDAO userMap;
-    private final MemoryGameDAO gameMap;
-    private final MemoryAuthDAO authMap;
+    private final UserDAO userMap;
+    private final GameDAO gameMap;
+    private final AuthDAO authMap;
     private String currentUser = null;
 
-    public GameHandler(MemoryUserDAO userMap, MemoryGameDAO gameMap, MemoryAuthDAO authMap) {
+    public GameHandler(UserDAO userMap, GameDAO gameMap, AuthDAO authMap) {
         this.userMap = userMap;
         this.gameMap = gameMap;
         this.authMap = authMap;

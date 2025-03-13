@@ -1,18 +1,16 @@
 package server.handlers;
 
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 import com.google.gson.Gson;
 
 public class ClearHandler implements Route {
-    private final MemoryAuthDAO authMap;
-    private final MemoryGameDAO gameMap;
-    private final MemoryUserDAO userMap;
-    public ClearHandler(MemoryAuthDAO authMap, MemoryGameDAO gameMap, MemoryUserDAO userMap) {
+    private final AuthDAO authMap;
+    private final GameDAO gameMap;
+    private final UserDAO userMap;
+    public ClearHandler(AuthDAO authMap, GameDAO gameMap, UserDAO userMap) {
         this.authMap = authMap;
         this.gameMap = gameMap;
         this.userMap = userMap;

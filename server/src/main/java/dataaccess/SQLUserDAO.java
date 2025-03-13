@@ -2,8 +2,18 @@ package dataaccess;
 
 import model.UserData;
 
+import java.sql.SQLException;
+
 public class SQLUserDAO implements UserDAO{
     public void clearAllUsers() {
+        String deleteStatements = "DROP TABLE IF EXISTS users";
+        try(var conn = DatabaseManager.getConnection()){
+            try(var preparedStatement = conn.prepareStatement(deleteStatements)){
+                preparedStatement.executeUpdate();
+            }
+        }catch(Exception ignored){
+
+        }
 
     }
 
@@ -28,4 +38,17 @@ public class SQLUserDAO implements UserDAO{
             
             """
     };
+    private void configureDatabase() throws Exception {
+        DatabaseManager.createDatabase();
+        try(var conn = DatabaseManager.getConnection()){
+            for(var statement : createStatements){
+                try(var preparedStatement = conn.prepareStatement(statement)){
+                    preparedStatement.executeUpdate();
+                }
+            }
+        }catch(SQLException e){
+            throw new Exception();
+        }
+
+    }
 }
