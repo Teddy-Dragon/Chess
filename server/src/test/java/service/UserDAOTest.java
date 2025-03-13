@@ -40,8 +40,9 @@ public class UserDAOTest {
     @Test
     @DisplayName("Failure To Add User")
     public void addUserFail(){
-        UserData testUser = new UserData("DOESNOTEXIST", null, null);
+
         try{
+            UserData testUser = new UserData("DOESNOTEXIST", null, null);
             userMap.addUser(testUser);
         }catch(Exception e){
             assert true;
