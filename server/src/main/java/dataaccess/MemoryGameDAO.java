@@ -15,8 +15,8 @@ public class MemoryGameDAO implements GameDAO{
         gameMap.clear();
         //remove all Game data from database
     }
-    public void addGame(int gameID, GameData gameData){
-        gameMap.put(gameID, gameData);
+    public void addGame(GameData gameData){
+        gameMap.put(gameData.gameID(), gameData);
         //makes and stores a new game
     }
     public GameData getGameByID(int gameID){

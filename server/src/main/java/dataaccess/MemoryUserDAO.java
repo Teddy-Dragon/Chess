@@ -15,9 +15,9 @@ public class MemoryUserDAO implements UserDAO{
     public void clearAllUsers(){
         userMap.clear();
     }
-    public void addUser(String username, UserData userData){
+    public void addUser(UserData userData){
         //puts not previously existing UserData in database
-        userMap.put(username, userData);
+        userMap.put(userData.username(), userData);
     }
     public UserData getUser(String username){
         //void temporarily, will return user data from database

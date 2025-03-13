@@ -15,7 +15,7 @@ import server.handlers.services.UserServices;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class LogoutTests {
+public class MemoryLogoutTests {
     static AuthDAO authMap = new MemoryAuthDAO(new HashMap<UUID, AuthData>());
     @AfterEach
     public void cleanUp(){

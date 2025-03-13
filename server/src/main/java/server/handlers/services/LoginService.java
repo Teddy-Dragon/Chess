@@ -22,7 +22,7 @@ public class LoginService {
             if(Objects.equals(returningUser.password(), password)){
                 UUID authToken = new CreateAuth(authMap).newToken();
                 AuthData authData = new AuthData(authToken, username);
-                authMap.addAuth(authToken, authData);
+                authMap.addAuth(authData);
                 return authData;
             }
             else {
