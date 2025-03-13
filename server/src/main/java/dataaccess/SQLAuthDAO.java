@@ -72,8 +72,12 @@ public class SQLAuthDAO implements AuthDAO{
     }
     @Override
     public void addAuth(AuthData authData) {
-        String statement = "INSERT INTO auth(authToken, userName) VALUES(?,?);";
+        String statement = "INSERT INTO auth(authToken, userName) VALUES(?,?)";
+
         try(var conn = DatabaseManager.getConnection()){
+            if(authData.authToken() == null){
+                throw new Exception();
+            }
             try(var prepareStatement = conn.prepareStatement(statement)){
                 prepareStatement.setString(1, String.valueOf(authData.authToken()));
                 prepareStatement.setString(2, authData.username());

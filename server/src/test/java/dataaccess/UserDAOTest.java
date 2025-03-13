@@ -1,7 +1,5 @@
-package service;
+package dataaccess;
 
-import dataaccess.SQLUserDAO;
-import dataaccess.UserDAO;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import org.mindrot.jbcrypt.BCrypt;
