@@ -32,7 +32,7 @@ public class SQLGameDAO implements GameDAO{
                  'whiteUsername' varchar(256) DEFAULT NULL,
                  'blackUsername' varchar(256) DEFAULT NULL,
                  'gameName' varchar(256),
-                 'game' figure out what to put for game type,
+                 'game' ,
                  PRIMARY KEY ('gameID'),
                  INDEX(whiteUsername),
                  INDEX(blackUsername),
