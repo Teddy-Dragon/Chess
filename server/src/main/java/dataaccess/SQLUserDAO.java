@@ -2,11 +2,22 @@ package dataaccess;
 
 import model.UserData;
 
-import java.sql.SQLException;
-
 public class SQLUserDAO implements UserDAO{
     public SQLUserDAO() throws Exception{
-        configureDatabase();
+        String[] createStatements = {
+                """
+            CREATE TABLE IF NOT EXISTS users(
+            `username` varchar(256) NOT NULL,
+            `password` varchar(256) NOT NULL,
+            `email` varchar(256) NOT NULL,
+             PRIMARY KEY(`username`),
+             INDEX(password),
+             INDEX(email)
+             )
+            
+            """
+        };
+        new DatabaseManager().configureDatabase(createStatements);
     }
     public void clearAllUsers() {
         String deleteStatements = "DROP TABLE IF EXISTS users";
@@ -28,30 +39,4 @@ public class SQLUserDAO implements UserDAO{
         return null;
     }
 
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS users(
-            `username` varchar(256) NOT NULL,
-            `password` varchar(256) NOT NULL,
-            `email` varchar(256) NOT NULL,
-             PRIMARY KEY(`username`),
-             INDEX(password),
-             INDEX(email)
-             )
-            
-            """
-    };
-    private void configureDatabase() throws Exception {
-        DatabaseManager.createDatabase();
-        try(var conn = DatabaseManager.getConnection()){
-            for(var statement : createStatements){
-                try(var preparedStatement = conn.prepareStatement(statement)){
-                    preparedStatement.executeUpdate();
-                }
-            }
-        }catch(SQLException e){
-            throw new Exception(e);
-        }
-
-    }
 }

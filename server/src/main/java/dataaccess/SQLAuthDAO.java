@@ -2,12 +2,24 @@ package dataaccess;
 
 import model.AuthData;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
 public class SQLAuthDAO implements AuthDAO{
     public SQLAuthDAO() throws Exception{
-        configureDatabase();
+        String[] createStatements = {
+                """
+            CREATE TABLE IF NOT EXISTS auth(
+            `authToken` varchar(256) NOT NULL,
+            `userName` varchar(256) NOT NULL,
+            PRIMARY KEY (`authToken`),
+            INDEX(username)
+            )
+
+
+            """
+
+        };
+        new DatabaseManager().configureDatabase(createStatements);
     }
 
     @Override
@@ -36,30 +48,4 @@ public class SQLAuthDAO implements AuthDAO{
 
     }
 
-    private final String[] createStatements= {
-            """
-            CREATE TABLE IF NOT EXISTS auth(
-            `authToken` varchar(256) NOT NULL,
-            `userName` varchar(256) NOT NULL,
-            PRIMARY KEY (`authToken`),
-            INDEX(username)
-            )
-
-
-            """
-
-    };
-    private void configureDatabase() throws Exception {
-        DatabaseManager.createDatabase();
-        try(var conn = DatabaseManager.getConnection()){
-            for(var statement : createStatements){
-                try(var preparedStatement = conn.prepareStatement(statement)){
-                    preparedStatement.executeUpdate();
-                }
-            }
-        }catch(SQLException e){
-            throw new Exception(e);
-        }
-
-    }
 }
