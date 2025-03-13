@@ -1,4 +1,4 @@
-package service;
+package dataaccess;
 
 import chess.ChessGame;
 import dataaccess.GameDAO;
@@ -88,5 +88,33 @@ public class GameDAOTest {
         HashMap<String, List<GameData>> listOfGames = gameMap.getAllGames();
         List<GameData> justGames = listOfGames.get("games");
         Assertions.assertEquals(3, justGames.size());
+    }
+    @Test
+    @DisplayName("Get Game Success")
+    public void getGameSuccess(){
+        GameData firstGame = new GameData(123, null, null, "name", new ChessGame());
+        GameData secondGame = new GameData(99323, "Player", null, "another", new ChessGame());
+        GameData thirdGame = new GameData(2351135, null, null, "name", new ChessGame());
+        gameMap.addGame(firstGame);
+        gameMap.addGame(secondGame);
+        gameMap.addGame(thirdGame);
+        Assertions.assertEquals(firstGame.gameName(), gameMap.getGameByID(firstGame.gameID()).gameName());
+        Assertions.assertEquals(secondGame.whiteUsername(), gameMap.getGameByID(secondGame.gameID()).whiteUsername());
+        Assertions.assertEquals(thirdGame.gameName(), gameMap.getGameByID(thirdGame.gameID()).gameName());
+
+    }
+
+    @Test
+    @DisplayName("Get Game Fail")
+    public void getGameFail(){
+        try{
+            assert gameMap.getGameByID(-5543) == null;
+
+        }
+        catch(Exception e){
+            assert false;
+
+        }
+
     }
 }

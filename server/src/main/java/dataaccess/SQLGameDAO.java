@@ -39,7 +39,7 @@ public class SQLGameDAO implements GameDAO{
     }
 
     public void addGame(GameData gameData) {
-        String statement = "INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, null, null, ?, ?)";
+        String statement = "INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
         Gson gson = new Gson();
         var json = gson.toJson(gameData.game());
 
@@ -47,8 +47,10 @@ public class SQLGameDAO implements GameDAO{
         try(var conn = DatabaseManager.getConnection()){
             try(var preparedStatement = conn.prepareStatement(statement)){
                 preparedStatement.setInt(1, gameData.gameID());
-                preparedStatement.setString(2, gameData.gameName());
-                preparedStatement.setString(3, json);
+                preparedStatement.setString(2, gameData.whiteUsername());
+                preparedStatement.setString(3, gameData.blackUsername());
+                preparedStatement.setString(4, gameData.gameName());
+                preparedStatement.setString(5, json);
                 preparedStatement.executeUpdate();
             }
         }catch(Exception e){
