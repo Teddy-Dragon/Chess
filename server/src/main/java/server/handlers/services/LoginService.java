@@ -4,8 +4,8 @@ import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public class LoginService {
@@ -19,7 +19,7 @@ public class LoginService {
     public AuthData login(String username, String password) throws Exception{
         UserData returningUser = userMap.getUser(username);
         if(returningUser != null) {
-            if(Objects.equals(returningUser.password(), password)){
+            if(BCrypt.checkpw(password, returningUser.password())){
                 UUID authToken = new CreateAuth(authMap).newToken();
                 AuthData authData = new AuthData(authToken, username);
                 authMap.addAuth(authData);

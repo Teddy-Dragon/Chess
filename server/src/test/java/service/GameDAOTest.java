@@ -6,6 +6,9 @@ import dataaccess.SQLGameDAO;
 import model.GameData;
 import org.junit.jupiter.api.*;
 
+import java.util.HashMap;
+import java.util.List;
+
 public class GameDAOTest {
 
     static GameDAO gameMap;
@@ -54,6 +57,13 @@ public class GameDAOTest {
         Assertions.assertEquals(newGame.whiteUsername(), gameMap.getGameByID(testGame.gameID()).whiteUsername());
 
     }
+    @Test
+    @DisplayName("Update Game Fail")
+    public void updateFail(){
+        GameData newGame = new GameData(123, "player_one", null, "Alternate Name", new ChessGame());
+        gameMap.updateGame(000, newGame);
+        Assertions.assertEquals(gameMap.getGameByID(000), null);
+    }
 
     @Test
     @DisplayName("Clear Games")
@@ -65,5 +75,18 @@ public class GameDAOTest {
         GameData response = gameMap.getGameByID(testGame.gameID());
         assert response == null;
 
+    }
+    @Test
+    @DisplayName("List Games Success")
+    public void listGamesSuccess(){
+        GameData firstGame = new GameData(123, null, null, "name", new ChessGame());
+        GameData secondGame = new GameData(99323, null, null, "another", new ChessGame());
+        GameData thirdGame = new GameData(2351135, null, null, "name", new ChessGame());
+        gameMap.addGame(firstGame);
+        gameMap.addGame(secondGame);
+        gameMap.addGame(thirdGame);
+        HashMap<String, List<GameData>> listOfGames = gameMap.getAllGames();
+        List<GameData> justGames = listOfGames.get("games");
+        Assertions.assertEquals(3, justGames.size());
     }
 }

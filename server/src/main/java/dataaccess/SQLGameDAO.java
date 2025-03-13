@@ -4,6 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -48,7 +49,6 @@ public class SQLGameDAO implements GameDAO{
                 preparedStatement.setInt(1, gameData.gameID());
                 preparedStatement.setString(2, gameData.gameName());
                 preparedStatement.setString(3, json);
-                System.out.println(preparedStatement);
                 preparedStatement.executeUpdate();
             }
         }catch(Exception e){
@@ -81,8 +81,34 @@ public class SQLGameDAO implements GameDAO{
         return null;
     }
 
-    public HashMap<String, List<GameData>> getAllGames() {
-        return null;
+    public  HashMap<String,List<GameData>> getAllGames() {
+        HashMap<String, List<GameData>> allGames = new HashMap<String, List<GameData>>();
+        List<GameData> games = new ArrayList<>();
+        String statement = "SELECT * FROM game";
+        try(var conn = DatabaseManager.getConnection()){
+            try(var prepareStatement = conn.prepareStatement(statement)){
+                try(var data = prepareStatement.executeQuery()){
+                    while(data.next()){
+                        Gson gson = new Gson();
+                        ChessGame game = gson.fromJson(data.getString("game"), ChessGame.class);
+                        GameData response = new GameData(data.getInt("gameID"),
+                                data.getString("whiteUsername"), data.getString("blackUsername"),
+                                data.getString("gameName"), game);
+                        games.add(response);
+
+                    }
+
+                }
+                allGames.put("games", games);
+                return allGames;
+            }
+
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return null;
+        }
+
     }
 
     public void updateGame(int gameID, GameData newGameData) {

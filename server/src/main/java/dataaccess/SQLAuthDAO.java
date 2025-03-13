@@ -1,9 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
-import model.UserData;
 
-import javax.xml.crypto.Data;
 import java.util.UUID;
 
 public class SQLAuthDAO implements AuthDAO{
@@ -57,6 +55,7 @@ public class SQLAuthDAO implements AuthDAO{
             return null;
         }
 
+        return null;
     }
     @Override
     public void removeAuth(UUID authToken) {
@@ -74,6 +73,15 @@ public class SQLAuthDAO implements AuthDAO{
     @Override
     public void addAuth(AuthData authData) {
         String statement = "INSERT INTO auth(authToken, userName) VALUES(?,?);";
+        try(var conn = DatabaseManager.getConnection()){
+            try(var prepareStatement = conn.prepareStatement(statement)){
+                prepareStatement.setString(1, String.valueOf(authData.authToken()));
+                prepareStatement.setString(2, authData.username());
+                prepareStatement.executeUpdate();
+            }
+        }catch (Exception e){
+            System.out.println(e);
+        }
 
     }
 
