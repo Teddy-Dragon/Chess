@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.HashMap;
 
@@ -15,9 +16,11 @@ public class MemoryUserDAO implements UserDAO{
     public void clearAllUsers(){
         userMap.clear();
     }
-    public void addUser(String username, UserData userData){
+    public void addUser(UserData userData){
+        UserData encrypt = new UserData(userData.username(), BCrypt.hashpw(userData.password(),
+                BCrypt.gensalt()), userData.email());
         //puts not previously existing UserData in database
-        userMap.put(username, userData);
+        userMap.put(userData.username(), encrypt);
     }
     public UserData getUser(String username){
         //void temporarily, will return user data from database

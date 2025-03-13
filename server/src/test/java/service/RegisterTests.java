@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import server.handlers.services.UserServices;
 
 import java.util.HashMap;
@@ -55,9 +56,9 @@ public class RegisterTests {
         try{
             new UserServices(userMap, authMap).createUser("Username", "notnull", "Email");
             new UserServices(userMap, authMap).createUser("anotherUser", "Password2", "Email2");
-            Assertions.assertEquals("notnull", userMap.getUser("Username").password());
+            assert BCrypt.checkpw("notnull", userMap.getUser("Username").password());
             Assertions.assertEquals("Email", userMap.getUser("Username").email());
-            Assertions.assertEquals("Password2", userMap.getUser("anotherUser").password());
+            assert BCrypt.checkpw("Password2", userMap.getUser("anotherUser").password());
             Assertions.assertEquals("Email2", userMap.getUser("anotherUser").email());
         }
         catch(Exception e){

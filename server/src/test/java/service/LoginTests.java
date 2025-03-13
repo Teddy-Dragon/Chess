@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import server.handlers.services.LoginService;
 import server.handlers.services.UserServices;
 
@@ -41,7 +42,7 @@ public class LoginTests {
     public void loginFailWrongPassword(){
         try{
             new UserServices(userMap, authMap).createUser("Username", "Password", "Email");
-            Assertions.assertEquals("Password", userMap.getUser("Username").password());
+            assert BCrypt.checkpw("Password", userMap.getUser("Username").password());
             new LoginService(userMap, authMap).login("Username", "badPassword");
         }
         catch(Exception e)
@@ -55,7 +56,7 @@ public class LoginTests {
     public void loginFailParams(){
         try{
             new UserServices(userMap, authMap).createUser("Username", "Password", "Email");
-            Assertions.assertEquals("Password", userMap.getUser("Username").password());
+            assert BCrypt.checkpw("Password", userMap.getUser("Username").password());
             new LoginService(userMap, authMap).login("Username", null);
         }
         catch(Exception e)

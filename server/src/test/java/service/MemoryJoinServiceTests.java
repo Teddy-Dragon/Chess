@@ -14,7 +14,7 @@ import server.handlers.services.JoinGameService;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class JoinServiceTests {
+public class MemoryJoinServiceTests {
 
     static UserDAO userMap = new MemoryUserDAO(new HashMap<String, UserData>());
     static GameDAO gameMap = new MemoryGameDAO(new HashMap<Integer, GameData>());

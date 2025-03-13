@@ -23,7 +23,7 @@ public class CreateGameService {
             id = random.nextInt(100000, 999999);
         }
         GameData game = new GameData(id, null, null, gameName, new ChessGame());
-        gameMap.addGame(id, game);
+        gameMap.addGame(game);
         return game;
 
         //auth status should be checked in GameHandler

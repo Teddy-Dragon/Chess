@@ -8,5 +8,5 @@ public interface AuthDAO {
     public void clearAllAuth();
     public AuthData getAuth(UUID authToken);
     public void removeAuth(UUID authToken);
-    public void addAuth(UUID authToken, AuthData authData);
+    public void addAuth(AuthData authData);
 }

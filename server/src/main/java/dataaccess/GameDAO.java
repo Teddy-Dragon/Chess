@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface GameDAO {
     public void clearAllGames();
-    public void addGame(int gameID, GameData gameData);
+    public void addGame(GameData gameData);
     public GameData getGameByID(int gameID);
-    public HashMap<String, List<GameData>> getAllGames();
+    public HashMap<String,List<GameData>> getAllGames();
     public void updateGame(int gameID, GameData newGameData);
 }

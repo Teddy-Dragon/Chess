@@ -15,15 +15,15 @@ public class MemoryGameDAO implements GameDAO{
         gameMap.clear();
         //remove all Game data from database
     }
-    public void addGame(int gameID, GameData gameData){
-        gameMap.put(gameID, gameData);
+    public void addGame(GameData gameData){
+        gameMap.put(gameData.gameID(), gameData);
         //makes and stores a new game
     }
     public GameData getGameByID(int gameID){
         return gameMap.get(gameID);
         //Returns game data from games with supplied gameData
     }
-    public HashMap<String, List<GameData>> getAllGames(){
+    public HashMap<String,List<GameData>> getAllGames(){
         //void temporarily, returns all active games regardless of ID
         HashMap<String, List<GameData>> allGames = new HashMap<String, List<GameData>>();
         List<GameData> gameData = new ArrayList<>();
@@ -31,6 +31,7 @@ public class MemoryGameDAO implements GameDAO{
             gameData.add(i.getValue());
         }
         allGames.put("games", gameData);
+
         return allGames;
     }
 
