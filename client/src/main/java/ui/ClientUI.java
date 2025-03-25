@@ -8,6 +8,7 @@ import java.util.List;
 import static ui.EscapeSequences.*;
 
 public class ClientUI {
+    public String textColor;
 
 
 
@@ -17,52 +18,78 @@ public class ClientUI {
     }
 
     public void chessBoardDisplay(ChessGame.TeamColor playerColor){
-        String whiteSquareEdge = SET_BG_COLOR_WHITE + EMPTY + " " + EMPTY + RESET_BG_COLOR;
-        String blackSquareEdge = SET_BG_COLOR_BLACK + EMPTY + " " + EMPTY + RESET_BG_COLOR;
-        chessLabels(playerColor);
-        String top = "";
-        for(int z = 0; z < 4; z++){
-            top += whiteSquareEdge;
-            top += blackSquareEdge;
+        if(playerColor == ChessGame.TeamColor.WHITE){
+            textColor = SET_TEXT_COLOR_BLUE;
         }
-        System.out.println(top);
-        String middle = "";
+        else{
+            textColor = SET_TEXT_COLOR_RED;
+        }
+        topLabel(playerColor);
+
+        ChessSquare row = new ChessSquare();
+
+        System.out.println(row.rowTopOrBottom(true));
+        System.out.println(row.rowChessMiddle(beginningRowTypes(1), playerColor, true));
+        System.out.println(row.rowTopOrBottom(true));
+        System.out.println(row.rowTopOrBottom(false));
+        System.out.println(row.rowChessMiddle(beginningRowTypes(2), playerColor, false));
+        System.out.println(row.rowTopOrBottom(false));
+        Boolean whitefirst = true;
         for(int i = 0; i < 4; i++){
-            middle += whiteSquareToken(" ");
-            middle += blackSquareToken(" ");
+            System.out.println(row.rowTopOrBottom(whitefirst));
+            System.out.println(row.rowChessMiddle(beginningRowTypes(3), playerColor, whitefirst));
+            System.out.println(row.rowTopOrBottom(whitefirst));
+            whitefirst = !whitefirst;
         }
-        System.out.println(middle);
-        String bottom = "";
-        for(int z = 0; z < 4; z++){
-            bottom += whiteSquareEdge;
-            bottom += blackSquareEdge;
+        if(textColor.equals(SET_TEXT_COLOR_BLUE)){
+            textColor = SET_TEXT_COLOR_RED;
         }
+        else{
+            textColor = SET_TEXT_COLOR_BLUE;
+        }
+        System.out.println(row.rowTopOrBottom(true));
+        System.out.println(row.rowChessMiddle(beginningRowTypes(2), enemyColor(playerColor), true));
+        System.out.println(row.rowTopOrBottom(true));
+        System.out.println(row.rowTopOrBottom(false));
+        System.out.println(row.rowChessMiddle(beginningRowTypes(1), enemyColor(playerColor), false));
+        System.out.println(row.rowTopOrBottom(false));
+        topLabel(playerColor);
+    }
+
+
+    public void topLabel(ChessGame.TeamColor playerColor){
+            String numberLine = "";
+            List<String> boardLetters = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
+
+            if (playerColor != ChessGame.TeamColor.WHITE) {
+                boardLetters = boardLetters.reversed();
+            }
+            for (String boardLetter : boardLetters) {
+                numberLine += SET_BG_COLOR_LIGHT_GREY + EMPTY + boardLetter + EMPTY + RESET_BG_COLOR;
+            }
+            System.out.println(SET_BG_COLOR_LIGHT_GREY + "   " + numberLine + SET_BG_COLOR_LIGHT_GREY + "   " + RESET_BG_COLOR);
 
 
     }
-
-    public String whiteSquareToken(String Token){
-        return SET_BG_COLOR_WHITE + EMPTY + SET_TEXT_COLOR_BLACK + Token + EMPTY + RESET_BG_COLOR;
-    }
-    public String blackSquareToken(String Token){
-        return SET_BG_COLOR_BLACK + EMPTY + SET_TEXT_COLOR_WHITE + Token + EMPTY + RESET_BG_COLOR;
-    }
-
-    public void chessLabels(ChessGame.TeamColor playerColor){
-        String numberLine = "";
-
-
-        List<String> boardLetters = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
-        List<String> boardNumbers = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8");
+    public ChessGame.TeamColor enemyColor(ChessGame.TeamColor playerColor){
         if(playerColor != ChessGame.TeamColor.WHITE){
-            boardLetters = boardLetters.reversed();
-            boardNumbers = boardNumbers.reversed();
+            return ChessGame.TeamColor.BLACK;
+        }
+        else return ChessGame.TeamColor.WHITE;
+    }
 
+    public List<String> beginningRowTypes(int whichType){
+        List<String> startingPieces = Arrays.asList(textColor + "R", textColor + "N", textColor + "B", textColor + "K",
+                textColor + "Q", textColor + "B", textColor +  "N", textColor+  "R");
+        List<String> pawnRow = Arrays.asList(textColor + "P", textColor + "P", textColor + "P", textColor + "P",
+                textColor + "P", textColor + "P", textColor +  "P", textColor+  "P");
+        List<String> emptyRow = Arrays.asList(" ", " ", " ", " ", " ", " ", " ", " ");
+        if(whichType == 1){
+            return startingPieces;
+        } else if (whichType == 2) {
+            return pawnRow;
         }
-        for (String boardLetter : boardLetters) {
-            numberLine += SET_BG_COLOR_LIGHT_GREY + EMPTY + boardLetter + EMPTY + RESET_BG_COLOR;
-        }
-        System.out.println("\n" + numberLine);
+        else return emptyRow;
     }
 
 }
