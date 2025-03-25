@@ -20,13 +20,16 @@ public class ClientUI {
 
     public void helpDisplay(){
         System.out.println(SET_TEXT_COLOR_MAGENTA +  "Welcome to my chess game <3" + RESET_BG_COLOR);
-        System.out.println("Options: ");
-        System.out.println("To login, type 'login' and then <USERNAME> <PASSWORD> Spaces are important for all options <3");
-        System.out.println("To register as a new user, type 'register' and then type <USERNAME> <PASSWORD> <EMAIL>");
+
         if(authorization != null){
+            System.out.println("To logout, type 'logout'");
             System.out.println("To create a game type 'create' <gameName>");
             System.out.println("To join a game, type 'join' <gameNumber> <playerColor>");
             System.out.println("To list all games, type 'list'");
+        } else {
+            System.out.println("Options: ");
+            System.out.println("To login, type 'login' and then <USERNAME> <PASSWORD> Spaces are important for all options <3");
+            System.out.println("To register as a new user, type 'register' and then type <USERNAME> <PASSWORD> <EMAIL>");
         }
 
         System.out.println("To exit, type 'quit' or the letter q");
