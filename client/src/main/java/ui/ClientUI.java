@@ -14,7 +14,12 @@ public class ClientUI {
 
 
     public void help(){
-        System.out.println(SET_TEXT_COLOR_BLACK + SET_BG_COLOR_LIGHT_GREY +  " This is the help display " + RESET_BG_COLOR);
+        System.out.println(SET_TEXT_COLOR_MAGENTA +  "Welcome to my chess game <3" + RESET_BG_COLOR);
+        System.out.println("Options: ");
+        System.out.println("To login, type 'login' and then <USERNAME> <PASSWORD> Spaces are important for all options <3");
+        System.out.println("To register as a new user, type 'register' and then type <USERNAME> <PASSWORD> <EMAIL>");
+        System.out.println("To exit, type 'quit' or the letter q");
+        System.out.println("To repeat this helpful screen, just type 'help' or h "+ RESET_TEXT_COLOR);
     }
 
     public void chessBoardDisplay(ChessGame.TeamColor playerColor){
