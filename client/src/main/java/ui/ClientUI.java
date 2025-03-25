@@ -4,20 +4,31 @@ import chess.ChessGame;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static ui.EscapeSequences.*;
 
 public class ClientUI {
     public String textColor;
+    private UUID authorization;
+    public ClientUI(UUID authorization){
+        this.authorization = authorization;
+    }
 
 
 
 
-    public void help(){
+    public void helpDisplay(){
         System.out.println(SET_TEXT_COLOR_MAGENTA +  "Welcome to my chess game <3" + RESET_BG_COLOR);
         System.out.println("Options: ");
         System.out.println("To login, type 'login' and then <USERNAME> <PASSWORD> Spaces are important for all options <3");
         System.out.println("To register as a new user, type 'register' and then type <USERNAME> <PASSWORD> <EMAIL>");
+        if(authorization != null){
+            System.out.println("To create a game type 'create' <gameName>");
+            System.out.println("To join a game, type 'join' <gameNumber> <playerColor>");
+            System.out.println("To list all games, type 'list'");
+        }
+
         System.out.println("To exit, type 'quit' or the letter q");
         System.out.println("To repeat this helpful screen, just type 'help' or h "+ RESET_TEXT_COLOR);
     }

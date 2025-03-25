@@ -23,10 +23,14 @@ public class ServerFacade {
     public ServerFacade(String url){
         serverURl = url;
     }
+    public UUID getAuth(){
+        return authorization;
+    }
 
     public AuthData registerUser(UserData registerData) {
         var path = "/user";
         AuthData response = makeRequest("POST", path, registerData, AuthData.class);
+        assert response != null;
         authorization = response.authToken();
         return response;
 
@@ -34,6 +38,7 @@ public class ServerFacade {
     public AuthData loginUser(UserData loginData){
         var path = "/session";
         AuthData response = makeRequest("POST", path, loginData, AuthData.class);
+        assert response != null;
         authorization = response.authToken();
         return response;
     }
