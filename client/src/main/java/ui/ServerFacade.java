@@ -79,7 +79,7 @@ public class ServerFacade {
                 //set authorization header to UUID
                 http.addRequestProperty("authorization", String.valueOf(authorization));
             }
-            http.getDoOutput(); // lets us know to expect things in return
+            http.setDoOutput(true); // lets us know to expect things in return
             writeBody(request, http); //sets request body
             http.connect(); //actually connects with this now not empty request
 

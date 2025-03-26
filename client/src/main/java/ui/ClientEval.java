@@ -54,7 +54,7 @@ public class ClientEval {
     public String joinEval(String[] parameters){
         return null;
     }
-    public String createEval(String[] parameteres){
+    public String createEval(String[] parameters){
         return null;
     }
 
@@ -68,6 +68,9 @@ public class ClientEval {
 
     public String helpEval(){
         return new ClientUI(authorization).helpDisplay();
+    }
+    public String formatResponse(){
+        return null;
     }
 
 
