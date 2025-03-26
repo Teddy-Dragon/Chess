@@ -1,5 +1,7 @@
 package ui;
 
+import model.UserData;
+
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -41,9 +43,33 @@ public class ClientEval {
 
     }
     public String registerEval(String[] parameters){
+        if(parameters.length < 3){
+            return "Not enough arguments";
+        }
+        if(parameters.length > 3){
+            return "Too many arguments";
+        }
+        String username = parameters[0];
+        String password = parameters[1];
+        String email = parameters[2];
+        UserData newUser = new UserData(username, password, email);
+        client.registerUser(newUser);
+        System.out.println(client.getAuth());
+        authorization = client.getAuth();
         return null;
     }
     public String loginEval(String[] parameters){
+        if(parameters.length < 2){
+            return "Not enough arguments";
+        }
+        if(parameters.length > 2){
+            return "Too many arguements";
+        }
+        String username = parameters[0];
+        String password = parameters[1];
+        UserData returningUser = new UserData(username, password, null);
+        client.loginUser(returningUser);
+        authorization = client.getAuth();
 
         return null;
     }
@@ -59,8 +85,11 @@ public class ClientEval {
     }
 
     public String logoutEval(){
-        client.logoutUser();
-        return "Logout Successful";
+        if(authorization != null){
+            client.logoutUser();
+            return "Logout Successful";
+        }else return "Not logged in";
+
     }
     public String listEval(){
         return null;
