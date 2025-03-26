@@ -1,5 +1,6 @@
 package ui;
 
+import model.AuthData;
 import model.UserData;
 
 import java.util.Arrays;
@@ -53,10 +54,16 @@ public class ClientEval {
         String password = parameters[1];
         String email = parameters[2];
         UserData newUser = new UserData(username, password, email);
-        client.registerUser(newUser);
-        System.out.println(client.getAuth());
-        authorization = client.getAuth();
-        return null;
+        try{
+            AuthData registered = client.registerUser(newUser);
+            System.out.println(client.getAuth());
+            authorization = client.getAuth();
+            return formatResponse(registered, AuthData.class);
+        }catch(Exception e){
+            System.out.println("This is the error in register-> " + e);
+            return "\n";
+        }
+
     }
     public String loginEval(String[] parameters){
         if(parameters.length < 2){
@@ -68,10 +75,12 @@ public class ClientEval {
         String username = parameters[0];
         String password = parameters[1];
         UserData returningUser = new UserData(username, password, null);
-        client.loginUser(returningUser);
+        AuthData response = client.loginUser(returningUser);
         authorization = client.getAuth();
+        return formatResponse(response, AuthData.class);
 
-        return null;
+
+
     }
     public String watchEval(String[] parameters){
         return null;
@@ -87,8 +96,10 @@ public class ClientEval {
     public String logoutEval(){
         if(authorization != null){
             client.logoutUser();
+            authorization = client.getAuth();
             return "Logout Successful";
         }else return "Not logged in";
+
 
     }
     public String listEval(){
@@ -98,7 +109,13 @@ public class ClientEval {
     public String helpEval(){
         return new ClientUI(authorization).helpDisplay();
     }
-    public String formatResponse(){
+    public String formatResponse(Object response, Class<?> responseType) {
+        if(responseType == AuthData.class){
+            AuthData data = (AuthData) response;
+            return "Welcome " + data.username() + "!\n" + helpEval();
+        }
+
+
         return null;
     }
 
