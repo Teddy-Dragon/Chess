@@ -14,8 +14,8 @@ public class ListGamesService {
         this.gameMap = gameMap;
     }
     public ListModel listGames(){
-        ListModel listModel = new ListModel(gameMap.getAllGames());
-        return listModel;
+        ListModel answer = new ListModel(gameMap.getAllGames());
+        return answer;
 
     }
 }

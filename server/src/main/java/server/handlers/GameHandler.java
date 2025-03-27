@@ -55,7 +55,6 @@ public class GameHandler implements Route {
         if(Objects.equals(request.requestMethod(), "PUT")){
            // System.out.println("In PUT");
             JoinRequest joiningUser = new Gson().fromJson(request.body(), JoinRequest.class);
-
             try{
                 checkAuth(request, response);
                 Object join = new JoinGameService(userMap, gameMap, authMap)
@@ -77,6 +76,7 @@ public class GameHandler implements Route {
             try {
                 checkAuth(request, response);
                 ListModel listGames = new ListGamesService(gameMap).listGames();
+
             return new Gson().toJson(listGames);
             }catch (Exception e){
                 JsonObject answer = new JsonObject();

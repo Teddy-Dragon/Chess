@@ -24,7 +24,7 @@ public class JoinGameService {
 
 
         GameData game = gameMap.getGameByID(gameID);
-        if(game == null){
+        if(game == null || playerColor == null){
             throw new Exception("Error: bad request");
         }
         if(!Objects.equals(playerColor.toUpperCase(), "WHITE") && !Objects.equals(playerColor.toUpperCase(), "BLACK")){

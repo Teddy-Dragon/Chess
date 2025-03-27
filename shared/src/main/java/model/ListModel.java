@@ -1,9 +1,8 @@
 package model;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.Collection;
 
 public record ListModel(
-        HashMap<String, List<GameData>> gameList
+         Collection<GameData> games
 ) {
 }
