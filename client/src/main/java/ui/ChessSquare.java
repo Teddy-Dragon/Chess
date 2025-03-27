@@ -1,7 +1,9 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessPiece;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,9 +35,36 @@ public class ChessSquare {
             return squareColor + EMPTY + pieceType + EMPTY + RESET_BG_COLOR;
     }
 
-    public String rowChessMiddle(List<String> rowPieces, ChessGame.TeamColor playerColor, Boolean whiteFirst){
+    public String rowChessMiddle(ChessPiece[] boardRow, ChessGame.TeamColor playerColor, Boolean whiteFirst){
         // include null for empty squares PLEASE
         String sideLabels = sideLabelMaker(playerColor);
+        List<String> rowPieces = new ArrayList<>();
+        if(playerColor == ChessGame.TeamColor.WHITE){
+            for(int i = 7; i >= 0; i--){
+                String piece = "";
+                if(boardRow[i] != null && boardRow[i].getTeamColor() == ChessGame.TeamColor.WHITE){
+                    piece += SET_TEXT_COLOR_RED;
+                }
+                if(boardRow[i]!= null && boardRow[i].getTeamColor() == ChessGame.TeamColor.BLACK){
+                    piece += SET_TEXT_COLOR_BLUE;
+                }
+                piece += getChessLetter(boardRow, i) + RESET_TEXT_COLOR;
+                rowPieces.add(piece);
+            }
+        }else{
+            for(int i = 0; i < 8; i++){
+                String piece = "";
+                if(boardRow[i] != null && boardRow[i].getTeamColor() == ChessGame.TeamColor.WHITE){
+                    piece += SET_TEXT_COLOR_RED;
+                }
+                if(boardRow[i]!= null && boardRow[i].getTeamColor() == ChessGame.TeamColor.BLACK){
+                    piece += SET_TEXT_COLOR_BLUE;
+                }
+                piece += getChessLetter(boardRow, i) + RESET_TEXT_COLOR;
+                rowPieces.add(piece);
+            }
+        }
+
         String squareColor = null;
         String altSquareColor = null;
         if(whiteFirst){
@@ -64,5 +93,34 @@ public class ChessSquare {
         String response = SET_BG_COLOR_LIGHT_GREY + " "+ SET_TEXT_COLOR_BLACK + boardNumbers.get(rowsPrinted) + " " +  RESET_BG_COLOR;
         rowsPrinted += 1;
         return response;
+    }
+
+    private String getChessLetter(ChessPiece[] boardRow, int location){
+        if(boardRow[location] != null){
+            switch (boardRow[location].getPieceType()){
+                case QUEEN -> {
+                    return "Q";
+                }
+                case BISHOP -> {
+                    return "B";
+                }
+                case ROOK -> {
+                    return "R";
+                }
+                case KNIGHT -> {
+                    return "N";
+                }
+                case KING -> {
+                    return "K";
+                }
+                case PAWN -> {
+                    return "P";
+                }
+                case null, default -> {
+                    return " ";
+                }
+            }
+        }
+        return " ";
     }
 }

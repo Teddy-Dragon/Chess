@@ -2,11 +2,12 @@ package server.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryGameDAO;
+import dataaccess.MemoryUserDAO;
 import model.GameData;
 import model.JoinRequest;
+import model.ListGame;
 import server.handlers.services.CreateGameService;
 import server.handlers.services.JoinGameService;
 import server.handlers.services.ListGamesService;
@@ -14,10 +15,9 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
 
 public class GameHandler implements Route {
     private final UserDAO userMap;
@@ -33,7 +33,6 @@ public class GameHandler implements Route {
 
     public Object handle(Request request, Response response) throws Exception {
         //check authorization in request and verify with AuthDAO
-
 
         //Create Game
         if(Objects.equals(request.requestMethod(), "POST")){
@@ -77,9 +76,9 @@ public class GameHandler implements Route {
         if(Objects.equals(request.requestMethod(), "GET")){
             try {
                 checkAuth(request, response);
-            // System.out.println("In GET");
-                HashMap<String, List<GameData>> listGames = new ListGamesService(gameMap).listGames();
-            return new Gson().toJson(listGames);}catch (Exception e){
+                ListGame listGames = new ListGamesService(gameMap).listGames();
+            return new Gson().toJson(listGames);
+            }catch (Exception e){
                 JsonObject answer = new JsonObject();
                 answer.addProperty("message", e.getMessage());
                 return answer;
