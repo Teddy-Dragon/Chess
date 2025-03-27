@@ -35,33 +35,30 @@ public class ChessSquare {
             return squareColor + EMPTY + pieceType + EMPTY + RESET_BG_COLOR;
     }
 
+    public String getPiece(ChessPiece[] boardRow, int location){
+        String piece = "";
+        if(boardRow[location] != null && boardRow[location].getTeamColor() == ChessGame.TeamColor.WHITE){
+            piece += SET_TEXT_COLOR_RED;
+        }
+        if(boardRow[location]!= null && boardRow[location].getTeamColor() == ChessGame.TeamColor.BLACK){
+            piece += SET_TEXT_COLOR_BLUE;
+        }
+        piece += getChessLetter(boardRow, location) + RESET_TEXT_COLOR;
+        return piece;
+    }
+
     public String rowChessMiddle(ChessPiece[] boardRow, ChessGame.TeamColor playerColor, Boolean whiteFirst){
         // include null for empty squares PLEASE
         String sideLabels = sideLabelMaker(playerColor);
         List<String> rowPieces = new ArrayList<>();
         if(playerColor == ChessGame.TeamColor.BLACK){
             for(int i = 7; i >= 0; i--){
-                String piece = "";
-                if(boardRow[i] != null && boardRow[i].getTeamColor() == ChessGame.TeamColor.WHITE){
-                    piece += SET_TEXT_COLOR_RED;
-                }
-                if(boardRow[i]!= null && boardRow[i].getTeamColor() == ChessGame.TeamColor.BLACK){
-                    piece += SET_TEXT_COLOR_BLUE;
-                }
-                piece += getChessLetter(boardRow, i) + RESET_TEXT_COLOR;
-                rowPieces.add(piece);
+                rowPieces.add(getPiece(boardRow, i));
+
             }
         }else{
             for(int i = 0; i < 8; i++){
-                String piece = "";
-                if(boardRow[i] != null && boardRow[i].getTeamColor() == ChessGame.TeamColor.WHITE){
-                    piece += SET_TEXT_COLOR_RED;
-                }
-                if(boardRow[i]!= null && boardRow[i].getTeamColor() == ChessGame.TeamColor.BLACK){
-                    piece += SET_TEXT_COLOR_BLUE;
-                }
-                piece += getChessLetter(boardRow, i) + RESET_TEXT_COLOR;
-                rowPieces.add(piece);
+                rowPieces.add(getPiece(boardRow, i));
             }
         }
 
@@ -87,7 +84,7 @@ public class ChessSquare {
 
     private String sideLabelMaker(ChessGame.TeamColor playerColor){
         List<String> boardNumbers = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8");
-        if(playerColor != ChessGame.TeamColor.BLACK){
+        if(playerColor != ChessGame.TeamColor.WHITE){
             boardNumbers = boardNumbers.reversed();
         }
         String response = SET_BG_COLOR_LIGHT_GREY + " "+ SET_TEXT_COLOR_BLACK + boardNumbers.get(rowsPrinted) + " " +  RESET_BG_COLOR;

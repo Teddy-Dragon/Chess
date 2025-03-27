@@ -17,9 +17,6 @@ public class ClientUI {
         this.authorization = authorization;
     }
 
-
-
-
     public String helpDisplay(){
         String response = SET_TEXT_COLOR_MAGENTA + "";
         if(authorization != null){
@@ -57,7 +54,7 @@ public class ClientUI {
         displayChessBoard += "\n" + SET_TEXT_COLOR_BLACK + topLabel(playerColor);
         Boolean whiteFirst = true;
 
-        if(playerColor == ChessGame.TeamColor.BLACK){
+        if(playerColor == ChessGame.TeamColor.WHITE){
             for(int i = 7; i >= 0; i--){
                 displayChessBoard += row.rowTopOrBottom(whiteFirst) + "\n";
                 displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.BLACK, whiteFirst) + "\n";
@@ -65,7 +62,7 @@ public class ClientUI {
                 whiteFirst = !whiteFirst;
             }
         }
-        if(playerColor == ChessGame.TeamColor.WHITE){
+        if(playerColor == ChessGame.TeamColor.BLACK){
             for(int i = 0; i < board.length; i++){
                 displayChessBoard += row.rowTopOrBottom(whiteFirst) + "\n";
                 displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.WHITE, whiteFirst) + "\n";
@@ -93,25 +90,4 @@ public class ClientUI {
 
 
     }
-    public ChessGame.TeamColor enemyColor(ChessGame.TeamColor playerColor){
-        if(playerColor != ChessGame.TeamColor.WHITE){
-            return ChessGame.TeamColor.BLACK;
-        }
-        else return ChessGame.TeamColor.WHITE;
-    }
-
-    public List<String> beginningRowTypes(int whichType){
-        List<String> startingPieces = Arrays.asList(textColor + "R", textColor + "N", textColor + "B", textColor + "K",
-                textColor + "Q", textColor + "B", textColor +  "N", textColor+  "R");
-        List<String> pawnRow = Arrays.asList(textColor + "P", textColor + "P", textColor + "P", textColor + "P",
-                textColor + "P", textColor + "P", textColor +  "P", textColor+  "P");
-        List<String> emptyRow = Arrays.asList(" ", " ", " ", " ", " ", " ", " ", " ");
-        if(whichType == 1){
-            return startingPieces;
-        } else if (whichType == 2) {
-            return pawnRow;
-        }
-        else return emptyRow;
-    }
-
 }
