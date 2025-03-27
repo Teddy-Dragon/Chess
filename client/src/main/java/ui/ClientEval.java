@@ -70,6 +70,9 @@ public class ClientEval {
         String username = parameters[0];
         String password = parameters[1];
         String email = parameters[2];
+        if(!email.matches("[A-z0-9]+[@][A-z0-9]+[.]{1}[A-z]{3}")){
+            return "Incorrect email type!";
+        }
         UserData newUser = new UserData(username, password, email);
         try{
             AuthData registered = client.registerUser(newUser);
@@ -107,6 +110,9 @@ public class ClientEval {
         if(authorization == null){
             return "Log in first";
         }
+        if(!parameters[0].matches("[0-9]{6}")){
+            return "Not a game number";
+        }
         int gameID = Integer.parseInt(parameters[0]);
         String playerColor = parameters[1];
         return playGame(playerColor, client.getGameByID(gameID));
@@ -117,7 +123,13 @@ public class ClientEval {
         if(parameters.length != 2){
             return "Wrong number of arguments";
         }
+        if(!parameters[0].matches("[0-9]{6}")){
+            return "Not a game number";
+        }
         int gameNumber = Integer.parseInt(parameters[0]);
+        if(!parameters[1].matches("white|black")){
+            return "Not a playable team";
+        }
         String playerColor = parameters[1];
         try{
             JoinRequest request = new JoinRequest(playerColor, gameNumber);
