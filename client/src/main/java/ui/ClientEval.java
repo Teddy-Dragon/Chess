@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import model.*;
 
 import java.util.Arrays;
@@ -86,8 +87,8 @@ public class ClientEval {
         if(parameters.length > 2){
             return "Too many arguments";
         }
-        String username = parameters[0].toUpperCase();
-        String password = parameters[1].toUpperCase();
+        String username = parameters[0];
+        String password = parameters[1];
         UserData returningUser = new UserData(username, password, null);
         AuthData response = client.loginUser(returningUser);
         if(client.getAuth() != null){
@@ -100,7 +101,16 @@ public class ClientEval {
 
     }
     public String watchEval(String[] parameters){
-        return null;
+        if(parameters.length != 2){
+            return "Wrong number of arguments";
+        }
+        if(authorization == null){
+            return "Log in first";
+        }
+        int gameID = Integer.parseInt(parameters[0]);
+        String playerColor = parameters[1];
+        return playGame(playerColor, client.getGameByID(gameID));
+
     }
 
     public String joinEval(String[] parameters){
@@ -113,13 +123,25 @@ public class ClientEval {
             JoinRequest request = new JoinRequest(playerColor, gameNumber);
             client.joinGame(request);
             GameData gameInfo = client.getGameByID(gameNumber);
-            return "Successfully joined " + gameInfo.gameName();
+
+            return "Successfully joined " + gameInfo.gameName() + " as " + playerColor + "\n" + playGame(playerColor, gameInfo);
         }
         catch(Exception e){
             System.out.println(e);
             return "Unsuccessful";
         }
 
+
+    }
+    public String playGame(String playerColor, GameData gameData){
+        ChessGame.TeamColor playerTeam = null;
+        if(Objects.equals(playerColor, "white")){
+            playerTeam = ChessGame.TeamColor.WHITE;
+        }
+        else{
+            playerTeam = ChessGame.TeamColor.BLACK;
+        }
+        return new ClientUI(client.getAuth()).chessBoardDisplay(playerTeam, gameData);
 
     }
     public String createEval(String[] parameters){
@@ -131,8 +153,7 @@ public class ClientEval {
         }
         String gameName = parameters[0];
         GameData response = client.createGame(new GameData(0, null, null, gameName, null));
-        System.out.println(response);
-        return null;
+        return "Created game #" + response.gameID() + " named " + response.gameName();
     }
 
     public String logoutEval(){

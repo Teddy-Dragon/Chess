@@ -1,6 +1,8 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessPiece;
+import model.GameData;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +28,7 @@ public class ClientUI {
             response += "To create a game type 'create' <gameName>\n";
             response += "To join a game, type 'join' <gameNumber> <playerColor>\n";
             response += "To list all games, type 'list'\n";
-            response += "To watch a game, type watch <gameNumber>\n";
+            response += "To watch a game, type watch <gameNumber> <playerColor>\n";
             response += "To exit, type 'quit'\n";
             response += "To repeat this helpful screen, just type 'help'\n"+ RESET_TEXT_COLOR;
             return response;
@@ -40,28 +42,30 @@ public class ClientUI {
         }
     }
 
-    public void chessBoardDisplay(ChessGame.TeamColor playerColor){
+    public String chessBoardDisplay(ChessGame.TeamColor playerColor, GameData gameInfo){
         if(playerColor == ChessGame.TeamColor.WHITE){
             textColor = SET_TEXT_COLOR_BLUE;
         }
         else{
             textColor = SET_TEXT_COLOR_RED;
         }
-        topLabel(playerColor);
+        ChessPiece[][] board = gameInfo.game().getBoard().getSquares();
+
 
         ChessSquare row = new ChessSquare();
-
-        System.out.println(row.rowTopOrBottom(true));
-        System.out.println(row.rowChessMiddle(beginningRowTypes(1), playerColor, true));
-        System.out.println(row.rowTopOrBottom(true));
-        System.out.println(row.rowTopOrBottom(false));
-        System.out.println(row.rowChessMiddle(beginningRowTypes(2), playerColor, false));
-        System.out.println(row.rowTopOrBottom(false));
+        String displayChessBoard = "";
+        displayChessBoard += "\n" + SET_TEXT_COLOR_BLACK + topLabel(playerColor);
+        displayChessBoard += row.rowTopOrBottom(true) + "\n";
+        displayChessBoard += row.rowChessMiddle(beginningRowTypes(1), playerColor, true) + "\n";
+        displayChessBoard += row.rowTopOrBottom(true) + "\n";
+        displayChessBoard += row.rowTopOrBottom(false) + "\n";
+        displayChessBoard += row.rowChessMiddle(beginningRowTypes(2), playerColor, false) + "\n";
+        displayChessBoard +=row.rowTopOrBottom(false) + "\n";
         Boolean whitefirst = true;
         for(int i = 0; i < 4; i++){
-            System.out.println(row.rowTopOrBottom(whitefirst));
-            System.out.println(row.rowChessMiddle(beginningRowTypes(3), playerColor, whitefirst));
-            System.out.println(row.rowTopOrBottom(whitefirst));
+            displayChessBoard += row.rowTopOrBottom(whitefirst) + "\n";
+            displayChessBoard += row.rowChessMiddle(beginningRowTypes(3), playerColor, whitefirst) + "\n";
+            displayChessBoard += row.rowTopOrBottom(whitefirst) + "\n";
             whitefirst = !whitefirst;
         }
         if(textColor.equals(SET_TEXT_COLOR_BLUE)){
@@ -70,17 +74,19 @@ public class ClientUI {
         else{
             textColor = SET_TEXT_COLOR_BLUE;
         }
-        System.out.println(row.rowTopOrBottom(true));
-        System.out.println(row.rowChessMiddle(beginningRowTypes(2), enemyColor(playerColor), true));
-        System.out.println(row.rowTopOrBottom(true));
-        System.out.println(row.rowTopOrBottom(false));
-        System.out.println(row.rowChessMiddle(beginningRowTypes(1), enemyColor(playerColor), false));
-        System.out.println(row.rowTopOrBottom(false));
-        topLabel(playerColor);
+        displayChessBoard += row.rowTopOrBottom(true) + "\n";
+        displayChessBoard += row.rowChessMiddle(beginningRowTypes(2), enemyColor(playerColor), true) + "\n";
+        displayChessBoard += row.rowTopOrBottom(true) + "\n";
+        displayChessBoard += row.rowTopOrBottom(false) + "\n";
+        displayChessBoard += row.rowChessMiddle(beginningRowTypes(1), enemyColor(playerColor), false) + "\n";
+        displayChessBoard += row.rowTopOrBottom(false) + "\n";
+        displayChessBoard += topLabel(playerColor);
+        return displayChessBoard;
+
     }
 
 
-    public void topLabel(ChessGame.TeamColor playerColor){
+    public String topLabel(ChessGame.TeamColor playerColor){
             String numberLine = "";
             List<String> boardLetters = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
 
@@ -90,7 +96,7 @@ public class ClientUI {
             for (String boardLetter : boardLetters) {
                 numberLine += SET_BG_COLOR_LIGHT_GREY + EMPTY + boardLetter + EMPTY + RESET_BG_COLOR;
             }
-            System.out.println(SET_BG_COLOR_LIGHT_GREY + "   " + numberLine + SET_BG_COLOR_LIGHT_GREY + "   " + RESET_BG_COLOR);
+            return SET_BG_COLOR_LIGHT_GREY + "   " + numberLine + SET_BG_COLOR_LIGHT_GREY + "   " + RESET_BG_COLOR  + "\n";
 
 
     }

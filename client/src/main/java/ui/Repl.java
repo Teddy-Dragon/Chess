@@ -14,7 +14,7 @@ public class Repl {
     public void run(){
         ClientUI display = new ClientUI(client.getAuth());
         ClientEval eval = new ClientEval(client.getAuth(), client);
-        System.out.println(SET_TEXT_COLOR_BLACK + SET_BG_COLOR_LIGHT_GREY + " Welcome to Chess" + " "+  RESET_BG_COLOR);
+        System.out.println(SET_TEXT_COLOR_BLACK + SET_BG_COLOR_LIGHT_GREY + " Welcome to Chess" + " "+  RESET_BG_COLOR + RESET_TEXT_COLOR);
         System.out.println(display.helpDisplay());
 
         Scanner scanner = new Scanner(System.in);
