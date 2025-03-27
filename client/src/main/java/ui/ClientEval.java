@@ -182,7 +182,7 @@ public class ClientEval {
         if(client.getAuth() == null){
             return "Not logged in!";
         }
-        ListGame serverResponse = client.listGames();
+        ListModel serverResponse = client.listGames();
         List<GameData> gamelist = serverResponse.gameList().get("games");
         String consoleResponse = "";
         for(int i = 0; i < gamelist.size(); i++){

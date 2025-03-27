@@ -69,12 +69,12 @@ public class ClientServerFacade {
         var path = "/game";
         makeRequest("PUT", path, request, null);
     }
-    public ListGame listGames(){
+    public ListModel listGames(){
         var path = "/game";
         //Hashmap<String, List<GameData>> map = new hashmap()
         //do map.class for the response type
 
-        ListGame response = makeRequest("GET", path, null, ListGame.class);
+        ListModel response = makeRequest("GET", path, null, ListModel.class);
 
         return response;
 

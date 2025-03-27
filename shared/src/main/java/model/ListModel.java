@@ -3,7 +3,7 @@ package model;
 import java.util.HashMap;
 import java.util.List;
 
-public record ListGame(
+public record ListModel(
         HashMap<String, List<GameData>> gameList
 ) {
 }
