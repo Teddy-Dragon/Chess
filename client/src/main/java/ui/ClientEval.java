@@ -174,7 +174,9 @@ public class ClientEval {
             client.logoutUser();
             authorization = client.getAuth();
             return "Logout Successful";
-        }else return "Not logged in";
+        }else {
+            return "Not logged in";
+        }
 
 
     }
