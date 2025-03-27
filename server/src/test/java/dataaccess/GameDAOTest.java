@@ -1,12 +1,9 @@
 package dataaccess;
 
 import chess.ChessGame;
-import dataaccess.GameDAO;
-import dataaccess.SQLGameDAO;
 import model.GameData;
 import org.junit.jupiter.api.*;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class GameDAOTest {
@@ -85,9 +82,8 @@ public class GameDAOTest {
         gameMap.addGame(firstGame);
         gameMap.addGame(secondGame);
         gameMap.addGame(thirdGame);
-        HashMap<String, List<GameData>> listOfGames = gameMap.getAllGames();
-        List<GameData> justGames = listOfGames.get("games");
-        Assertions.assertEquals(3, justGames.size());
+        List<GameData> listOfGames = gameMap.getAllGames();
+        Assertions.assertEquals(3, listOfGames.size());
     }
     @Test
     @DisplayName("Get Game Success")

@@ -1,16 +1,8 @@
 package server;
 
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
-import model.AuthData;
-import model.GameData;
-import model.UserData;
+import dataaccess.*;
 import server.handlers.*;
 import spark.Spark;
-
-import java.util.HashMap;
-import java.util.UUID;
 public class Server {
     private AuthDAO authMap;
     private GameDAO gameMap;

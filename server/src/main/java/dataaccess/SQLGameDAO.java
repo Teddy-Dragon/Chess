@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import model.GameData;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class SQLGameDAO implements GameDAO{
@@ -83,8 +82,7 @@ public class SQLGameDAO implements GameDAO{
         return null;
     }
 
-    public  HashMap<String,List<GameData>> getAllGames() {
-        HashMap<String, List<GameData>> allGames = new HashMap<String, List<GameData>>();
+    public  List<GameData> getAllGames() {
         List<GameData> games = new ArrayList<>();
         String statement = "SELECT * FROM game";
         try(var conn = DatabaseManager.getConnection()){
@@ -101,8 +99,7 @@ public class SQLGameDAO implements GameDAO{
                     }
 
                 }
-                allGames.put("games", games);
-                return allGames;
+                return games;
             }
 
         }

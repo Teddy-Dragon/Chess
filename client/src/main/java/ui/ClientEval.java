@@ -159,7 +159,7 @@ public class ClientEval {
     }
     public String createEval(String[] parameters){
         if(parameters.length != 1){
-            return "Wrong number of arguements";
+            return "Wrong number of arguments";
         }
         if(authorization == null){
             return "Not logged in!";
@@ -182,14 +182,14 @@ public class ClientEval {
         if(client.getAuth() == null){
             return "Not logged in!";
         }
-        ListGame serverResponse = client.listGames();
-        List<GameData> gamelist = serverResponse.gameList().get("games");
+        ListModel serverResponse = client.listGames();
+        List<GameData> gameList = (List<GameData>) serverResponse.games();
         String consoleResponse = "";
-        for(int i = 0; i < gamelist.size(); i++){
-            consoleResponse += SET_TEXT_COLOR_MAGENTA + SET_TEXT_BOLD + "Game# " + gamelist.get(i).gameID() + " ";
-            consoleResponse += RESET_TEXT_BOLD_FAINT + "Game name: " + gamelist.get(i).gameName() + " ";
-            consoleResponse += SET_TEXT_COLOR_RED + "White username: " + gamelist.get(i).whiteUsername() + " " + RESET_TEXT_COLOR;
-            consoleResponse += SET_TEXT_COLOR_BLUE + "Black username: " + gamelist.get(i).blackUsername() + " " + RESET_TEXT_COLOR + "\n";
+        for(int i = 0; i < gameList.size(); i++){
+            consoleResponse += SET_TEXT_COLOR_MAGENTA + SET_TEXT_BOLD + "Game# " + gameList.get(i).gameID() + " ";
+            consoleResponse += RESET_TEXT_BOLD_FAINT + "Game name: " + gameList.get(i).gameName() + " ";
+            consoleResponse += SET_TEXT_COLOR_RED + "White username: " + gameList.get(i).whiteUsername() + " " + RESET_TEXT_COLOR;
+            consoleResponse += SET_TEXT_COLOR_BLUE + "Black username: " + gameList.get(i).blackUsername() + " " + RESET_TEXT_COLOR + "\n";
 
         }
 

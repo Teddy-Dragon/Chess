@@ -2,12 +2,12 @@ package server.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
+import dataaccess.UserDAO;
 import model.GameData;
 import model.JoinRequest;
-import model.ListGame;
+import model.ListModel;
 import server.handlers.services.CreateGameService;
 import server.handlers.services.JoinGameService;
 import server.handlers.services.ListGamesService;
@@ -55,7 +55,6 @@ public class GameHandler implements Route {
         if(Objects.equals(request.requestMethod(), "PUT")){
            // System.out.println("In PUT");
             JoinRequest joiningUser = new Gson().fromJson(request.body(), JoinRequest.class);
-
             try{
                 checkAuth(request, response);
                 Object join = new JoinGameService(userMap, gameMap, authMap)
@@ -76,7 +75,8 @@ public class GameHandler implements Route {
         if(Objects.equals(request.requestMethod(), "GET")){
             try {
                 checkAuth(request, response);
-                ListGame listGames = new ListGamesService(gameMap).listGames();
+                ListModel listGames = new ListGamesService(gameMap).listGames();
+
             return new Gson().toJson(listGames);
             }catch (Exception e){
                 JsonObject answer = new JsonObject();

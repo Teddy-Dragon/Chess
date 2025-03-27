@@ -1,8 +1,8 @@
 package server.handlers;
 
 import com.google.gson.Gson;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
 import model.GameData;
 import spark.Request;
 import spark.Response;
@@ -11,11 +11,11 @@ import spark.Route;
 import java.util.UUID;
 
 public class PlayHandler implements Route {
-    private final MemoryGameDAO gameMap;
-    private final MemoryAuthDAO authMap;
+    private final GameDAO gameMap;
+    private final AuthDAO authMap;
 
 
-    public PlayHandler(MemoryGameDAO gameMap, MemoryAuthDAO authMap) {
+    public PlayHandler(GameDAO gameMap, AuthDAO authMap) {
         this.gameMap = gameMap;
         this.authMap = authMap;
     }

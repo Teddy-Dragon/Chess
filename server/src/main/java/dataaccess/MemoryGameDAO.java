@@ -1,9 +1,11 @@
 package dataaccess;
 
 import model.GameData;
-import model.ListGame;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MemoryGameDAO implements GameDAO{
     private final HashMap<Integer, GameData> gameMap;
@@ -24,15 +26,13 @@ public class MemoryGameDAO implements GameDAO{
         return gameMap.get(gameID);
         //Returns game data from games with supplied gameData
     }
-    public ListGame getAllGames(){
+    public List<GameData> getAllGames(){
         //void temporarily, returns all active games regardless of ID
-        ListGame allGames = new ListGame(new HashMap<String, List<GameData>>());
         List<GameData> gameData = new ArrayList<>();
         for(Map.Entry<Integer, GameData> i : gameMap.entrySet()){
             gameData.add(i.getValue());
         }
-        allGames.gameList().put("games", gameData);
-        return allGames;
+        return gameData;
     }
 
     public void updateGame(int gameID, GameData newGameData){
