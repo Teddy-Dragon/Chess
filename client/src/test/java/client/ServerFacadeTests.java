@@ -149,5 +149,103 @@ public class ServerFacadeTests {
         }
     }
 
+    @Test
+    @DisplayName("Register Success")
+    public void registerSuccess(){
+        UserData firstUser = new UserData("Test", "password", "email@email.com");
+        try{
+            serverFacade.registerUser(firstUser);
+            assert serverFacade.getAuth() != null;
+        }catch(Exception e){
+            assert false;
+        }
+    }
+
+    @Test
+    @DisplayName("Register Fail- Already Taken")
+    public void registerFail(){
+        UserData firstUser = new UserData("Test", "password", "email@email.com");
+        try{
+            serverFacade.registerUser(firstUser);
+            assert serverFacade.getAuth() != null;
+            serverFacade.logoutUser();
+            assert serverFacade.getAuth() == null;
+            serverFacade.registerUser(firstUser);
+            assert serverFacade.getAuth() == null;
+
+        }catch(Exception e){
+            assert true;
+        }
+    }
+
+    @Test
+    @DisplayName("Login Success")
+    public void loginSuccess(){
+        UserData firstUser = new UserData("Test", "password", "email@email.com");
+        try{
+            serverFacade.registerUser(firstUser);
+            assert serverFacade.getAuth() != null;
+            serverFacade.logoutUser();
+            assert serverFacade.getAuth() == null;
+            serverFacade.loginUser(firstUser);
+            assert serverFacade.getAuth() != null;
+        }catch(Exception e){
+            assert false;
+        }
+
+    }
+    @Test
+    @DisplayName("Login Fail- Does Not Exist")
+    public void loginFailNoExist(){
+        UserData firstUser = new UserData("Test", "password", "email@email.com");
+        UserData secondUser = new UserData("ShouldnotShow", "password", "email@email.com");
+        try{
+            serverFacade.registerUser(firstUser);
+            assert serverFacade.getAuth() != null;
+            serverFacade.logoutUser();
+            assert serverFacade.getAuth() == null;
+            serverFacade.loginUser(secondUser);
+            assert serverFacade.getAuth() == null;
+        }catch(Exception e){
+            assert true;
+        }
+    }
+
+    @Test
+    @DisplayName("Get Individual Game Success")
+    public void getIndividualGameSuccess(){
+        UserData firstUser = new UserData("Test", "password", "email@email.com");
+        GameData game = new GameData(0, null, null, "Success", null);
+        GameData gameTwo = new GameData(0, null, null, "Fail", null);
+        try{
+            serverFacade.registerUser(firstUser);
+            assert serverFacade.getAuth() != null;
+            GameData newGame = serverFacade.createGame(game);
+            GameData newGameTwo = serverFacade.createGame(gameTwo);
+            GameData response = serverFacade.getGameByID(newGame.gameID());
+            assert Objects.equals(response.gameName(), game.gameName());
+
+        }catch(Exception e){
+            assert false;
+        }
+    }
+
+    @Test
+    @DisplayName("Get Game Fail- Does Not Exist")
+    public void getIndividualFailExist(){
+        UserData firstUser = new UserData("Test", "password", "email@email.com");
+        GameData game = new GameData(0, null, null, "Success", null);
+        GameData gameTwo = new GameData(0, null, null, "Fail", null);
+        try{
+            serverFacade.registerUser(firstUser);
+            serverFacade.createGame(game);
+            GameData response = serverFacade.getGameByID(gameTwo.gameID());
+            assert response == null;
+        }catch(Exception e){
+            assert true;
+        }
+
+    }
+
 
 }
