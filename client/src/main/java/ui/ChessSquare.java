@@ -3,6 +3,7 @@ package ui;
 import chess.ChessGame;
 import chess.ChessPiece;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,14 +38,30 @@ public class ChessSquare {
     public String rowChessMiddle(ChessPiece[] boardRow, ChessGame.TeamColor playerColor, Boolean whiteFirst){
         // include null for empty squares PLEASE
         String sideLabels = sideLabelMaker(playerColor);
-        List<String> rowPieces = null;
-        if(playerColor == ChessGame.TeamColor.BLACK){
+        List<String> rowPieces = new ArrayList<>();
+        if(playerColor == ChessGame.TeamColor.WHITE){
             for(int i = 7; i >= 0; i--){
                 String piece = "";
                 if(boardRow[i] != null && boardRow[i].getTeamColor() == ChessGame.TeamColor.WHITE){
                     piece += SET_TEXT_COLOR_RED;
                 }
-
+                if(boardRow[i]!= null && boardRow[i].getTeamColor() == ChessGame.TeamColor.BLACK){
+                    piece += SET_TEXT_COLOR_BLUE;
+                }
+                piece += getChessLetter(boardRow, i) + RESET_TEXT_COLOR;
+                rowPieces.add(piece);
+            }
+        }else{
+            for(int i = 0; i < 8; i++){
+                String piece = "";
+                if(boardRow[i] != null && boardRow[i].getTeamColor() == ChessGame.TeamColor.WHITE){
+                    piece += SET_TEXT_COLOR_RED;
+                }
+                if(boardRow[i]!= null && boardRow[i].getTeamColor() == ChessGame.TeamColor.BLACK){
+                    piece += SET_TEXT_COLOR_BLUE;
+                }
+                piece += getChessLetter(boardRow, i) + RESET_TEXT_COLOR;
+                rowPieces.add(piece);
             }
         }
 
@@ -80,19 +97,30 @@ public class ChessSquare {
 
     private String getChessLetter(ChessPiece[] boardRow, int location){
         if(boardRow[location] != null){
-            switch (boardRow[0].getPieceType()){
+            switch (boardRow[location].getPieceType()){
                 case QUEEN -> {
                     return "Q";
                 }
                 case BISHOP -> {
                     return "B";
                 }
-                case ROOK -> return "R";
-                case KNIGHT -> return "N";
-                case KING -> return "K";
-                case PAWN -> return "P";
-                case null, default -> return null;
+                case ROOK -> {
+                    return "R";
+                }
+                case KNIGHT -> {
+                    return "N";
+                }
+                case KING -> {
+                    return "K";
+                }
+                case PAWN -> {
+                    return "P";
+                }
+                case null, default -> {
+                    return " ";
+                }
             }
         }
+        return " ";
     }
 }

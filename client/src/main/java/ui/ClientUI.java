@@ -59,48 +59,20 @@ public class ClientUI {
 
         if(playerColor == ChessGame.TeamColor.BLACK){
             for(int i = 7; i >= 0; i--){
-                displayChessBoard += row.rowTopOrBottom(whiteFirst);
-                displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.BLACK, whiteFirst);
-                displayChessBoard += row.rowTopOrBottom(whiteFirst);
+                displayChessBoard += row.rowTopOrBottom(whiteFirst) + "\n";
+                displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.BLACK, whiteFirst) + "\n";
+                displayChessBoard += row.rowTopOrBottom(whiteFirst) + "\n";
                 whiteFirst = !whiteFirst;
             }
         }
         if(playerColor == ChessGame.TeamColor.WHITE){
             for(int i = 0; i < board.length; i++){
-                displayChessBoard += row.rowTopOrBottom(whiteFirst);
-                displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.WHITE, whiteFirst);
-                displayChessBoard += row.rowTopOrBottom(whiteFirst);
+                displayChessBoard += row.rowTopOrBottom(whiteFirst) + "\n";
+                displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.WHITE, whiteFirst) + "\n";
+                displayChessBoard += row.rowTopOrBottom(whiteFirst) + "\n";
                 whiteFirst = !whiteFirst;
             }
         }
-//
-
-//
-//        displayChessBoard += row.rowTopOrBottom(true) + "\n";
-//        displayChessBoard += row.rowChessMiddle(beginningRowTypes(1), playerColor, true) + "\n";
-//        displayChessBoard += row.rowTopOrBottom(true) + "\n";
-//        displayChessBoard += row.rowTopOrBottom(false) + "\n";
-//        displayChessBoard += row.rowChessMiddle(beginningRowTypes(2), playerColor, false) + "\n";
-//        displayChessBoard +=row.rowTopOrBottom(false) + "\n";
-//
-//        for(int i = 0; i < 4; i++){
-//            displayChessBoard += row.rowTopOrBottom(whitefirst) + "\n";
-//            displayChessBoard += row.rowChessMiddle(beginningRowTypes(3), playerColor, whitefirst) + "\n";
-//            displayChessBoard += row.rowTopOrBottom(whitefirst) + "\n";
-//            whitefirst = !whitefirst;
-//        }
-//        if(textColor.equals(SET_TEXT_COLOR_BLUE)){
-//            textColor = SET_TEXT_COLOR_RED;
-//        }
-//        else{
-//            textColor = SET_TEXT_COLOR_BLUE;
-//        }
-//        displayChessBoard += row.rowTopOrBottom(true) + "\n";
-//        displayChessBoard += row.rowChessMiddle(beginningRowTypes(2), enemyColor(playerColor), true) + "\n";
-//        displayChessBoard += row.rowTopOrBottom(true) + "\n";
-//        displayChessBoard += row.rowTopOrBottom(false) + "\n";
-//        displayChessBoard += row.rowChessMiddle(beginningRowTypes(1), enemyColor(playerColor), false) + "\n";
-//        displayChessBoard += row.rowTopOrBottom(false) + "\n";
         displayChessBoard += topLabel(playerColor);
         return displayChessBoard;
 
