@@ -19,23 +19,25 @@ public class ClientUI {
 
 
     public String helpDisplay(){
-        System.out.println(SET_TEXT_COLOR_MAGENTA +  "Welcome to my chess game <3" + RESET_BG_COLOR);
-
+        String response = SET_TEXT_COLOR_MAGENTA + "";
         if(authorization != null){
-            System.out.println("To logout, type 'logout'");
-            System.out.println("To create a game type 'create' <gameName>");
-            System.out.println("To join a game, type 'join' <gameNumber> <playerColor>");
-            System.out.println("To list all games, type 'list'");
-            System.out.println("To watch a game, type watch <gameNumber>");
+            response += "Options: \n";
+            response += "To logout, type 'logout' \n";
+            response += "To create a game type 'create' <gameName>\n";
+            response += "To join a game, type 'join' <gameNumber> <playerColor>\n";
+            response += "To list all games, type 'list'\n";
+            response += "To watch a game, type watch <gameNumber>\n";
+            response += "To exit, type 'quit'\n";
+            response += "To repeat this helpful screen, just type 'help'\n"+ RESET_TEXT_COLOR;
+            return response;
         } else {
-            System.out.println("Options: ");
-            System.out.println("To login, type 'login' and then <USERNAME> <PASSWORD> Spaces are important for all options <3");
-            System.out.println("To register as a new user, type 'register' and then type <USERNAME> <PASSWORD> <EMAIL>");
+            response += "Options: \n";
+            response += "To login, type 'login' and then <USERNAME> <PASSWORD> Spaces are important for all options <3 \n";
+            response += "To register as a new user, type 'register' and then type <USERNAME> <PASSWORD> <EMAIL> \n";
+            response += "To exit, type 'quit'\n";
+            response += "To repeat this helpful screen, just type 'help'\n"+ RESET_TEXT_COLOR;
+            return response;
         }
-
-        System.out.println("To exit, type 'quit' or the letter q");
-        System.out.println("To repeat this helpful screen, just type 'help' or h "+ RESET_TEXT_COLOR);
-        return "";
     }
 
     public void chessBoardDisplay(ChessGame.TeamColor playerColor){

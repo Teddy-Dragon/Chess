@@ -1,10 +1,7 @@
 package ui;
 
 import com.google.gson.Gson;
-import model.AuthData;
-import model.GameData;
-import model.JoinRequest;
-import model.UserData;
+import model.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,18 +26,31 @@ public class ServerFacade {
 
     public AuthData registerUser(UserData registerData) {
         var path = "/user";
-        AuthData response = makeRequest("POST", path, registerData, AuthData.class);
-        assert response != null;
-        authorization = response.authToken();
-        return response;
+        try {
+            AuthData response = makeRequest("POST", path, registerData, AuthData.class);
+            if(response == null){
+                return null;
+            }
+            authorization = response.authToken();
+            return response;
+        }
+        catch(Exception e){
+            return null;
+        }
 
     }
     public AuthData loginUser(UserData loginData){
         var path = "/session";
-        AuthData response = makeRequest("POST", path, loginData, AuthData.class);
-        assert response != null;
-        authorization = response.authToken();
-        return response;
+        try{
+            AuthData response = makeRequest("POST", path, loginData, AuthData.class);
+            if(response == null){
+                return null;
+            }
+            authorization = response.authToken();
+            return response;
+        }catch(Exception e){
+            return null;
+        }
     }
 
     public void logoutUser(){
@@ -59,9 +69,10 @@ public class ServerFacade {
         var path = "/game";
         makeRequest("PUT", path, request, null);
     }
-    public GameData listGames(){
+    public ListGame listGames(){
         var path = "/game";
-        GameData response = makeRequest("GET", path, null, GameData.class);
+        ListGame response = makeRequest("GET", path, null, ListGame.class);
+        System.out.println(response);
         return response;
 
     }
@@ -71,9 +82,10 @@ public class ServerFacade {
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass){
+        HttpURLConnection http = null;
         try{
             URL url = (new URI(serverURl + path)).toURL();
-            HttpURLConnection http = (HttpURLConnection) url.openConnection(); //Sets up an empty request
+            http = (HttpURLConnection) url.openConnection(); //Sets up an empty request
             http.setRequestMethod(method); //sets request method
             if(authorization != null){
                 //set authorization header to UUID
@@ -82,14 +94,15 @@ public class ServerFacade {
             http.setDoOutput(true); // lets us know to expect things in return
             writeBody(request, http); //sets request body
             http.connect(); //actually connects with this now not empty request
-
-
-
             throwIfNotSuccessful(http);
             return readBody(responseClass, http);
         }
         catch(Exception e){
-            System.out.println(e);
+            if(http != null){
+                String formattedResponse = new ExceptionReader().responseReader(http);
+                System.out.println(formattedResponse);
+            }
+
         }
         return null;
     }
@@ -97,6 +110,9 @@ public class ServerFacade {
     private void writeBody(Object request, HttpURLConnection http){
         String body = new Gson().toJson(request);
         http.addRequestProperty("Content-Type", "application/json");
+        if(request == null){
+            return;
+        }
         try(OutputStream reqBody = http.getOutputStream()){
             reqBody.write(body.getBytes()); //connection wants a stream for the body, so we give it a stream
         } catch (Exception e) {
@@ -123,6 +139,7 @@ public class ServerFacade {
                 InputStreamReader reader = new InputStreamReader(respBody);
                 if (responseClass != null) {
                     response = new Gson().fromJson(reader, responseClass);
+                    return response;
                 }
             }
         }

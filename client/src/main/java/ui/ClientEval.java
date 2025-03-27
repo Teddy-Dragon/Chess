@@ -1,9 +1,9 @@
 package ui;
 
-import model.AuthData;
-import model.UserData;
+import model.*;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.UUID;
 
 public class ClientEval {
@@ -34,6 +34,7 @@ public class ClientEval {
                 case "list" -> listEval();
                 case "create" -> createEval(parameters);
                 case "watch" -> watchEval(parameters);
+                case "clear" -> clearEval(parameters);
                 default -> helpEval();
 
             };
@@ -42,6 +43,18 @@ public class ClientEval {
        }
 
 
+    }
+    public String clearEval(String[] parameters){
+        if(parameters.length != 1){
+            return "Not authorized";
+        }
+        if(Objects.equals(parameters[0], "kayleesaidso")){
+            client.clearAll();
+            return "If Kaylee says so";
+        }
+        else{
+            return "Wrong password";
+        }
     }
     public String registerEval(String[] parameters){
         if(parameters.length < 3){
@@ -56,12 +69,10 @@ public class ClientEval {
         UserData newUser = new UserData(username, password, email);
         try{
             AuthData registered = client.registerUser(newUser);
-            System.out.println(client.getAuth());
             authorization = client.getAuth();
             return formatResponse(registered, AuthData.class);
         }catch(Exception e){
-            System.out.println("This is the error in register-> " + e);
-            return "\n";
+            return "";
         }
 
     }
@@ -76,8 +87,11 @@ public class ClientEval {
         String password = parameters[1];
         UserData returningUser = new UserData(username, password, null);
         AuthData response = client.loginUser(returningUser);
-        authorization = client.getAuth();
-        return formatResponse(response, AuthData.class);
+        if(client.getAuth() != null){
+            authorization = client.getAuth();
+            return formatResponse(response, AuthData.class);
+        }
+        return "Error logging in! Try again!";
 
 
 
@@ -87,9 +101,32 @@ public class ClientEval {
     }
 
     public String joinEval(String[] parameters){
-        return null;
+        if(parameters.length != 2){
+            return "Wrong number of arguments";
+        }
+        int gameNumber = Integer.parseInt(parameters[0]);
+        String playerColor = parameters[1];
+        try{
+            JoinRequest request = new JoinRequest(playerColor, gameNumber);
+            return "Successful";
+        }
+        catch(Exception e){
+            System.out.println(e);
+            return "Unsuccessful";
+        }
+
+
     }
     public String createEval(String[] parameters){
+        if(parameters.length != 1){
+            return "Wrong number of arguements";
+        }
+        if(authorization == null){
+            return "Not logged in!";
+        }
+        String gameName = parameters[0];
+        GameData response = client.createGame(new GameData(0, null, null, gameName, null));
+        System.out.println(response);
         return null;
     }
 
@@ -103,7 +140,12 @@ public class ClientEval {
 
     }
     public String listEval(){
-        return null;
+        if(client.getAuth() == null){
+            return "Not logged in!";
+        }
+        ListGame response = client.listGames();
+        System.out.println(response.gameList());
+        return "";
     }
 
     public String helpEval(){
@@ -114,6 +156,7 @@ public class ClientEval {
             AuthData data = (AuthData) response;
             return "Welcome " + data.username() + "!\n" + helpEval();
         }
+
 
 
         return null;

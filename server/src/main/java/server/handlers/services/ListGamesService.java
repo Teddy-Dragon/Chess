@@ -1,10 +1,7 @@
 package server.handlers.services;
 
 import dataaccess.MemoryGameDAO;
-import model.GameData;
-
-import java.util.HashMap;
-import java.util.List;
+import model.ListGame;
 
 public class ListGamesService {
     //if GameHandler is faced with a get method it calls this
@@ -16,7 +13,7 @@ public class ListGamesService {
     public ListGamesService(MemoryGameDAO gameMap) {
         this.gameMap = gameMap;
     }
-    public HashMap<String, List<GameData>> listGames(){
+    public ListGame listGames(){
         return gameMap.getAllGames();
 
     }
