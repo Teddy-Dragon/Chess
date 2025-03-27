@@ -26,7 +26,6 @@ public class ClientUI {
             response += "To join a game, type 'join' <gameNumber> <playerColor>\n";
             response += "To list all games, type 'list'\n";
             response += "To watch a game, type watch <gameNumber> <playerColor>\n";
-            response += "To exit, type 'quit'\n";
             response += "To repeat this helpful screen, just type 'help'\n"+ RESET_TEXT_COLOR;
             return response;
         } else {

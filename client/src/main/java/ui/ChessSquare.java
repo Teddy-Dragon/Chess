@@ -51,7 +51,7 @@ public class ChessSquare {
         // include null for empty squares PLEASE
         String sideLabels = sideLabelMaker(playerColor);
         List<String> rowPieces = new ArrayList<>();
-        if(playerColor == ChessGame.TeamColor.BLACK){
+        if(playerColor == ChessGame.TeamColor.WHITE){
             for(int i = 7; i >= 0; i--){
                 rowPieces.add(getPiece(boardRow, i));
 

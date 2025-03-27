@@ -32,7 +32,7 @@ public class ClientEval {
             return switch (command){
                 case "login" -> loginEval(parameters);
                 case "logout" -> logoutEval();
-                case "quit" -> "quit";
+                case "quit" -> quitEval();
                 case "register" -> registerEval(parameters);
                 case "join" -> joinEval(parameters);
                 case "list" -> listEval();
@@ -48,16 +48,28 @@ public class ClientEval {
 
 
     }
+    public String quitEval(){
+        if(client.getAuth() != null){
+            return "Please log out to quit!";
+        }
+        else{
+            return "quit";
+        }
+    }
     public String clearEval(String[] parameters){
         if(parameters.length != 1){
             return "Not authorized";
         }
-        if(Objects.equals(parameters[0], "kayleesaidso")){
-            client.clearAll();
-            return "If Kaylee says so";
+        try {
+            if (Objects.equals(parameters[0], "kayleesaidso")) {
+                client.clearAll();
+                return "If Kaylee says so";
+            } else {
+                return "Wrong password";
+            }
         }
-        else{
-            return "Wrong password";
+        catch(Exception e){
+            return "Something went wrong";
         }
     }
     public String registerEval(String[] parameters){
@@ -84,6 +96,7 @@ public class ClientEval {
 
     }
     public String loginEval(String[] parameters){
+        try{
         if(parameters.length < 2){
             return "Not enough arguments";
         }
@@ -98,40 +111,52 @@ public class ClientEval {
             authorization = client.getAuth();
             return formatResponse(response, AuthData.class);
         }
-        return "Error logging in! Try again!";
+        return "Error logging in! Try again!";}catch(Exception e){
+            return "";
+        }
 
 
 
     }
     public String watchEval(String[] parameters){
-        if(parameters.length != 2){
-            return "Wrong number of arguments";
+        try{
+            ListModel games = new ListModel(client.listGames().games());
+            if(parameters.length != 2){
+                return "Wrong number of arguments";
+            }
+            if(authorization == null){
+                return "Log in first";
+            }
+            if(!parameters[0].matches("[0-9]") && Integer.parseInt(parameters[0]) > games.games().size()){
+                return "Not a game number";
+            }
+            if(!parameters[1].matches("white|black")){
+                return "Not a watchable team";
+            }
+            int gameID = games.games().get(Integer.parseInt(parameters[0]) - 1).gameID();
+            String playerColor = parameters[1];
+
+                return playGame(playerColor, client.getGameByID(gameID));
+        }catch(Exception e){
+            return "";
         }
-        if(authorization == null){
-            return "Log in first";
-        }
-        if(!parameters[0].matches("[0-9]{6}")){
-            return "Not a game number";
-        }
-        int gameID = Integer.parseInt(parameters[0]);
-        String playerColor = parameters[1];
-        return playGame(playerColor, client.getGameByID(gameID));
 
     }
 
     public String joinEval(String[] parameters){
+        try{
+        ListModel games = new ListModel(client.listGames().games());
         if(parameters.length != 2){
             return "Wrong number of arguments";
         }
-        if(!parameters[0].matches("[0-9]{6}")){
+        if(!parameters[0].matches("[0-9]") && Integer.parseInt(parameters[0]) > games.games().size()){
             return "Not a game number";
         }
-        int gameNumber = Integer.parseInt(parameters[0]);
+        int gameNumber = games.games().get(Integer.parseInt(parameters[0]) - 1).gameID();
         if(!parameters[1].matches("white|black")){
             return "Not a playable team";
         }
         String playerColor = parameters[1];
-        try{
 
             GameData gameInfo = client.getGameByID(gameNumber);
             JoinRequest request = new JoinRequest(playerColor, gameNumber);
@@ -140,8 +165,7 @@ public class ClientEval {
             return "Successfully joined " + gameInfo.gameName() + " as " + playerColor + "\n" + playGame(playerColor, gameInfo);
         }
         catch(Exception e){
-            System.out.println(e);
-            return "Unsuccessful";
+            return "Couldn't join game";
         }
 
 
@@ -158,6 +182,7 @@ public class ClientEval {
 
     }
     public String createEval(String[] parameters){
+        try{
         if(parameters.length != 1){
             return "Wrong number of arguments";
         }
@@ -167,9 +192,13 @@ public class ClientEval {
         String gameName = parameters[0];
         GameData response = client.createGame(new GameData(0, null, null, gameName, null));
         return "Created game #" + response.gameID() + " named " + response.gameName();
+        }catch (Exception e){
+            return "";
+        }
     }
 
     public String logoutEval(){
+        try{
         if(authorization != null){
             client.logoutUser();
             authorization = client.getAuth();
@@ -177,10 +206,14 @@ public class ClientEval {
         }else {
             return "Not logged in";
         }
+        }catch(Exception e){
+            return "";
+        }
 
 
     }
     public String listEval(){
+        try{
         if(client.getAuth() == null){
             return "Not logged in!";
         }
@@ -188,14 +221,17 @@ public class ClientEval {
         List<GameData> gameList = (List<GameData>) serverResponse.games();
         String consoleResponse = "";
         for(int i = 0; i < gameList.size(); i++){
-            consoleResponse += SET_TEXT_COLOR_MAGENTA + SET_TEXT_BOLD + "Game# " + gameList.get(i).gameID() + " ";
+            int gameNumber = i + 1;
+            consoleResponse += SET_TEXT_COLOR_MAGENTA + SET_TEXT_BOLD + "Game# " + gameNumber + " ";
             consoleResponse += RESET_TEXT_BOLD_FAINT + "Game name: " + gameList.get(i).gameName() + " ";
             consoleResponse += SET_TEXT_COLOR_RED + "White username: " + gameList.get(i).whiteUsername() + " " + RESET_TEXT_COLOR;
             consoleResponse += SET_TEXT_COLOR_BLUE + "Black username: " + gameList.get(i).blackUsername() + " " + RESET_TEXT_COLOR + "\n";
 
         }
 
-        return consoleResponse;
+        return consoleResponse;}catch(Exception e){
+            return "";
+        }
     }
 
     public String helpEval(){
