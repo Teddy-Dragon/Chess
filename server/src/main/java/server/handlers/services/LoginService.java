@@ -1,28 +1,28 @@
 package server.handlers.services;
 
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.AuthDAO;
+import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public class LoginService {
-    private final MemoryUserDAO userMap;
-    private final MemoryAuthDAO authMap;
+    private final UserDAO userMap;
+    private final AuthDAO authMap;
 
-    public LoginService(MemoryUserDAO userMap, MemoryAuthDAO authMap) {
+    public LoginService(UserDAO userMap, AuthDAO authMap) {
         this.userMap = userMap;
         this.authMap = authMap;
     }
     public AuthData login(String username, String password) throws Exception{
         UserData returningUser = userMap.getUser(username);
         if(returningUser != null) {
-            if(Objects.equals(returningUser.password(), password)){
+            if(BCrypt.checkpw(password, returningUser.password())){
                 UUID authToken = new CreateAuth(authMap).newToken();
                 AuthData authData = new AuthData(authToken, username);
-                authMap.addAuth(authToken, authData);
+                authMap.addAuth(authData);
                 return authData;
             }
             else {

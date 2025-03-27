@@ -1,13 +1,16 @@
 package service;
 
+import dataaccess.AuthDAO;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
+import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import server.handlers.services.LoginService;
 import server.handlers.services.UserServices;
 
@@ -15,8 +18,8 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class LoginTests {
-    static MemoryUserDAO userMap = new MemoryUserDAO(new HashMap<String, UserData>());
-    static MemoryAuthDAO authMap = new MemoryAuthDAO(new HashMap<UUID, AuthData>());
+    static UserDAO userMap = new MemoryUserDAO(new HashMap<String, UserData>());
+    static AuthDAO authMap = new MemoryAuthDAO(new HashMap<UUID, AuthData>());
     @AfterEach
     public void cleanUp(){
         userMap.clearAllUsers();
@@ -39,7 +42,7 @@ public class LoginTests {
     public void loginFailWrongPassword(){
         try{
             new UserServices(userMap, authMap).createUser("Username", "Password", "Email");
-            Assertions.assertEquals("Password", userMap.getUser("Username").password());
+            assert BCrypt.checkpw("Password", userMap.getUser("Username").password());
             new LoginService(userMap, authMap).login("Username", "badPassword");
         }
         catch(Exception e)
@@ -53,7 +56,7 @@ public class LoginTests {
     public void loginFailParams(){
         try{
             new UserServices(userMap, authMap).createUser("Username", "Password", "Email");
-            Assertions.assertEquals("Password", userMap.getUser("Username").password());
+            assert BCrypt.checkpw("Password", userMap.getUser("Username").password());
             new LoginService(userMap, authMap).login("Username", null);
         }
         catch(Exception e)

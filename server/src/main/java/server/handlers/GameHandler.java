@@ -18,13 +18,14 @@ import spark.Route;
 import java.util.Objects;
 import java.util.UUID;
 
+
 public class GameHandler implements Route {
-    private final MemoryUserDAO userMap;
-    private final MemoryGameDAO gameMap;
-    private final MemoryAuthDAO authMap;
+    private final UserDAO userMap;
+    private final GameDAO gameMap;
+    private final AuthDAO authMap;
     private String currentUser = null;
 
-    public GameHandler(MemoryUserDAO userMap, MemoryGameDAO gameMap, MemoryAuthDAO authMap) {
+    public GameHandler(UserDAO userMap, GameDAO gameMap, AuthDAO authMap) {
         this.userMap = userMap;
         this.gameMap = gameMap;
         this.authMap = authMap;

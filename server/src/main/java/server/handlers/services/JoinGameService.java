@@ -1,8 +1,6 @@
 package server.handlers.services;
 
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import model.GameData;
 
 import java.util.Objects;
@@ -12,11 +10,11 @@ public class JoinGameService {
     //GameDAO.findGameByID with game ID from request
     //Modify returned game data with player info from player color
     //GameDAO.updateGame with updated model to add player to game
-    private final MemoryUserDAO userMap;
-    private final MemoryGameDAO gameMap;
-    private final MemoryAuthDAO authMap;
+    private final UserDAO userMap;
+    private final GameDAO gameMap;
+    private final AuthDAO authMap;
 
-    public JoinGameService(MemoryUserDAO userMap, MemoryGameDAO gameMap, MemoryAuthDAO authMap) {
+    public JoinGameService(UserDAO userMap, GameDAO gameMap, AuthDAO authMap) {
         this.userMap = userMap;
         this.gameMap = gameMap;
         this.authMap = authMap;

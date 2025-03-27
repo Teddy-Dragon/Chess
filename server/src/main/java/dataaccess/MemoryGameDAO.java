@@ -5,7 +5,7 @@ import model.ListGame;
 
 import java.util.*;
 
-public class MemoryGameDAO{
+public class MemoryGameDAO implements GameDAO{
     private final HashMap<Integer, GameData> gameMap;
 
     public MemoryGameDAO(HashMap<Integer, GameData> gameMap) {
@@ -16,8 +16,8 @@ public class MemoryGameDAO{
         gameMap.clear();
         //remove all Game data from database
     }
-    public void addGame(int gameID, GameData gameData){
-        gameMap.put(gameID, gameData);
+    public void addGame(GameData gameData){
+        gameMap.put(gameData.gameID(), gameData);
         //makes and stores a new game
     }
     public GameData getGameByID(int gameID){
