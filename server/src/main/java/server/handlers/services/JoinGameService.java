@@ -29,21 +29,21 @@ public class JoinGameService {
         if(game == null){
             throw new Exception("Error: bad request");
         }
-        if(!Objects.equals(playerColor, "WHITE") && !Objects.equals(playerColor, "BLACK")){
+        if(!Objects.equals(playerColor.toUpperCase(), "WHITE") && !Objects.equals(playerColor.toUpperCase(), "BLACK")){
             throw new Exception("Error: bad request");
         }
-        if(game.blackUsername() != null && Objects.equals(playerColor, "BLACK")){
+        if(game.blackUsername() != null && Objects.equals(playerColor.toUpperCase(), "BLACK")){
             throw new Exception("Error: already taken");
 
         }
-        if(game.whiteUsername() != null && Objects.equals(playerColor, "WHITE")){
+        if(game.whiteUsername() != null && Objects.equals(playerColor.toUpperCase(), "WHITE")){
             throw new Exception("Error: already taken");
         }
-        if(Objects.equals(playerColor, "WHITE")) {
+        if(Objects.equals(playerColor.toUpperCase(), "WHITE")) {
             GameData newData = new GameData(gameID, username, game.blackUsername(), game.gameName(), game.game());
             gameMap.updateGame(gameID, newData);
         }
-        if(Objects.equals(playerColor, "BLACK")){
+        if(Objects.equals(playerColor.toUpperCase(), "BLACK")){
             GameData newData = new GameData(gameID, game.whiteUsername(), username, game.gameName(), game.game());
             gameMap.updateGame(gameID, newData);
         }

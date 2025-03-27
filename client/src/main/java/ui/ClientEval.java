@@ -84,7 +84,7 @@ public class ClientEval {
             return "Not enough arguments";
         }
         if(parameters.length > 2){
-            return "Too many arguements";
+            return "Too many arguments";
         }
         String username = parameters[0].toUpperCase();
         String password = parameters[1].toUpperCase();
@@ -112,8 +112,8 @@ public class ClientEval {
         try{
             JoinRequest request = new JoinRequest(playerColor, gameNumber);
             client.joinGame(request);
-
-            return "Successful";
+            GameData gameInfo = client.getGameByID(gameNumber);
+            return "Successfully joined " + gameInfo.gameName();
         }
         catch(Exception e){
             System.out.println(e);

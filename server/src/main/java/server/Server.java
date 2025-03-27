@@ -6,10 +6,7 @@ import dataaccess.MemoryUserDAO;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import server.handlers.ClearHandler;
-import server.handlers.GameHandler;
-import server.handlers.SessionHandler;
-import server.handlers.UserHandler;
+import server.handlers.*;
 import spark.Spark;
 
 import java.util.HashMap;
@@ -24,7 +21,7 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-
+        Spark.post("/play",(request, response) -> new PlayHandler(gameMap, authMap).handle(request, response));
         Spark.post("/user", (request, response) -> new UserHandler(userMap, authMap).handle(request, response)); //register
         Spark.post("/session", (request, response) -> new SessionHandler(userMap, authMap).handle(request, response)); //login
         Spark.delete("/session", (request, response) -> new SessionHandler(userMap, authMap).handle(request, response)); //logout

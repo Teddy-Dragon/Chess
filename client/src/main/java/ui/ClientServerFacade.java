@@ -79,6 +79,11 @@ public class ClientServerFacade {
         return response;
 
     }
+    public GameData getGameByID(int gameID){
+        var path = "/play";
+        GameData response = makeRequest("POST", path, gameID, GameData.class);
+        return response;
+    }
     public void clearAll(){
         var path = "/db";
         makeRequest("DELETE", path, null, null);
@@ -103,6 +108,7 @@ public class ClientServerFacade {
         }
         catch(Exception e){
             if(http != null){
+
                 String formattedResponse = new ExceptionReader().responseReader(http);
                 System.out.println(formattedResponse);
             }

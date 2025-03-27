@@ -8,7 +8,7 @@ public class ExceptionReader {
     public String responseReader(HttpURLConnection http){
         try {
             if(http.getResponseCode() == 403){
-                return "Username already taken!";
+                return "Already Taken!";
             }
             if(http.getResponseCode() == 400){
                 return "Bad request- try again!";
@@ -16,7 +16,11 @@ public class ExceptionReader {
             if(http.getResponseCode() == 401){
                 return "Unauthorized!";
             }
+            if(http.getResponseCode() == 404){
+                return "Does not exist";
+            }
             else{
+                System.out.println(http.getResponseCode());
                 return "Unknown error code";
             }
 
