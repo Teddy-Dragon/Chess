@@ -3,14 +3,17 @@ package ui;
 import model.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import static ui.EscapeSequences.*;
 
 public class ClientEval {
     private String input;
     private UUID authorization;
-    private ServerFacade client;
-    public ClientEval(UUID authorization, ServerFacade client){
+    private ClientServerFacade client;
+    public ClientEval(UUID authorization, ClientServerFacade client){
         this.input = input;
         this.authorization = authorization;
         this.client = client;
@@ -83,8 +86,8 @@ public class ClientEval {
         if(parameters.length > 2){
             return "Too many arguements";
         }
-        String username = parameters[0];
-        String password = parameters[1];
+        String username = parameters[0].toUpperCase();
+        String password = parameters[1].toUpperCase();
         UserData returningUser = new UserData(username, password, null);
         AuthData response = client.loginUser(returningUser);
         if(client.getAuth() != null){
@@ -108,6 +111,8 @@ public class ClientEval {
         String playerColor = parameters[1];
         try{
             JoinRequest request = new JoinRequest(playerColor, gameNumber);
+            client.joinGame(request);
+
             return "Successful";
         }
         catch(Exception e){
@@ -143,9 +148,18 @@ public class ClientEval {
         if(client.getAuth() == null){
             return "Not logged in!";
         }
-        ListGame response = client.listGames();
-        System.out.println(response.gameList());
-        return "";
+        ListGame serverResponse = client.listGames();
+        List<GameData> gamelist = serverResponse.gameList().get("games");
+        String consoleResponse = "";
+        for(int i = 0; i < gamelist.size(); i++){
+            consoleResponse += SET_TEXT_COLOR_MAGENTA + SET_TEXT_BOLD + "Game# " + gamelist.get(i).gameID() + " ";
+            consoleResponse += RESET_TEXT_BOLD_FAINT + "Game name: " + gamelist.get(i).gameName() + " ";
+            consoleResponse += SET_TEXT_COLOR_RED + "White username: " + gamelist.get(i).whiteUsername() + " " + RESET_TEXT_COLOR;
+            consoleResponse += SET_TEXT_COLOR_BLUE + "Black username: " + gamelist.get(i).blackUsername() + " " + RESET_TEXT_COLOR + "\n";
+
+        }
+
+        return consoleResponse;
     }
 
     public String helpEval(){

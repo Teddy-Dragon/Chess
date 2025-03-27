@@ -6,9 +6,9 @@ import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
 public class Repl {
-    ServerFacade client;
+    ClientServerFacade client;
     public Repl(String serverURL){
-        client = new ServerFacade(serverURL);
+        client = new ClientServerFacade(serverURL);
     }
 
     public void run(){

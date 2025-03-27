@@ -13,11 +13,11 @@ import java.net.URL;
 import java.util.UUID;
 
 
-public class ServerFacade {
+public class ClientServerFacade {
     private final String serverURl;
     private UUID authorization;
 
-    public ServerFacade(String url){
+    public ClientServerFacade(String url){
         serverURl = url;
     }
     public UUID getAuth(){
@@ -71,8 +71,11 @@ public class ServerFacade {
     }
     public ListGame listGames(){
         var path = "/game";
+        //Hashmap<String, List<GameData>> map = new hashmap()
+        //do map.class for the response type
+
         ListGame response = makeRequest("GET", path, null, ListGame.class);
-        System.out.println(response);
+
         return response;
 
     }
@@ -95,6 +98,7 @@ public class ServerFacade {
             writeBody(request, http); //sets request body
             http.connect(); //actually connects with this now not empty request
             throwIfNotSuccessful(http);
+
             return readBody(responseClass, http);
         }
         catch(Exception e){
@@ -132,6 +136,8 @@ public class ServerFacade {
         }
     }
 
+    //client reading from server
+
     private <T> T readBody(Class<T> responseClass, HttpURLConnection http) throws IOException{
         T response = null;
         if (http.getContentLength() < 0) { // if the content length header is an unknown number or too big
@@ -149,4 +155,5 @@ public class ServerFacade {
         return response;
 
     }
+
 }
