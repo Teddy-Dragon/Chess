@@ -132,9 +132,10 @@ public class ClientEval {
         }
         String playerColor = parameters[1];
         try{
+
+            GameData gameInfo = client.getGameByID(gameNumber);
             JoinRequest request = new JoinRequest(playerColor, gameNumber);
             client.joinGame(request);
-            GameData gameInfo = client.getGameByID(gameNumber);
 
             return "Successfully joined " + gameInfo.gameName() + " as " + playerColor + "\n" + playGame(playerColor, gameInfo);
         }
