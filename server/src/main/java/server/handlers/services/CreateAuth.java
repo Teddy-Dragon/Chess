@@ -1,14 +1,14 @@
 package server.handlers.services;
 
-import dataaccess.MemoryAuthDAO;
+import dataaccess.AuthDAO;
 
 import java.util.UUID;
 
 public class CreateAuth {
     //For use in other functions
-    private final MemoryAuthDAO authMap;
+    private final AuthDAO authMap;
 
-    public CreateAuth(MemoryAuthDAO authMap) {
+    public CreateAuth(AuthDAO authMap) {
         this.authMap = authMap;
     }
 

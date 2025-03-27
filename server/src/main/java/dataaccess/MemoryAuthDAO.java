@@ -5,7 +5,7 @@ import model.AuthData;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class MemoryAuthDAO{
+public class MemoryAuthDAO implements AuthDAO{
     private final HashMap<UUID, AuthData> authMap;
 
     public MemoryAuthDAO(HashMap<UUID, AuthData> authMap) {
@@ -25,7 +25,7 @@ public class MemoryAuthDAO{
         authMap.remove(authToken, data);
         //removes one individual's authData
     }
-    public void addAuth(UUID authToken, AuthData authData){
-        authMap.put(authToken, authData);
+    public void addAuth(AuthData authData){
+        authMap.put(authData.authToken(), authData);
     }
 }

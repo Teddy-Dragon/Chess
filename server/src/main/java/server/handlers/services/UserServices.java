@@ -1,7 +1,7 @@
 package server.handlers.services;
 
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.AuthDAO;
+import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
 
@@ -11,10 +11,10 @@ public class UserServices {
     //UserHandler will refer to this regardless of method, this is just to make it nice and separate
 
     //Call UserDAO.getUser, if it returns null, create authToken and send UserData model to UserDAO.createUser
-    private final MemoryUserDAO userMap;
-    private final MemoryAuthDAO authMap;
+    private final UserDAO userMap;
+    private final AuthDAO authMap;
 
-    public UserServices(MemoryUserDAO userMap, MemoryAuthDAO authMap) {
+    public UserServices(UserDAO userMap, AuthDAO authMap) {
         this.userMap = userMap;
         this.authMap = authMap;
     }
@@ -34,10 +34,10 @@ public class UserServices {
 
         }
         UserData newUser = new UserData(username, password, email);
-        userMap.addUser(username, newUser);
+        userMap.addUser(newUser);
         UUID authToken = new CreateAuth(authMap).newToken();
         AuthData newAuth = new AuthData(authToken, username);
-        authMap.addAuth(authToken, newAuth);
+        authMap.addAuth(newAuth);
 
         return newAuth;
 

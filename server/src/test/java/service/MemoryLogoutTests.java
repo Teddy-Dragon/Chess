@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.AuthDAO;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
 import model.AuthData;
@@ -14,8 +15,8 @@ import server.handlers.services.UserServices;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class LogoutTests {
-    static MemoryAuthDAO authMap = new MemoryAuthDAO(new HashMap<UUID, AuthData>());
+public class MemoryLogoutTests {
+    static AuthDAO authMap = new MemoryAuthDAO(new HashMap<UUID, AuthData>());
     @AfterEach
     public void cleanUp(){
         authMap.clearAllAuth();
