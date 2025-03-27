@@ -53,25 +53,25 @@ public class ClientServerFacade {
         }
     }
 
-    public void logoutUser(){
+    public void logoutUser() throws Exception {
         var path = "/session";
         makeRequest("DELETE", path, null, null);
         authorization = null;
     }
 
-    public GameData createGame(GameData gameData){
+    public GameData createGame(GameData gameData) throws Exception {
         var path = "/game";
         GameData response = makeRequest("POST", path, gameData, GameData.class);
         return response;
     }
 
 
-    public void joinGame(JoinRequest request){
+    public void joinGame(JoinRequest request) throws Exception {
         var path = "/game";
         makeRequest("PUT", path, request, null);
     }
 
-    public ListModel listGames(){
+    public ListModel listGames() throws Exception {
         var path = "/game";
         //do map.class for the response type
         ListModel response = makeRequest("GET", path, null, ListModel.class);
@@ -79,17 +79,17 @@ public class ClientServerFacade {
         return response;
 
     }
-    public GameData getGameByID(int gameID){
+    public GameData getGameByID(int gameID) throws Exception {
         var path = "/play";
         GameData response = makeRequest("POST", path, gameID, GameData.class);
         return response;
     }
-    public void clearAll(){
+    public void clearAll() throws Exception {
         var path = "/db";
         makeRequest("DELETE", path, null, null);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass){
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception{
         HttpURLConnection http = null;
         try{
             URL url = (new URI(serverURl + path)).toURL();
@@ -114,7 +114,7 @@ public class ClientServerFacade {
             }
 
         }
-        return null;
+        throw new Exception("");
     }
 
     private void writeBody(Object request, HttpURLConnection http){

@@ -1,8 +1,8 @@
 package model;
 
-import java.util.Collection;
+import java.util.List;
 
 public record ListModel(
-         Collection<GameData> games
+         List<GameData> games
 ) {
 }
