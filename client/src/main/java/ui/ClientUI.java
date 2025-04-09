@@ -5,6 +5,7 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 import model.GameData;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -53,22 +54,23 @@ public class ClientUI {
         displayChessBoard += "\n" + SET_TEXT_COLOR_BLACK + topLabel(playerColor);
         Boolean whiteFirst = true;
 
-        List<Integer> rowHighlights = null;
+        List<Integer> rowHighlights = new ArrayList<>();
         if(playerColor == ChessGame.TeamColor.WHITE){
             for(int i = 7; i >= 0; i--){
 
                 if(highlights != null){
-                for (ChessPosition highlight : highlights) {
-                    if (highlight.getRow() == i) {
-                        rowHighlights.add(highlight.getColumn());
+                    for (ChessPosition highlight : highlights) {
+                        if (highlight.getRow() == i + 1) {
+                            rowHighlights.add(highlight.getColumn());
+                        }
                     }
                 }
-                }
 
-                displayChessBoard += row.rowTopOrBottom(whiteFirst) + "\n";
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights) + "\n";
                 displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.BLACK, whiteFirst, rowHighlights) + "\n";
-                displayChessBoard += row.rowTopOrBottom(whiteFirst) + "\n";
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights) + "\n";
                 whiteFirst = !whiteFirst;
+                rowHighlights.clear();
             }
         }
         if(playerColor == ChessGame.TeamColor.BLACK){
@@ -76,15 +78,16 @@ public class ClientUI {
             for(int i = 0; i < board.length; i++){
                 if(highlights != null){
                     for (ChessPosition highlight : highlights) {
-                        if (highlight.getRow() == i) {
+                        if (highlight.getRow() == i + 1) {
                             rowHighlights.add(highlight.getColumn());
                         }
+                    }
                 }
-                }
-                displayChessBoard += row.rowTopOrBottom(whiteFirst) + "\n";
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights) + "\n";
                 displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.WHITE, whiteFirst, rowHighlights) + "\n";
-                displayChessBoard += row.rowTopOrBottom(whiteFirst) + "\n";
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights) + "\n";
                 whiteFirst = !whiteFirst;
+                rowHighlights.clear();
             }
         }
         displayChessBoard += topLabel(playerColor);

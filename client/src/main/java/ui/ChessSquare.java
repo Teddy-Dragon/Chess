@@ -16,15 +16,31 @@ public class ChessSquare {
         return backgroundColor + EMPTY + " " + EMPTY + RESET_BG_COLOR;
     }
 
-    public String rowTopOrBottom(Boolean whiteFirst){
+    public String rowTopOrBottom(Boolean whiteFirst,List<Integer> highlights ){
         String response = "";
         List<String> firstColor = Arrays.asList(SET_BG_COLOR_WHITE, SET_BG_COLOR_BLACK);
+        List<String> highlightColors = Arrays.asList(SET_BG_COLOR_GREEN, SET_BG_COLOR_DARK_GREEN);
         if(!whiteFirst){
             firstColor = firstColor.reversed();
+            highlightColors = highlightColors.reversed();
         }
-        for(int i = 0; i < 4; i++){
-            response += chessTopOrBottom(firstColor.get(0));
-            response += chessTopOrBottom(firstColor.get(1));
+        for(int i = 0; i != 8; i += 2){
+            if(highlights != null && highlights.size() != 0){
+                if(highlights.contains(i + 1)){
+                    response += chessTopOrBottom(highlightColors.get(0));
+                } else if (!highlights.contains(i + 1)) {
+                    response += chessTopOrBottom(firstColor.get(0));
+                }
+                if(highlights.contains(i + 2)){
+                    response += chessTopOrBottom(highlightColors.get(1));
+                } else if (!highlights.contains(i + 2)) {
+                    response += chessTopOrBottom(firstColor.get(1));
+                }
+            }
+            else{
+                response += chessTopOrBottom(firstColor.get(0));
+                response += chessTopOrBottom(firstColor.get(1));
+            }
         }
 
         return SET_BG_COLOR_LIGHT_GREY + "   " + RESET_BG_COLOR + response + SET_BG_COLOR_LIGHT_GREY + "   " + RESET_BG_COLOR;
@@ -82,19 +98,20 @@ public class ChessSquare {
 
         String response = "";
         for(int i = 0; i < rowPieces.size(); i += 2){
-            if(highlights == null){
+            if(highlights == null && highlights.size() == 0){
                 response += chessMiddle(rowPieces.get(i), squareColor);
                 response += chessMiddle(rowPieces.get(i + 1), altSquareColor);
             }
             else{
-                if(highlights.contains(i)){
+                if(highlights.contains(i)) {
                     response += chessMiddle(rowPieces.get(i), highlightColorOne);
+                } else if (!highlights.contains(i)) {
+                    response += chessMiddle(rowPieces.get(i), squareColor);
                 }
                 if(highlights.contains(i + 1)){
                     response += chessMiddle(rowPieces.get(i), highlightColorTwo);
                 }
-                else{
-                    response += chessMiddle(rowPieces.get(i), squareColor);
+                else if(!highlights.contains( i + 1)){
                     response += chessMiddle(rowPieces.get(i + 1), altSquareColor);
                 }
 

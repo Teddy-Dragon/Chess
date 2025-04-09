@@ -135,7 +135,7 @@ public class ClientEval {
             int gameID = games.games().get(Integer.parseInt(parameters[0]) - 1).gameID();
             String playerColor = parameters[1];
 
-                return getGame(playerColor, client.getGameByID(gameID));
+                return getGame(playerColor, client.getGameByID(gameID), null);
         }catch(Exception e){
             return "";
         }
@@ -157,34 +157,41 @@ public class ClientEval {
             return "Invalid start position";
         }
         //Make sure that we have the right number of arguments and that we are starting off with a letter first
-        int firstIndex = 0;
+        int column = 0;
         List<String> boardLetters = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
-        for(int i = 0; i < boardLetters.size() - 1; i++){
+        for(int i = 0; i < boardLetters.size(); i++){
             if(Objects.equals(positions[0], boardLetters.get(i))){
-                firstIndex = i;
+                column = i;
+
+                break;
             }
             else{
-                firstIndex = 10;
+                column = 10;
             }
         }
-        if(!parameters[1].matches("[0-9]")){
+        if(!positions[1].matches("[0-8]")){
             return "Invalid start position";
         }
-        int secondIndex = Integer.parseInt(parameters[1]);
-        if(firstIndex > 8 || secondIndex > 8 || secondIndex < 1 ){
+        int row = Integer.parseInt(positions[1]);
+        if(column > 8 || row > 8 || row < 1 ){
             return "Not a valid position";
         }
-        ChessPosition startPos = new ChessPosition(firstIndex, secondIndex);
+        ChessPosition startPos = new ChessPosition(row, column + 1);
 
         try{
             GameData gameData = client.getGameByID(request.gameID());
             ChessGame game = gameData.game();
-            Collection<ChessMove> validMoves = game.validMoves(startPos);
+            List<ChessPosition> endPositions = new ArrayList<>();
+            List<ChessMove> validMoves = (List<ChessMove>) game.validMoves(startPos);
+            for(int i = 0; i < validMoves.size(); i++){
+                endPositions.add(validMoves.get(i).getEndPosition());
+            }
+            return getGame(request.playerColor(), gameData, endPositions);
+
         }
         catch(Exception e){
-            return "Something went wrong in highlight";
+            return "No piece is at that spot, try again!";
         }
-        return null;
     }
 
     public String inGameHelp(){
@@ -206,7 +213,7 @@ public class ClientEval {
         switch (tokens[0]){
             case "redraw" -> {
                 try{
-                    return getGame(request.playerColor(), client.getGameByID(request.gameID()));
+                    return getGame(request.playerColor(), client.getGameByID(request.gameID()), null);
                 }catch (Exception e){
                     return "There was an issue";
                 }
@@ -274,7 +281,7 @@ public class ClientEval {
             GameData gameInfo = client.getGameByID(gameNumber);
             JoinRequest request = new JoinRequest(playerColor, gameNumber);
             client.joinGame(request);
-            System.out.print( "Successfully joined " + gameInfo.gameName() + " as " + playerColor + "\n" + getGame(playerColor, gameInfo));
+            System.out.print( "Successfully joined " + gameInfo.gameName() + " as " + playerColor + "\n" + getGame(playerColor, gameInfo, null));
             return inGame(request);
         }
         catch(Exception e){
@@ -283,7 +290,7 @@ public class ClientEval {
 
 
     }
-    public String getGame(String playerColor, GameData gameData){
+    public String getGame(String playerColor, GameData gameData, List<ChessPosition> highlights){
         ChessGame.TeamColor playerTeam = null;
         if(Objects.equals(playerColor, "white")){
             playerTeam = ChessGame.TeamColor.WHITE;
@@ -291,7 +298,7 @@ public class ClientEval {
         else{
             playerTeam = ChessGame.TeamColor.BLACK;
         }
-        return new ClientUI(client.getAuth()).chessBoardDisplay(playerTeam, gameData, null);
+        return new ClientUI(client.getAuth()).chessBoardDisplay(playerTeam, gameData, highlights);
 
     }
     public String createEval(String[] parameters){
