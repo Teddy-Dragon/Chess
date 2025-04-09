@@ -60,15 +60,15 @@ public class ClientUI {
 
                 if(highlights != null){
                     for (ChessPosition highlight : highlights) {
-                        if (highlight.getRow() == i + 1) {
+                        if (highlight.getRow() == i) {
                             rowHighlights.add(highlight.getColumn());
                         }
                     }
                 }
 
-                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights) + "\n";
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.WHITE) + "\n";
                 displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.BLACK, whiteFirst, rowHighlights) + "\n";
-                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights) + "\n";
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.WHITE) + "\n";
                 whiteFirst = !whiteFirst;
                 rowHighlights.clear();
             }
@@ -83,9 +83,9 @@ public class ClientUI {
                         }
                     }
                 }
-                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights) + "\n";
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.BLACK) + "\n";
                 displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.WHITE, whiteFirst, rowHighlights) + "\n";
-                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights) + "\n";
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.BLACK) + "\n";
                 whiteFirst = !whiteFirst;
                 rowHighlights.clear();
             }

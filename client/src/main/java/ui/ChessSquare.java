@@ -16,7 +16,7 @@ public class ChessSquare {
         return backgroundColor + EMPTY + " " + EMPTY + RESET_BG_COLOR;
     }
 
-    public String rowTopOrBottom(Boolean whiteFirst,List<Integer> highlights ){
+    public String rowTopOrBottom(Boolean whiteFirst, List<Integer> highlights, ChessGame.TeamColor playerColor){
         String response = "";
         List<String> firstColor = Arrays.asList(SET_BG_COLOR_WHITE, SET_BG_COLOR_BLACK);
         List<String> highlightColors = Arrays.asList(SET_BG_COLOR_GREEN, SET_BG_COLOR_DARK_GREEN);
@@ -24,24 +24,47 @@ public class ChessSquare {
             firstColor = firstColor.reversed();
             highlightColors = highlightColors.reversed();
         }
-        for(int i = 0; i != 8; i += 2){
-            if(highlights != null && highlights.size() != 0){
-                if(highlights.contains(i + 1)){
-                    response += chessTopOrBottom(highlightColors.get(0));
-                } else if (!highlights.contains(i + 1)) {
-                    response += chessTopOrBottom(firstColor.get(0));
+        if(playerColor == ChessGame.TeamColor.WHITE){
+            for(int i = 0; i != 8; i += 2){
+                if(highlights != null && highlights.size() != 0){
+                    if(highlights.contains(i + 1)){
+                        response += chessTopOrBottom(highlightColors.get(0));
+                    } else if (!highlights.contains(i + 1)) {
+                        response += chessTopOrBottom(firstColor.get(0));
+                    }
+                    if(highlights.contains(i + 2)){
+                        response += chessTopOrBottom(highlightColors.get(1));
+                    } else if (!highlights.contains(i + 2)) {
+                        response += chessTopOrBottom(firstColor.get(1));
+                    }
                 }
-                if(highlights.contains(i + 2)){
-                    response += chessTopOrBottom(highlightColors.get(1));
-                } else if (!highlights.contains(i + 2)) {
+                else{
+                    response += chessTopOrBottom(firstColor.get(0));
                     response += chessTopOrBottom(firstColor.get(1));
                 }
             }
-            else{
-                response += chessTopOrBottom(firstColor.get(0));
-                response += chessTopOrBottom(firstColor.get(1));
+        }
+        if(playerColor == ChessGame.TeamColor.BLACK){
+            for(int i = 8; i != 0; i -= 2){
+                if(highlights != null && highlights.size() != 0){
+                    if(highlights.contains(i - 1)){
+                        response += chessTopOrBottom(highlightColors.get(0));
+                    } else if (!highlights.contains(i - 1)) {
+                        response += chessTopOrBottom(firstColor.get(0));
+                    }
+                    if(highlights.contains(i - 2)){
+                        response += chessTopOrBottom(highlightColors.get(1));
+                    } else if (!highlights.contains(i - 2)) {
+                        response += chessTopOrBottom(firstColor.get(1));
+                    }
+                }
+                else{
+                    response += chessTopOrBottom(firstColor.get(0));
+                    response += chessTopOrBottom(firstColor.get(1));
+                }
             }
         }
+
 
         return SET_BG_COLOR_LIGHT_GREY + "   " + RESET_BG_COLOR + response + SET_BG_COLOR_LIGHT_GREY + "   " + RESET_BG_COLOR;
     }
