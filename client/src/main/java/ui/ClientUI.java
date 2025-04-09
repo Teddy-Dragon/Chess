@@ -74,10 +74,12 @@ public class ClientUI {
         if(playerColor == ChessGame.TeamColor.BLACK){
 
             for(int i = 0; i < board.length; i++){
-                for (ChessPosition highlight : highlights) {
-                    if (highlight.getRow() == i) {
-                        rowHighlights.add(highlight.getColumn());
-                    }
+                if(highlights != null){
+                    for (ChessPosition highlight : highlights) {
+                        if (highlight.getRow() == i) {
+                            rowHighlights.add(highlight.getColumn());
+                        }
+                }
                 }
                 displayChessBoard += row.rowTopOrBottom(whiteFirst) + "\n";
                 displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.WHITE, whiteFirst, rowHighlights) + "\n";
