@@ -29,6 +29,8 @@ public class Server {
         Spark.put("/game",(request, response) ->  new GameHandler(userMap, gameMap, authMap).handle(request, response)); //join game
         Spark.delete("/db",(request, response) ->  new ClearHandler(authMap, gameMap, userMap).handle(request, response)); //nuke it all
         Spark.post("/play",(request, response) -> new PlayHandler(gameMap, authMap).handle(request, response));
+        Spark.put("/play",(request, response) -> new PlayHandler(gameMap, authMap).handle(request, response));
+
 
         Spark.awaitInitialization();
         return Spark.port();

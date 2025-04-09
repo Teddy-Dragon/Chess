@@ -47,8 +47,10 @@ public class ChessSquare {
         return piece;
     }
 
-    public String rowChessMiddle(ChessPiece[] boardRow, ChessGame.TeamColor playerColor, Boolean whiteFirst){
+
+    public String rowChessMiddle(ChessPiece[] boardRow, ChessGame.TeamColor playerColor, Boolean whiteFirst, List<Integer> highlights){
         // include null for empty squares PLEASE
+
         String sideLabels = sideLabelMaker(playerColor);
         List<String> rowPieces = new ArrayList<>();
         if(playerColor == ChessGame.TeamColor.WHITE){
@@ -61,22 +63,43 @@ public class ChessSquare {
                 rowPieces.add(getPiece(boardRow, i));
             }
         }
-
+        String highlightColorOne = null;
+        String highlightColorTwo = null;
         String squareColor = null;
         String altSquareColor = null;
         if(whiteFirst){
             squareColor = SET_BG_COLOR_WHITE;
+            highlightColorOne = SET_BG_COLOR_GREEN;
             altSquareColor = SET_BG_COLOR_BLACK;
+            highlightColorTwo = SET_BG_COLOR_DARK_GREEN;
         }
         else{
             squareColor = SET_BG_COLOR_BLACK;
+            highlightColorOne = SET_BG_COLOR_DARK_GREEN;
             altSquareColor= SET_BG_COLOR_WHITE;
+            highlightColorTwo = SET_BG_COLOR_GREEN;
         }
 
         String response = "";
         for(int i = 0; i < rowPieces.size(); i += 2){
-            response += chessMiddle(rowPieces.get(i), squareColor);
-            response += chessMiddle(rowPieces.get(i + 1), altSquareColor);
+            if(highlights == null){
+                response += chessMiddle(rowPieces.get(i), squareColor);
+                response += chessMiddle(rowPieces.get(i + 1), altSquareColor);
+            }
+            else{
+                if(highlights.contains(i)){
+                    response += chessMiddle(rowPieces.get(i), highlightColorOne);
+                }
+                if(highlights.contains(i + 1)){
+                    response += chessMiddle(rowPieces.get(i), highlightColorTwo);
+                }
+                else{
+                    response += chessMiddle(rowPieces.get(i), squareColor);
+                    response += chessMiddle(rowPieces.get(i + 1), altSquareColor);
+                }
+
+            }
+
         }
 
         return sideLabels+ response + sideLabels;
