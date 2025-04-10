@@ -186,7 +186,8 @@ public class ClientEval {
             for(int i = 0; i < validMoves.size(); i++){
                 endPositions.add(validMoves.get(i).getEndPosition());
             }
-            return getGame(request.playerColor(), gameData, endPositions);
+            System.out.println(getGame(request.playerColor(), gameData, endPositions));
+            return inGame(request);
 
         }
         catch(Exception e){
@@ -233,9 +234,10 @@ public class ClientEval {
             case "resign" -> {
                 return "resign";
             }
-            default -> inGameHelp();
+            default -> {
+                return inGameHelp();
+            }
         }
-        return "";
     }
 
 
