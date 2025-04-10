@@ -56,7 +56,7 @@ public class ClientUI {
 
         if(playerColor == ChessGame.TeamColor.WHITE){
             for(int i = 0; i < 8; i++){ //We go from row 0 to row 7
-                List<Integer> rowHighlights = getHighlightsInRow(highlights, i, ChessGame.TeamColor.WHITE); // get a row, if there are valid moves in the highlights, get those as well
+                List<Integer> rowHighlights = getHighlightsInRow(highlights, i, true); // get a row, if there are valid moves in the highlights, get those as well
 
                 displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.WHITE) + "\n"; // makes the top of a row
                 displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.WHITE, whiteFirst, rowHighlights) + "\n"; // makes the middle of a row
@@ -68,7 +68,7 @@ public class ClientUI {
         if(playerColor == ChessGame.TeamColor.BLACK){
 
             for(int i = 7; i >= 0; i--){ // we go from row 7 to row 0
-                List<Integer> rowHighlights = getHighlightsInRow(highlights, i, ChessGame.TeamColor.BLACK);
+                List<Integer> rowHighlights = getHighlightsInRow(highlights, i, true);
 
                 displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.BLACK) + "\n";
                 displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.BLACK, whiteFirst, rowHighlights) + "\n";
@@ -98,36 +98,27 @@ public class ClientUI {
 
     }
 
-    public List<Integer> getHighlightsInRow(List<ChessPosition> toInvert, int location, ChessGame.TeamColor playerColor){
+    public List<Integer> getHighlightsInRow(List<ChessPosition> highlights, int rowLocation, Boolean invert){
+        List<Integer> invertedNumbers = Arrays.asList(8 ,7 , 6, 5, 4, 3, 2, 1);
         List<Integer> response = new ArrayList<>();
-        List<Integer> invertedBoardNumbers = Arrays.asList(8, 7, 6, 5, 4, 3, 2 , 1);
-        List<ChessPosition> toGoOver = toInvert;
+        List<ChessPosition> invertedHighlights = highlights;
 
-        if(playerColor == ChessGame.TeamColor.WHITE){
-            if(toInvert != null){
-                toGoOver = new ArrayList<>();
-                for(ChessPosition row: toInvert){
-                    toGoOver.add(new ChessPosition(invertedBoardNumbers.get(row.getRow()), row.getColumn()));
-                }
-            }
-        }
-        if(playerColor == ChessGame.TeamColor.BLACK){
-            if(toInvert != null){
-                toGoOver = new ArrayList<>();
-                for(ChessPosition row: toInvert){
-                    toGoOver.add(new ChessPosition(row.getRow(), invertedBoardNumbers.get(row.getColumn())));
-                }
-            }
-        }
-        if(toGoOver != null){
-            for(ChessPosition row: toGoOver){
-                if(row.getRow() == location){
-                    response.add(row.getColumn());
-                }
+        if(highlights != null && invert){
+            invertedHighlights = new ArrayList<>();
+            for(ChessPosition row: highlights){
+                invertedHighlights.add(new ChessPosition(invertedNumbers.get(row.getRow() - 1), row.getColumn()));
             }
         }
 
 
+
+        if(invertedHighlights != null){
+            for(ChessPosition highlight: invertedHighlights){
+                if(highlight.getRow() - 1 == rowLocation){
+                    response.add(highlight.getColumn());
+                }
+            }
+        }
 
         return response;
 

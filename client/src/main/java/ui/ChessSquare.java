@@ -16,106 +16,88 @@ public class ChessSquare {
         return backgroundColor + EMPTY + " " + EMPTY + RESET_BG_COLOR;
     }
 
-    public String rowTopOrBottom(Boolean whiteFirst, List<Integer> highlights, ChessGame.TeamColor playerColor){
+    public String rowTopOrBottom(Boolean whiteFirst, List<Integer> rowHighlights, ChessGame.TeamColor playerColor){
         String response = "";
         List<String> firstColor = Arrays.asList(SET_BG_COLOR_WHITE, SET_BG_COLOR_BLACK);
-        List<String> highlightColors = Arrays.asList(SET_BG_COLOR_GREEN, SET_BG_COLOR_DARK_GREEN);
         if(!whiteFirst){
             firstColor = firstColor.reversed();
-            highlightColors = highlightColors.reversed();
         }
-        if(playerColor == ChessGame.TeamColor.WHITE){
-            for(int i = 0; i < 8; i += 2){
-                response += highlightTopOrBottom(i, highlights, firstColor.get(0), highlightColors.get(1));
-                response += highlightTopOrBottom(i + 1, highlights, firstColor.get(1), highlightColors.get(0));
-            }
+        for(int i = 0; i < 4; i++){
+            response += chessTopOrBottom(firstColor.get(0));
+            response += chessTopOrBottom(firstColor.get(1));
         }
-        if(playerColor == ChessGame.TeamColor.BLACK){
-            for(int i = 7; i >= 0; i -= 2){
-                response += highlightTopOrBottom(i, highlights, firstColor.get(0), highlightColors.get(1));
-                response += highlightTopOrBottom(i -1, highlights, firstColor.get(1), highlightColors.get(0));
-            }
-        }
-
-
-
 
         return SET_BG_COLOR_LIGHT_GREY + "   " + RESET_BG_COLOR + response + SET_BG_COLOR_LIGHT_GREY + "   " + RESET_BG_COLOR;
     }
 
     public String chessMiddle(String pieceType, String squareColor){
 
-            return squareColor + EMPTY + pieceType + EMPTY + RESET_BG_COLOR;
+        return squareColor + EMPTY + pieceType + EMPTY + RESET_BG_COLOR;
     }
 
     public String getPiece(ChessPiece[] boardRow, int location){
         String piece = "";
-        if(boardRow[location] != null && boardRow[location].getTeamColor() == ChessGame.TeamColor.WHITE){
+        if(boardRow[location] != null && boardRow[location].getTeamColor() == ChessGame.TeamColor.BLACK){
             piece += SET_TEXT_COLOR_RED;
         }
-        if(boardRow[location]!= null && boardRow[location].getTeamColor() == ChessGame.TeamColor.BLACK){
+        if(boardRow[location]!= null && boardRow[location].getTeamColor() == ChessGame.TeamColor.WHITE){
             piece += SET_TEXT_COLOR_BLUE;
         }
         piece += getChessLetter(boardRow, location) + RESET_TEXT_COLOR;
         return piece;
     }
 
-
-    public String rowChessMiddle(ChessPiece[] boardRow, ChessGame.TeamColor playerColor, Boolean whiteFirst, List<Integer> highlights){
+    public String rowChessMiddle(ChessPiece[] boardRow, ChessGame.TeamColor playerColor, Boolean whiteFirst, List<Integer> rowHighlights){
         // include null for empty squares PLEASE
         String sideLabels = sideLabelMaker(playerColor);
         List<String> rowPieces = new ArrayList<>();
         if(playerColor == ChessGame.TeamColor.BLACK){
+            rowHighlights = invertColumnAndSubtract(rowHighlights, true);
             for(int i = 7; i >= 0; i--){
                 rowPieces.add(getPiece(boardRow, i));
+
             }
         }else{
+            rowHighlights = invertColumnAndSubtract(rowHighlights, false);
             for(int i = 0; i < 8; i++){
                 rowPieces.add(getPiece(boardRow, i));
             }
         }
-        String highlightColorOne = null;
-        String highlightColorTwo = null;
         String squareColor = null;
         String altSquareColor = null;
+        String highlightColor = null;
+        String altHighlightColor = null;
         if(whiteFirst){
             squareColor = SET_BG_COLOR_WHITE;
-            highlightColorOne = SET_BG_COLOR_GREEN;
             altSquareColor = SET_BG_COLOR_BLACK;
-            highlightColorTwo = SET_BG_COLOR_DARK_GREEN;
+            highlightColor = SET_BG_COLOR_GREEN;
+            altHighlightColor = SET_BG_COLOR_DARK_GREEN;
         }
         else{
             squareColor = SET_BG_COLOR_BLACK;
-            highlightColorOne = SET_BG_COLOR_DARK_GREEN;
             altSquareColor= SET_BG_COLOR_WHITE;
-            highlightColorTwo = SET_BG_COLOR_GREEN;
+            highlightColor = SET_BG_COLOR_DARK_GREEN;
+            altHighlightColor = SET_BG_COLOR_GREEN;
         }
-
 
         String response = "";
         for(int i = 0; i < rowPieces.size(); i += 2){
-            if(highlights.isEmpty()){
-                response += chessMiddle(rowPieces.get(i), squareColor);
-                response += chessMiddle(rowPieces.get(i + 1), altSquareColor);
-            }
-            else{
-                if(highlights.contains(i)) {
-                    response += chessMiddle(rowPieces.get(i), highlightColorOne);
-                } else if (!highlights.contains(i)) {
-                    response += chessMiddle(rowPieces.get(i), squareColor);
-                }
-                if(highlights.contains(i + 1)){
-                    response += chessMiddle(rowPieces.get(i + 1), highlightColorTwo);
-                }
-                else if(!highlights.contains( i + 1)){
-                    response += chessMiddle(rowPieces.get(i + 1), altSquareColor);
-                }
-
-            }
-
+            response += highlightMiddle(rowHighlights, rowPieces.get(i), i, squareColor, highlightColor);
+            response += highlightMiddle(rowHighlights, rowPieces.get(i + 1), i+1, altSquareColor, altHighlightColor);
         }
 
         return sideLabels+ response + sideLabels;
+    }
+
+    private String highlightMiddle(List<Integer> sortedNumbers, String rowPiece, int colLocation, String color, String highlightColor){
+        String response = "";
+        if(!sortedNumbers.isEmpty() && sortedNumbers.contains(colLocation)){
+            response += chessMiddle(rowPiece, highlightColor);
+        }
+        else{
+            response += chessMiddle(rowPiece, color);
+        }
+        return response;
     }
 
     private String sideLabelMaker(ChessGame.TeamColor playerColor){
@@ -126,6 +108,25 @@ public class ChessSquare {
         String response = SET_BG_COLOR_LIGHT_GREY + " "+ SET_TEXT_COLOR_BLACK + boardNumbers.get(rowsPrinted) + " " +  RESET_BG_COLOR;
         rowsPrinted += 1;
         return response;
+    }
+
+    private List<Integer> invertColumnAndSubtract(List<Integer> columns, Boolean invert){
+        List<Integer> invertedColumns = new ArrayList<>();
+        if(columns == null || columns.isEmpty()){ // if there's nothing in the list
+            return invertedColumns;
+        }
+        List<Integer> invertedNumbers = Arrays.asList(7, 6, 5, 4, 3, 2, 1, 0);
+        if(invert){//if we're switching order as well as adjusting the system
+            for(Integer col: columns){
+                invertedColumns.add(invertedNumbers.get(col - 1));
+            }
+        }
+        else{ // if we're not, and we're just converting from the ChessPosition system to the usual 0-7
+            for(Integer col: columns){
+                invertedColumns.add(col - 1);
+            }
+        }
+        return invertedColumns;
     }
 
     private String getChessLetter(ChessPiece[] boardRow, int location){
@@ -155,22 +156,5 @@ public class ChessSquare {
             }
         }
         return " ";
-    }
-
-
-    public String highlightTopOrBottom(int location, List<Integer> highlights, String color, String highlightColor){
-        String response = "";
-        List<Integer> locations = new ArrayList<>();
-        if(highlights.isEmpty()){
-            response += chessTopOrBottom(color);
-        }
-        else{
-            if(highlights.contains(location)){
-                response += chessTopOrBottom(highlightColor);
-            }
-        }
-
-
-        return response;
     }
 }
