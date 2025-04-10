@@ -18,16 +18,37 @@ public class ChessSquare {
 
     public String rowTopOrBottom(Boolean whiteFirst, List<Integer> rowHighlights, ChessGame.TeamColor playerColor){
         String response = "";
+        if(playerColor == ChessGame.TeamColor.BLACK){
+            rowHighlights = invertColumnAndSubtract(rowHighlights, true);
+        }
+        else{
+            rowHighlights = invertColumnAndSubtract(rowHighlights, false);
+        }
         List<String> firstColor = Arrays.asList(SET_BG_COLOR_WHITE, SET_BG_COLOR_BLACK);
+        List<String> highlightColor = Arrays.asList(SET_BG_COLOR_GREEN, SET_BG_COLOR_DARK_GREEN);
         if(!whiteFirst){
             firstColor = firstColor.reversed();
+            highlightColor = highlightColor.reversed();
         }
-        for(int i = 0; i < 4; i++){
-            response += chessTopOrBottom(firstColor.get(0));
-            response += chessTopOrBottom(firstColor.get(1));
+        for(int i = 0; i < 8; i+= 2){
+            response += highlightRowTopOrBottom(i, rowHighlights, firstColor.get(0), highlightColor.get(0));
+            response += highlightRowTopOrBottom(i + 1, rowHighlights, firstColor.get(1), highlightColor.get(1));
         }
 
         return SET_BG_COLOR_LIGHT_GREY + "   " + RESET_BG_COLOR + response + SET_BG_COLOR_LIGHT_GREY + "   " + RESET_BG_COLOR;
+    }
+
+    private String highlightRowTopOrBottom(int col, List<Integer> sortedColumns, String color, String highlightColor){
+        String response = "";
+
+        if(!sortedColumns.isEmpty() && sortedColumns.contains(col)){
+            response += chessTopOrBottom(highlightColor);
+        }
+        else{
+            response += chessTopOrBottom(color);
+        }
+        return response;
+
     }
 
     public String chessMiddle(String pieceType, String squareColor){
