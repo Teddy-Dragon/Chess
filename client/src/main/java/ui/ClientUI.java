@@ -55,21 +55,20 @@ public class ClientUI {
         Boolean whiteFirst = true;
 
         if(playerColor == ChessGame.TeamColor.WHITE){
-            for(int i = 0; i < 8; i++){
-                List<Integer> rowHighlights = getHighlightsInRow(highlights, i, false);
+            for(int i = 0; i < 8; i++){ //We go from row 0 to row 7
+                List<Integer> rowHighlights = getHighlightsInRow(highlights, i, ChessGame.TeamColor.WHITE); // get a row, if there are valid moves in the highlights, get those as well
 
-
-                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.WHITE) + "\n";
-                displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.WHITE, whiteFirst, rowHighlights) + "\n";
-                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.WHITE) + "\n";
-                whiteFirst = !whiteFirst;
-                rowHighlights.clear();
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.WHITE) + "\n"; // makes the top of a row
+                displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.WHITE, whiteFirst, rowHighlights) + "\n"; // makes the middle of a row
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.WHITE) + "\n"; // makes the bottom of a row
+                whiteFirst = !whiteFirst; // tells the chessboard to flip color alternations
+                rowHighlights.clear(); // if there were any highlights for this row, delete so it doesn't interfere with the next row
             }
         }
         if(playerColor == ChessGame.TeamColor.BLACK){
 
-            for(int i = 7; i >= 0; i--){
-                List<Integer> rowHighlights = getHighlightsInRow(highlights, i, true);
+            for(int i = 7; i >= 0; i--){ // we go from row 7 to row 0
+                List<Integer> rowHighlights = getHighlightsInRow(highlights, i, ChessGame.TeamColor.BLACK);
 
                 displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.BLACK) + "\n";
                 displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.BLACK, whiteFirst, rowHighlights) + "\n";
@@ -99,24 +98,37 @@ public class ClientUI {
 
     }
 
-    public List<Integer> getHighlightsInRow(List<ChessPosition> toInvert, int location, Boolean invert){
+    public List<Integer> getHighlightsInRow(List<ChessPosition> toInvert, int location, ChessGame.TeamColor playerColor){
         List<Integer> response = new ArrayList<>();
-        List<Integer> invertedBoardNumbers = Arrays.asList(7, 6, 5, 4, 3, 2 , 1, 0);
+        List<Integer> invertedBoardNumbers = Arrays.asList(8, 7, 6, 5, 4, 3, 2 , 1);
         List<ChessPosition> toGoOver = toInvert;
-        if(invert = true) {
-            toGoOver.clear();
-            for (ChessPosition positions: toInvert) {
-                ChessPosition newPos = new ChessPosition(invertedBoardNumbers.get(positions.getRow() - 1), positions.getColumn());
-                toGoOver.add(newPos);
-            }
-        }
-            if(toInvert!= null){
-                for (ChessPosition highlight : toGoOver) {
-                    if (highlight.getRow() - 1 == location) {
-                        response.add(highlight.getColumn());
-                    }
+
+        if(playerColor == ChessGame.TeamColor.WHITE){
+            if(toInvert != null){
+                toGoOver = new ArrayList<>();
+                for(ChessPosition row: toInvert){
+                    toGoOver.add(new ChessPosition(invertedBoardNumbers.get(row.getRow()), row.getColumn()));
                 }
             }
+        }
+        if(playerColor == ChessGame.TeamColor.BLACK){
+            if(toInvert != null){
+                toGoOver = new ArrayList<>();
+                for(ChessPosition row: toInvert){
+                    toGoOver.add(new ChessPosition(row.getRow(), invertedBoardNumbers.get(row.getColumn())));
+                }
+            }
+        }
+        if(toGoOver != null){
+            for(ChessPosition row: toGoOver){
+                if(row.getRow() == location){
+                    response.add(row.getColumn());
+                }
+            }
+        }
+
+
+
         return response;
 
     };

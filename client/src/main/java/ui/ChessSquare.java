@@ -25,16 +25,18 @@ public class ChessSquare {
             highlightColors = highlightColors.reversed();
         }
         if(playerColor == ChessGame.TeamColor.WHITE){
-            for(int i = 0; i < 8; i+= 2){
-                response += highlightTopOrBottom(i, highlights, firstColor, highlightColors, playerColor);
-
+            for(int i = 0; i < 8; i += 2){
+                response += highlightTopOrBottom(i, highlights, firstColor.get(0), highlightColors.get(1));
+                response += highlightTopOrBottom(i + 1, highlights, firstColor.get(1), highlightColors.get(0));
             }
         }
         if(playerColor == ChessGame.TeamColor.BLACK){
             for(int i = 7; i >= 0; i -= 2){
-                response += highlightTopOrBottom(i, highlights, firstColor, highlightColors, playerColor);
+                response += highlightTopOrBottom(i, highlights, firstColor.get(0), highlightColors.get(1));
+                response += highlightTopOrBottom(i -1, highlights, firstColor.get(1), highlightColors.get(0));
             }
         }
+
 
 
 
@@ -61,14 +63,12 @@ public class ChessSquare {
 
     public String rowChessMiddle(ChessPiece[] boardRow, ChessGame.TeamColor playerColor, Boolean whiteFirst, List<Integer> highlights){
         // include null for empty squares PLEASE
-        List<Integer> invertedHighlights = new ArrayList<>();
         String sideLabels = sideLabelMaker(playerColor);
         List<String> rowPieces = new ArrayList<>();
         if(playerColor == ChessGame.TeamColor.BLACK){
             for(int i = 7; i >= 0; i--){
                 rowPieces.add(getPiece(boardRow, i));
             }
-            invertedHighlights = invertHighlights(highlights, true);
         }else{
             for(int i = 0; i < 8; i++){
                 rowPieces.add(getPiece(boardRow, i));
@@ -94,20 +94,20 @@ public class ChessSquare {
 
         String response = "";
         for(int i = 0; i < rowPieces.size(); i += 2){
-            if(invertedHighlights.isEmpty()){
+            if(highlights.isEmpty()){
                 response += chessMiddle(rowPieces.get(i), squareColor);
                 response += chessMiddle(rowPieces.get(i + 1), altSquareColor);
             }
             else{
-                if(invertedHighlights.contains(i)) {
+                if(highlights.contains(i)) {
                     response += chessMiddle(rowPieces.get(i), highlightColorOne);
-                } else if (!invertedHighlights.contains(i)) {
+                } else if (!highlights.contains(i)) {
                     response += chessMiddle(rowPieces.get(i), squareColor);
                 }
-                if(invertedHighlights.contains(i + 1)){
+                if(highlights.contains(i + 1)){
                     response += chessMiddle(rowPieces.get(i + 1), highlightColorTwo);
                 }
-                else if(!invertedHighlights.contains( i + 1)){
+                else if(!highlights.contains( i + 1)){
                     response += chessMiddle(rowPieces.get(i + 1), altSquareColor);
                 }
 
@@ -157,47 +157,17 @@ public class ChessSquare {
         return " ";
     }
 
-    public List<Integer> invertHighlights(List<Integer> highlights, Boolean invert){
-        List<Integer> highlightLocation = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8);
-        List<Integer> invertedLocations = new ArrayList<>();
-        if(invert){
-            highlightLocation = highlightLocation.reversed();
-        }
-        for(Integer highlight: highlights){
-            System.out.println("regular list -> " + highlight);
-            invertedLocations.add(highlightLocation.get(highlight));
-        }
-        for(Integer inversion: invertedLocations){
-            System.out.println("Inverted list "+inversion);
-        }
-        return invertedLocations;
-    }
 
-    public String highlightTopOrBottom(int location, List<Integer> highlights, List<String> colors, List<String> highlightColors, ChessGame.TeamColor playerColor){
+    public String highlightTopOrBottom(int location, List<Integer> highlights, String color, String highlightColor){
         String response = "";
         List<Integer> locations = new ArrayList<>();
-        if(playerColor == ChessGame.TeamColor.BLACK){
-            locations = invertHighlights(highlights, true);
-        }
-
-
-        if(highlights.isEmpty()){ // if we are not highlighting anything
-            response += chessTopOrBottom(colors.get(0));
-            response += chessTopOrBottom(colors.get(1));
+        if(highlights.isEmpty()){
+            response += chessTopOrBottom(color);
         }
         else{
-            if(locations.contains(location)){
-                response += chessTopOrBottom(highlightColors.get(0));
-            } else if (!locations.contains(location)) {
-                response += chessTopOrBottom(colors.get(0));
+            if(highlights.contains(location)){
+                response += chessTopOrBottom(highlightColor);
             }
-            if(locations.contains(location + 1)){
-                response += chessTopOrBottom(highlightColors.get(1));
-            } else if (!locations.contains(location + 1)) {
-                response += chessTopOrBottom(colors.get(1));
-            }
-
-
         }
 
 
