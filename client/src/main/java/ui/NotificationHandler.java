@@ -1,7 +1,7 @@
 package ui;
 
-import model.Notification;
+import websocket.messages.ServerMessage;
 
 public interface NotificationHandler {
-    public void notify(Notification notification);
+    public void notify(ServerMessage serverMessage);
 }

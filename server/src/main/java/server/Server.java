@@ -21,7 +21,7 @@ public class Server {
             System.out.println("Can't connect to Database -> " + e);
         }
 
-        Spark.webSocket("/ws", WebSocketHandler.class);
+        Spark.webSocket("/ws", new WebSocketHandler(authMap, gameMap));
         Spark.post("/user", (request, response) -> new UserHandler(userMap, authMap).handle(request, response)); //register
         Spark.post("/session", (request, response) -> new SessionHandler(userMap, authMap).handle(request, response)); //login
         Spark.delete("/session", (request, response) -> new SessionHandler(userMap, authMap).handle(request, response)); //logout

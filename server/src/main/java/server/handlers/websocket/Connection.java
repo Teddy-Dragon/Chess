@@ -1,5 +1,11 @@
 package server.handlers.websocket;
+
+import chess.ChessGame;
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.ServerMessage;
+
+import java.io.IOException;
 
 public class Connection {
     public String username;
@@ -9,7 +15,15 @@ public class Connection {
         this.session = session;
     }
     public void send(String message) throws Exception{
-        session.getRemote().sendString(message);
+        ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        serverMessage.setMessage(message);
+        session.getRemote().sendString(new Gson().toJson(serverMessage));
+    }
+    public void update(String message, ChessGame game) throws IOException {
+        ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+        serverMessage.setGame(game);
+        serverMessage.setMessage(message);
+        session.getRemote().sendString(new Gson().toJson(serverMessage));
     }
 
 

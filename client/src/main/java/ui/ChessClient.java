@@ -20,6 +20,7 @@ public class ChessClient {
     private ClientServerFacade client;
     private ClientWebsocketFacade websocketClient;
     private NotificationHandler notificationHandler;
+    private ChessGame.TeamColor chessBoardPerspective;
     public ChessClient(String serverUrl, NotificationHandler notificationHandler){
         this.client = new ClientServerFacade(serverUrl);
         this.notificationHandler = notificationHandler;
@@ -142,13 +143,13 @@ public class ChessClient {
             }
             int gameID = games.games().get(Integer.parseInt(parameters[0]) - 1).gameID();
             String playerColor = parameters[1];
+            readTeamColor(playerColor);
             try{
                 websocketClient = new ClientWebsocketFacade(serverURL, notificationHandler);
             }catch(Exception ex){
                 System.out.println("Websocket Error");
             }
                 GameData gameData = client.getGameByID(gameID);
-                System.out.println(getGame(playerColor, gameData, null));
                 return inGame(new JoinRequest(playerColor, gameID), false);
         }catch(Exception e){
             return "";
@@ -157,7 +158,6 @@ public class ChessClient {
     }
 
     public String makeMove(String[] parameters, int gameID){
-        List<String> boardLetters = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
         if(parameters.length < 2 || parameters.length > 3){
             return "Incorrect number of arguements";
         }
@@ -174,7 +174,7 @@ public class ChessClient {
             row = Integer.parseInt(startLetter[0]);
         }
         else{
-            col = readChessMove(startLetter[0]);
+            col = readChessMove(startLetter[0]) + 1;
         }
         if(readChessMove(startLetter[1]) == 1000){
             row = Integer.parseInt(startLetter[1]);
@@ -188,7 +188,7 @@ public class ChessClient {
             row = Integer.parseInt(endLetter[0]);
         }
         else{
-            col = readChessMove(endLetter[0]);
+            col = readChessMove(endLetter[0]) + 1;
         }
         if(readChessMove(endLetter[1]) == 1000){
             row = Integer.parseInt(endLetter[1]);
@@ -210,12 +210,12 @@ public class ChessClient {
                 move = new ChessMove(startPosition, endPosition, pieceType);
             }
         }
-        websocketClient.makeMove(new MakeMoveCommand(MakeMoveCommand.CommandType.MAKE_MOVE, client.getAuth().toString(), gameID, move));
-
-
-
-
-        return null;
+        try{
+            websocketClient.makeMove(new MakeMoveCommand(MakeMoveCommand.CommandType.MAKE_MOVE, client.getAuth().toString(), gameID, move));}
+        catch (Exception e){
+            System.out.println("Problem with making a move");
+        }
+        return "";
     }
     public String highlightValid(String[] parameters, JoinRequest request, Boolean player){
         if(parameters.length != 1){
@@ -308,7 +308,15 @@ public class ChessClient {
                 if(!player){
                     return inGameHelp(player);
                 }else{
-                    return "resign";
+                    System.out.println("Are you sure?");
+                    Scanner scanner = new Scanner(System.in);
+                    String line = scanner.nextLine();
+                    if(line.equalsIgnoreCase("yes")){
+                        return "resign";
+                    }
+                    else{
+                        return "";
+                    }
                 }
             }
             default -> {
@@ -324,24 +332,34 @@ public class ChessClient {
         try{
             websocketClient.connect(new UserGameCommand(UserGameCommand.CommandType.CONNECT, client.
                     getAuth().toString(), request.gameID()));
+            if(player){
+                System.out.println(SET_TEXT_COLOR_MAGENTA + "Successfully joined game as " + request.playerColor()+ "\n");
+            }
+            else{
+                System.out.println(SET_TEXT_COLOR_MAGENTA + "Watching as " + request.playerColor());
+            }
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
         while(!input.equals("leave") && !Objects.equals(input, "resign")){
             String line = scanner.nextLine();
             input = inGameEval(line, request, player);
-            System.out.println(SET_TEXT_COLOR_MAGENTA + input + RESET_TEXT_COLOR);
+            System.out.println(SET_TEXT_COLOR_LIGHT_GREY + ">>>" + input + "<<<" + RESET_TEXT_COLOR);
         }
         if(input.equals("leave")){
             try{
-                client.removePlayer(request);
-                return SET_TEXT_COLOR_MAGENTA + "Left Game" + RESET_TEXT_COLOR;
+                UserGameCommand userGameCommand = new UserGameCommand(UserGameCommand.CommandType.LEAVE, client.getAuth().toString(), request.gameID());
+                websocketClient.disconnect(userGameCommand);
+                websocketClient = null;
+                return SET_TEXT_COLOR_MAGENTA + "Left Game" + RESET_TEXT_COLOR + "\n" + helpEval();
             } catch(Exception e){
                 return SET_TEXT_COLOR_RED + "Something went wrong" + RESET_TEXT_COLOR;
             }
         }
-        if (Objects.equals(input, "resign")) {
-            return null;
+        if(Objects.equals(input, "resign")) {
+            websocketClient.disconnect(new UserGameCommand(UserGameCommand.CommandType.RESIGN, client.getAuth().toString(), request.gameID()));
+            websocketClient = null;
+            return SET_TEXT_COLOR_MAGENTA + "Resigned" + RESET_TEXT_COLOR + "\n" + helpEval();
         }
 
 
@@ -350,34 +368,35 @@ public class ChessClient {
 
     public String joinEval(String[] parameters){
         try{
-        ListModel games = new ListModel(client.listGames().games());
-        if(parameters.length != 2){
-            return "Wrong number of arguments";
-        }
-        if(!parameters[0].matches("[0-9]") && Integer.parseInt(parameters[0]) > games.games().size()){
-            return "Not a game number";
-        }
-        int gameNumber = games.games().get(Integer.parseInt(parameters[0]) - 1).gameID();
-        if(!parameters[1].matches("white|black")){
-            return "Not a playable team";
-        }
-        String playerColor = parameters[1];
+            ListModel games = new ListModel(client.listGames().games());
+            if(parameters.length != 2){
+                return "Wrong number of arguments";
+            }
+            if(!parameters[0].matches("[0-9]") && Integer.parseInt(parameters[0]) > games.games().size()){
+                return "Not a game number";
+            }
+            int gameNumber = games.games().get(Integer.parseInt(parameters[0]) - 1).gameID();
+            if(!parameters[1].matches("white|black")){
+                return "Not a playable team";
+            }
 
+            String playerColor = parameters[1];
+            readTeamColor(playerColor);
             GameData gameInfo = client.getGameByID(gameNumber);
             JoinRequest request = new JoinRequest(playerColor, gameNumber);
             client.joinGame(request);
+
             try{
                 websocketClient = new ClientWebsocketFacade(serverURL, notificationHandler);
             }catch(Exception ex){
                 System.out.println("Websocket Error");
             }
-            System.out.print( "Successfully joined " + gameInfo.gameName() + " as " + playerColor + "\n" + getGame(playerColor, gameInfo, null));
+
             return inGame(request, true);
         }
         catch(Exception e){
             return "Error with Game";
         }
-
 
     }
     public String getGame(String playerColor, GameData gameData, List<ChessPosition> highlights){
@@ -388,7 +407,7 @@ public class ChessClient {
         else{
             playerTeam = ChessGame.TeamColor.BLACK;
         }
-        return new ChessBoardDisplay(client.getAuth()).chessBoardDisplay(playerTeam, gameData, highlights);
+        return new ChessBoardDisplay().chessBoardDisplay(playerTeam, gameData.game(), highlights);
 
     }
     public String createEval(String[] parameters){
@@ -486,6 +505,18 @@ public class ChessClient {
         }
         return null;
 
+    }
+    public String printChessGame(ChessGame game){
+        return new ChessBoardDisplay().chessBoardDisplay(chessBoardPerspective, game, null);
+
+    }
+    private void readTeamColor(String playerColor){
+        if(playerColor.equalsIgnoreCase("white")){
+            chessBoardPerspective = ChessGame.TeamColor.WHITE;
+        }
+        if(playerColor.equalsIgnoreCase("black")){
+            chessBoardPerspective = ChessGame.TeamColor.BLACK;
+        }
     }
 
 

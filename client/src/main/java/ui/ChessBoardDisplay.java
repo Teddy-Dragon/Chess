@@ -3,7 +3,6 @@ package ui;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
-import model.GameData;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,39 +18,39 @@ public class ChessBoardDisplay {
 
 
 
-    public String chessBoardDisplay(ChessGame.TeamColor playerColor, GameData gameInfo, List<ChessPosition> highlights){
+    public String chessBoardDisplay(ChessGame.TeamColor playerColor, ChessGame game, List<ChessPosition> highlights){
         if(playerColor == ChessGame.TeamColor.WHITE){
             textColor = SET_TEXT_COLOR_BLUE;
         }
         else{
             textColor = SET_TEXT_COLOR_RED;
         }
-        ChessPiece[][] board = gameInfo.game().getBoard().getSquares();
+        ChessPiece[][] board = game.getBoard().getSquares();
 
         ChessSquare row = new ChessSquare();
         String displayChessBoard = "";
         displayChessBoard += "\n" + SET_TEXT_COLOR_BLACK + topLabel(playerColor);
         Boolean whiteFirst = true;
 
-        if(playerColor == ChessGame.TeamColor.WHITE){
+        if(playerColor == ChessGame.TeamColor.BLACK){
             for(int i = 0; i < 8; i++){ //We go from row 0 to row 7
                 List<Integer> rowHighlights = getHighlightsInRow(highlights, i, true); // get a row, if there are valid moves in the highlights, get those as well
 
-                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.WHITE) + "\n"; // makes the top of a row
-                displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.WHITE, whiteFirst, rowHighlights) + "\n"; // makes the middle of a row
-                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.WHITE) + "\n"; // makes the bottom of a row
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.BLACK) + "\n"; // makes the top of a row
+                displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.BLACK, whiteFirst, rowHighlights) + "\n"; // makes the middle of a row
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.BLACK) + "\n"; // makes the bottom of a row
                 whiteFirst = !whiteFirst; // tells the chessboard to flip color alternations
                 rowHighlights.clear(); // if there were any highlights for this row, delete so it doesn't interfere with the next row
             }
         }
-        if(playerColor == ChessGame.TeamColor.BLACK){
+        if(playerColor == ChessGame.TeamColor.WHITE){
 
             for(int i = 7; i >= 0; i--){ // we go from row 7 to row 0
-                List<Integer> rowHighlights = getHighlightsInRow(highlights, i, true);
+                List<Integer> rowHighlights = getHighlightsInRow(highlights, i, false);
 
-                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.BLACK) + "\n";
-                displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.BLACK, whiteFirst, rowHighlights) + "\n";
-                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.BLACK) + "\n";
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.WHITE) + "\n";
+                displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.WHITE, whiteFirst, rowHighlights) + "\n";
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.WHITE) + "\n";
                 whiteFirst = !whiteFirst;
             }
         }

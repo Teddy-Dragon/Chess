@@ -38,7 +38,6 @@ public class PlayHandler implements Route {
         if(Objects.equals(request.requestMethod(), "PUT")){
             JoinRequest playerRequest = new Gson().fromJson(request.body(), JoinRequest.class);
             GameData databaseResponse = verifyExist(playerRequest.gameID(), response);
-            System.out.println(playerRequest.playerColor());
             if(Objects.equals(playerRequest.playerColor(), "white")){
                 GameData newGame = new GameData(playerRequest.gameID(), null,
                         databaseResponse.blackUsername(), databaseResponse.gameName(), databaseResponse.game());

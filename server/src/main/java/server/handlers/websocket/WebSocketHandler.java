@@ -5,11 +5,8 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
-import dataaccess.SQLAuthDAO;
-import dataaccess.SQLGameDAO;
 import model.AuthData;
 import model.GameData;
-import model.Notification;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -26,17 +23,20 @@ public class WebSocketHandler {
     private AuthDAO authMap;
     private GameDAO gameMap;
 
+    public WebSocketHandler(AuthDAO authMap, GameDAO gameMap){
+        this.authMap = authMap;
+        this.gameMap = gameMap;
+    }
+
     @OnWebSocketMessage
     public void onMessage(Session session, String message){
 
         try{
-            authMap = new SQLAuthDAO();
-            gameMap = new SQLGameDAO();
             UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
             switch(userGameCommand.getCommandType()){
                 case CONNECT -> connectHandler(session, userGameCommand.getAuthToken(), userGameCommand.getGameID());
-                case LEAVE -> leaveHandler();
-                case RESIGN -> resignHandler();
+                case LEAVE -> leaveHandler(userGameCommand);
+                case RESIGN -> resignHandler(userGameCommand);
                 case MAKE_MOVE -> {
                     MakeMoveCommand moveCommand = new Gson().fromJson(message, MakeMoveCommand.class);
                     makeMoveHandler(moveCommand, session);
@@ -51,11 +51,24 @@ public class WebSocketHandler {
     public void connectHandler(Session session, String authToken, Integer gameID){
         try{
             AuthData playerInfo = authMap.getAuth(UUID.fromString(authToken));
-            if(gameMap.getGameByID(gameID) == null || playerInfo == null){
-                session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR)));
+            GameData gameData = gameMap.getGameByID(gameID);
+            if(gameMap.getGameByID(gameID) == null){
+                ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+                serverMessage.setErrorMessage("Error: Game does not exist");
+                session.getRemote().sendString(new Gson().toJson(serverMessage));
+                return;
             }
-            connectionManager.add(playerInfo.username(), session);
-            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME)));
+            if(playerInfo == null){
+                ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+                serverMessage.setErrorMessage("Error: Not Authorized");
+                session.getRemote().sendString(new Gson().toJson(serverMessage));
+            }
+            else{
+                connectionManager.add(playerInfo.username(), session, gameData.gameID(), gameData);
+                ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+                serverMessage.setGame(gameData.game());
+                session.getRemote().sendString(new Gson().toJson(serverMessage));
+            }
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -68,26 +81,37 @@ public class WebSocketHandler {
             ChessGame game = gameInfo.game();
             ChessBoard board = game.getBoard();
             ChessGame.TeamColor pieceColor = game.getBoard().getPiece(moveCommand.getMove().getStartPosition()).getTeamColor();
+            if(gameInfo.game().getIsGameOver()){
+                ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+                serverMessage.setErrorMessage("Game is already over");
+                session.getRemote().sendString(new Gson().toJson(serverMessage));
+                return;
+            }
             if(pieceColor == ChessGame.TeamColor.WHITE){
+                if(game.getTeamTurn() != ChessGame.TeamColor.WHITE){
+                    ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+                    serverMessage.setErrorMessage("It is not your turn!");
+                    session.getRemote().sendString(new Gson().toJson(serverMessage));
+                }
                 if(Objects.equals(playerInfo.username(), gameInfo.whiteUsername())){
-                    if(game.isAValidMove(moveCommand.getMove())){
-                        board.commitMove(moveCommand.getMove(), board.getPiece(moveCommand.getMove().getStartPosition()));
-                        gameMap.updateGame(moveCommand.getGameID(), new GameData(moveCommand.getGameID(),
-                                gameInfo.whiteUsername(), gameInfo.blackUsername(), gameInfo.gameName() ,game));
-                    }
+                    commitMove(game, moveCommand, gameInfo, playerInfo, session);
+                    checkGameStatus(moveCommand);
                 }
             }
-            if(pieceColor == ChessGame.TeamColor.BLACK){
+            else if(pieceColor == ChessGame.TeamColor.BLACK){
+                if(game.getTeamTurn() != ChessGame.TeamColor.BLACK){
+                    ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+                    serverMessage.setErrorMessage("It is not your turn!");
+                    session.getRemote().sendString(new Gson().toJson(serverMessage));
+                }
                 if(Objects.equals(playerInfo.username(), gameInfo.blackUsername())){
-                    if(game.isAValidMove(moveCommand.getMove())){
-                        board.commitMove(moveCommand.getMove(), board.getPiece(moveCommand.getMove().getStartPosition()));
-                        gameMap.updateGame(moveCommand.getGameID(), new GameData(moveCommand.getGameID(),
-                                gameInfo.whiteUsername(), gameInfo.blackUsername(), gameInfo.gameName() ,game));
-                    }
+                    commitMove(game, moveCommand, gameInfo, playerInfo, session);
+                    checkGameStatus(moveCommand);
                 }
             }else{
-                Notification notification = new Notification(new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME), gameMap.getGameByID(gameInfo.gameID()));
-                session.getRemote().sendString(new Gson().toJson(notification));
+                ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+                serverMessage.setErrorMessage("Error: move not valid");
+                session.getRemote().sendString(new Gson().toJson(serverMessage));
             }
 
 
@@ -96,9 +120,74 @@ public class WebSocketHandler {
         }
 
     }
-    public void leaveHandler(){}
-    public void resignHandler(){}
+    public void leaveHandler(UserGameCommand userGameCommand) throws Exception {
+        AuthData userInfo = authMap.getAuth(UUID.fromString(userGameCommand.getAuthToken()));
+        GameData gameData = gameMap.getGameByID(userGameCommand.getGameID());
+        GameData updatedData;
+        if(Objects.equals(userInfo.username(), gameData.blackUsername())){
+            updatedData = new GameData(gameData.gameID(), gameData.whiteUsername(), null, gameData.gameName(), gameData.game());
+            gameMap.updateGame(gameData.gameID(), updatedData);
+        }
+        if(Objects.equals(userInfo.username(), gameData.whiteUsername())) {
+            updatedData = new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game());
+            gameMap.updateGame(gameData.gameID(), updatedData);
+        }
+        connectionManager.remove(userInfo.username(), userGameCommand.getGameID());
+    }
+    public void resignHandler(UserGameCommand userGameCommand) throws Exception {
+        GameData gameData = gameMap.getGameByID(userGameCommand.getGameID());
+        AuthData resigningPlayer = authMap.getAuth(UUID.fromString(userGameCommand.getAuthToken()));
 
+        ChessGame game = gameData.game();
+        game.setIsGameOver(true);
+        GameData updatedGame = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
+        gameMap.updateGame(gameData.gameID(), updatedGame);
+        connectionManager.remove(resigningPlayer.username(), userGameCommand.getGameID());
+        connectionManager.broadcastLobby(resigningPlayer.username(), resigningPlayer.username() + " has resigned, game is over!", gameData.gameID());
+
+
+    }
+    public void checkGameStatus(MakeMoveCommand moveCommand) throws Exception {
+        GameData gameData = gameMap.getGameByID(moveCommand.getGameID());
+        String isInCheck = "";
+        String isCheckmate = "";
+        String checkMessage = isInCheck + " is in Check!";
+        String mateMessage = isCheckmate + " is in Checkmate, good game!";
+        if(gameData.game().isInCheck(ChessGame.TeamColor.WHITE)){
+            isInCheck = gameData.whiteUsername();
+        }
+        else if(gameData.game().isInCheck(ChessGame.TeamColor.BLACK)){
+            isInCheck = gameData.blackUsername();
+        }
+        if(gameData.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
+            isCheckmate = gameData.whiteUsername();
+        } else if (gameData.game().isInCheckmate(ChessGame.TeamColor.BLACK)) {
+            isCheckmate = gameData.blackUsername();
+        }
+
+        if(!isInCheck.isEmpty() && isCheckmate.isEmpty()){
+            connectionManager.broadcastLobby("", isInCheck + checkMessage, gameData.gameID() );
+        }
+        if(!isCheckmate.isEmpty()){
+            ChessGame game = gameData.game();
+            game.setIsGameOver(true);
+            GameData updatedGame = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
+            gameMap.updateGame(gameData.gameID(), updatedGame);
+            connectionManager.broadcastLobby("", isCheckmate + mateMessage, gameData.gameID());
+        }
+
+    }
+    private void commitMove(ChessGame game, MakeMoveCommand moveCommand, GameData gameInfo, AuthData playerInfo, Session session) throws Exception {;
+        if(game.isAValidMove(moveCommand.getMove())){
+            game.makeMove(moveCommand.getMove());
+            gameMap.updateGame(moveCommand.getGameID(), new GameData(moveCommand.getGameID(),
+                    gameInfo.whiteUsername(), gameInfo.blackUsername(), gameInfo.gameName() ,game));
+            ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+            serverMessage.setGame(gameMap.getGameByID(gameInfo.gameID()).game());
+            session.getRemote().sendString(new Gson().toJson(serverMessage));
+            connectionManager.gameUpdate(playerInfo.username(), gameInfo.gameID(), game, moveCommand.getMove());
+        }
+    }
 
 
 }

@@ -3,6 +3,7 @@ package ui;
 import com.google.gson.Gson;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -25,8 +26,8 @@ public class ClientWebsocketFacade extends Endpoint {
             @Override
             public void onMessage(String message){
 
-                model.Notification notification = new Gson().fromJson(message, model.Notification.class);
-                notificationHandler.notify(notification);
+                ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+                notificationHandler.notify(serverMessage);
 
 
             }
@@ -38,7 +39,6 @@ public class ClientWebsocketFacade extends Endpoint {
 
 
     public void connect(UserGameCommand userGameCommand) throws IOException {
-        System.out.println(SET_TEXT_COLOR_WHITE + "Connecting to game..." + RESET_TEXT_COLOR);
         try{
             this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));}
         catch(Exception e){
@@ -56,6 +56,15 @@ public class ClientWebsocketFacade extends Endpoint {
             System.out.println("Error trying to make move");
         }
     }
+    public void disconnect(UserGameCommand userGameCommand){
+        try{
+            this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
+        }catch(Exception e){
+            System.out.println("Error leaving websocket " + e.getMessage());
+        }
+
+    }
+
 
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }

@@ -58,10 +58,10 @@ public class ChessSquare {
 
     public String getPiece(ChessPiece[] boardRow, int location){
         String piece = "";
-        if(boardRow[location] != null && boardRow[location].getTeamColor() == ChessGame.TeamColor.BLACK){
+        if(boardRow[location] != null && boardRow[location].getTeamColor() == ChessGame.TeamColor.WHITE){
             piece += SET_TEXT_COLOR_RED;
         }
-        if(boardRow[location]!= null && boardRow[location].getTeamColor() == ChessGame.TeamColor.WHITE){
+        if(boardRow[location]!= null && boardRow[location].getTeamColor() == ChessGame.TeamColor.BLACK){
             piece += SET_TEXT_COLOR_BLUE;
         }
         piece += getChessLetter(boardRow, location) + RESET_TEXT_COLOR;
