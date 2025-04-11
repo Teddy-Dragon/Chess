@@ -88,11 +88,6 @@ public class ClientServerFacade {
         var path = "/db";
         makeRequest("DELETE", path, null, null);
     }
-    public void removePlayer(JoinRequest request) throws Exception{
-        var path = "/play";
-        makeRequest("PUT", path, request, null);
-    }
-
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception{
         HttpURLConnection http = null;
         try{

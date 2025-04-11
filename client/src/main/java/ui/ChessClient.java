@@ -27,7 +27,6 @@ public class ChessClient {
         this.serverURL = serverUrl;
 
     }
-
     public String eval(String input){
        try{
             var tokens = input.toLowerCase().split(" ");
@@ -53,8 +52,6 @@ public class ChessClient {
        }catch(Exception e){
            return e.toString();
        }
-
-
     }
     public String quitEval(){
         if(client.getAuth() != null){
@@ -101,7 +98,6 @@ public class ChessClient {
         }catch(Exception e){
             return "";
         }
-
     }
     public String loginEval(String[] parameters){
         try{
@@ -122,9 +118,6 @@ public class ChessClient {
         return "Error logging in! Try again!";}catch(Exception e){
             return "";
         }
-
-
-
     }
     public String watchEval(String[] parameters){
         try{
@@ -156,7 +149,6 @@ public class ChessClient {
         }
 
     }
-
     public String makeMove(String[] parameters, int gameID){
         if(parameters.length < 2 || parameters.length > 3){
             return "Incorrect number of arguements";
@@ -361,8 +353,6 @@ public class ChessClient {
             websocketClient = null;
             return SET_TEXT_COLOR_MAGENTA + "Resigned" + RESET_TEXT_COLOR + "\n" + helpEval();
         }
-
-
         return null;
     }
 
@@ -379,19 +369,16 @@ public class ChessClient {
             if(!parameters[1].matches("white|black")){
                 return "Not a playable team";
             }
-
             String playerColor = parameters[1];
             readTeamColor(playerColor);
             GameData gameInfo = client.getGameByID(gameNumber);
             JoinRequest request = new JoinRequest(playerColor, gameNumber);
             client.joinGame(request);
-
             try{
                 websocketClient = new ClientWebsocketFacade(serverURL, notificationHandler);
             }catch(Exception ex){
                 System.out.println("Websocket Error");
             }
-
             return inGame(request, true);
         }
         catch(Exception e){
@@ -408,7 +395,6 @@ public class ChessClient {
             playerTeam = ChessGame.TeamColor.BLACK;
         }
         return new ChessBoardDisplay().chessBoardDisplay(playerTeam, gameData.game(), highlights);
-
     }
     public String createEval(String[] parameters){
         try{
@@ -425,7 +411,6 @@ public class ChessClient {
             return "";
         }
     }
-
     public String logoutEval(){
         try{
         if(authorization != null){
@@ -438,8 +423,6 @@ public class ChessClient {
         }catch(Exception e){
             return "";
         }
-
-
     }
     public String listEval(){
         try{
@@ -455,14 +438,11 @@ public class ChessClient {
             consoleResponse += RESET_TEXT_BOLD_FAINT + "Game name: " + gameList.get(i).gameName() + " ";
             consoleResponse += SET_TEXT_COLOR_RED + "White username: " + gameList.get(i).whiteUsername() + " " + RESET_TEXT_COLOR;
             consoleResponse += SET_TEXT_COLOR_BLUE + "Black username: " + gameList.get(i).blackUsername() + " " + RESET_TEXT_COLOR + "\n";
-
         }
-
         return consoleResponse;}catch(Exception e){
             return "";
         }
     }
-
     public String helpEval(){
         return new HelpDisplay(authorization).helpDisplay();
     }
@@ -476,9 +456,7 @@ public class ChessClient {
 
         return null;
     }
-
     public int readChessMove(String letter){
-
         List<String> boardLetters = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
         if(letter.matches("[A-z]")){
             for(int i = 0; i < boardLetters.size(); i++){
@@ -508,7 +486,6 @@ public class ChessClient {
     }
     public String printChessGame(ChessGame game){
         return new ChessBoardDisplay().chessBoardDisplay(chessBoardPerspective, game, null);
-
     }
     private void readTeamColor(String playerColor){
         if(playerColor.equalsIgnoreCase("white")){
@@ -518,6 +495,4 @@ public class ChessClient {
             chessBoardPerspective = ChessGame.TeamColor.BLACK;
         }
     }
-
-
 }
