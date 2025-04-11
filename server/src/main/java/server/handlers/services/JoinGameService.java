@@ -30,11 +30,11 @@ public class JoinGameService {
         if(!Objects.equals(playerColor.toUpperCase(), "WHITE") && !Objects.equals(playerColor.toUpperCase(), "BLACK")){
             throw new Exception("Error: bad request");
         }
-        if(game.blackUsername() != null && Objects.equals(playerColor.toUpperCase(), "BLACK")){
+        if((game.blackUsername() != null && !game.blackUsername().equals(username)) && Objects.equals(playerColor.toUpperCase(), "BLACK")){
             throw new Exception("Error: already taken");
 
         }
-        if(game.whiteUsername() != null && Objects.equals(playerColor.toUpperCase(), "WHITE")){
+        if((game.whiteUsername() != null && !Objects.equals(game.whiteUsername(), username)) && Objects.equals(playerColor.toUpperCase(), "WHITE")){
             throw new Exception("Error: already taken");
         }
         if(Objects.equals(playerColor.toUpperCase(), "WHITE")) {
