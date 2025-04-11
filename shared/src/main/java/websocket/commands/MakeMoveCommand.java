@@ -16,10 +16,8 @@ public class MakeMoveCommand{
         this.move = move;
     }
     public enum CommandType {
-        CONNECT,
         MAKE_MOVE,
-        LEAVE,
-        RESIGN
+
     }
 
     public CommandType getCommandType() {

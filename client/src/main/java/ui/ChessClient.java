@@ -2,21 +2,29 @@ package ui;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import model.*;
+import websocket.commands.MakeMoveCommand;
+import websocket.commands.UserGameCommand;
 
+import java.io.IOException;
 import java.util.*;
 
 import static ui.EscapeSequences.*;
 
-public class ClientEval {
-    private String input;
+public class ChessClient {
     private UUID authorization;
+    private String username;
+    private String serverURL;
     private ClientServerFacade client;
-    public ClientEval(UUID authorization, ClientServerFacade client){
-        this.input = input;
-        this.authorization = authorization;
-        this.client = client;
+    private ClientWebsocketFacade websocketClient;
+    private NotificationHandler notificationHandler;
+    public ChessClient(String serverUrl, NotificationHandler notificationHandler){
+        this.client = new ClientServerFacade(serverUrl);
+        this.notificationHandler = notificationHandler;
+        this.serverURL = serverUrl;
+
     }
 
     public String eval(String input){
@@ -134,21 +142,82 @@ public class ClientEval {
             }
             int gameID = games.games().get(Integer.parseInt(parameters[0]) - 1).gameID();
             String playerColor = parameters[1];
-
-                return getGame(playerColor, client.getGameByID(gameID), null);
+            try{
+                websocketClient = new ClientWebsocketFacade(serverURL, notificationHandler);
+            }catch(Exception ex){
+                System.out.println("Websocket Error");
+            }
+                GameData gameData = client.getGameByID(gameID);
+                System.out.println(getGame(playerColor, gameData, null));
+                return inGame(new JoinRequest(playerColor, gameID), false);
         }catch(Exception e){
             return "";
         }
 
     }
 
-    public String makeMove(String[] move){
+    public String makeMove(String[] parameters, int gameID){
+        List<String> boardLetters = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
+        if(parameters.length < 2 || parameters.length > 3){
+            return "Incorrect number of arguements";
+        }
+        if(!parameters[0].matches("[A-z][0-8]") && !parameters[0].matches("[0-8][A-z]")){
+            return "Invalid start position";
+        }
+        if(!parameters[1].matches("[A-z][0-8]") && !parameters[1].matches("[0-8][A-z]")){
+            return "Invalid end position";
+        }
+        var startLetter = parameters[0].split("");
+        int col = 0;
+        int row = 0;
+        if(readChessMove(startLetter[0]) == 1000){
+            row = Integer.parseInt(startLetter[0]);
+        }
+        else{
+            col = readChessMove(startLetter[0]);
+        }
+        if(readChessMove(startLetter[1]) == 1000){
+            row = Integer.parseInt(startLetter[1]);
+        }
+        else{
+            col = readChessMove(startLetter[1]);
+        }
+        ChessPosition startPosition = new ChessPosition(row, col);
+        var endLetter = parameters[1].split("");
+        if(readChessMove(endLetter[0]) == 1000){
+            row = Integer.parseInt(endLetter[0]);
+        }
+        else{
+            col = readChessMove(endLetter[0]);
+        }
+        if(readChessMove(endLetter[1]) == 1000){
+            row = Integer.parseInt(endLetter[1]);
+        }
+        else{
+            col = readChessMove(endLetter[1]);
+        }
+        ChessPosition endPosition = new ChessPosition(row, col);
+        ChessMove move;
+        if(parameters.length == 2) {
+            move = new ChessMove(startPosition, endPosition, null);
+        }
+        else{
+            ChessPiece.PieceType pieceType = validatePromotion(parameters[2]);
+            if(pieceType == null){
+                return "Invalid promotion piece";
+            }
+            else{
+                move = new ChessMove(startPosition, endPosition, pieceType);
+            }
+        }
+        websocketClient.makeMove(new MakeMoveCommand(MakeMoveCommand.CommandType.MAKE_MOVE, client.getAuth().toString(), gameID, move));
+
 
 
 
         return null;
     }
-    public String highlightValid(String[] parameters, JoinRequest request){
+    public String highlightValid(String[] parameters, JoinRequest request, Boolean player){
         if(parameters.length != 1){
             return "Incorrect number of arguments";
         }
@@ -186,8 +255,8 @@ public class ClientEval {
             for(int i = 0; i < validMoves.size(); i++){
                 endPositions.add(validMoves.get(i).getEndPosition());
             }
-            System.out.println(getGame(request.playerColor(), gameData, endPositions));
-            return inGame(request);
+            return getGame(request.playerColor(), gameData, endPositions);
+
 
         }
         catch(Exception e){
@@ -195,17 +264,20 @@ public class ClientEval {
         }
     }
 
-    public String inGameHelp(){
+    public String inGameHelp(Boolean player){
         String line = "" + SET_TEXT_COLOR_MAGENTA;
+
+        if(player){
+            line += "Type 'move' and then <start location> <end location> <promotion if applicable> to make a move \n";
+            line += "Type 'resign' to forfeit and end the game \n";
+        }
         line += "Type 'redraw' to redraw the current chessboard \n";
         line += "Type 'highlight' to highlight valid moves \n";
-        line += "Type 'move' and then <start location> <end location> <promotion if applicable> to make a move \n";
-        line += "Type 'leave' to leave the current game (Someone else can join your spot!) \n";
-        line += "Type 'resign' to forfeit and end the game \n" + RESET_TEXT_COLOR;
+        line += "Type 'leave' to leave the current game \n" + RESET_TEXT_COLOR;
         return line;
     }
 
-    public String inGameEval(String input, JoinRequest request){
+    public String inGameEval(String input, JoinRequest request, Boolean player){
         var tokens = input.toLowerCase().split(" ");
         var parameters = Arrays.copyOfRange(tokens, 1, tokens.length);
         if(tokens.length < 1){
@@ -219,34 +291,45 @@ public class ClientEval {
                     return "There was an issue";
                 }
             }
-            case "help" -> {
-                return inGameHelp();
-            }
             case "highlight" -> {
-                return highlightValid(parameters, request);
+                return highlightValid(parameters, request, player);
             }
             case "move" -> {
-                return makeMove(parameters);
+                if(!player){
+                    return inGameHelp(player);
+                }
+                else{
+                    return makeMove(parameters, request.gameID());}
             }
             case "leave" -> {
                 return "leave";
             }
             case "resign" -> {
-                return "resign";
+                if(!player){
+                    return inGameHelp(player);
+                }else{
+                    return "resign";
+                }
             }
             default -> {
-                return inGameHelp();
+                return inGameHelp(player);
             }
         }
     }
 
 
-    public String inGame(JoinRequest request){
+    public String inGame(JoinRequest request, Boolean player){
         Scanner scanner = new Scanner(System.in);
         var input = "";
+        try{
+            websocketClient.connect(new UserGameCommand(UserGameCommand.CommandType.CONNECT, client.
+                    getAuth().toString(), request.gameID()));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
         while(!input.equals("leave") && !Objects.equals(input, "resign")){
             String line = scanner.nextLine();
-            input = inGameEval(line, request);
+            input = inGameEval(line, request, player);
             System.out.println(SET_TEXT_COLOR_MAGENTA + input + RESET_TEXT_COLOR);
         }
         if(input.equals("leave")){
@@ -283,11 +366,16 @@ public class ClientEval {
             GameData gameInfo = client.getGameByID(gameNumber);
             JoinRequest request = new JoinRequest(playerColor, gameNumber);
             client.joinGame(request);
+            try{
+                websocketClient = new ClientWebsocketFacade(serverURL, notificationHandler);
+            }catch(Exception ex){
+                System.out.println("Websocket Error");
+            }
             System.out.print( "Successfully joined " + gameInfo.gameName() + " as " + playerColor + "\n" + getGame(playerColor, gameInfo, null));
-            return inGame(request);
+            return inGame(request, true);
         }
         catch(Exception e){
-            return "Couldn't join game";
+            return "Error with Game";
         }
 
 
@@ -300,7 +388,7 @@ public class ClientEval {
         else{
             playerTeam = ChessGame.TeamColor.BLACK;
         }
-        return new ClientUI(client.getAuth()).chessBoardDisplay(playerTeam, gameData, highlights);
+        return new ChessBoardDisplay(client.getAuth()).chessBoardDisplay(playerTeam, gameData, highlights);
 
     }
     public String createEval(String[] parameters){
@@ -357,7 +445,7 @@ public class ClientEval {
     }
 
     public String helpEval(){
-        return new ClientUI(authorization).helpDisplay();
+        return new HelpDisplay(authorization).helpDisplay();
     }
     public String formatResponse(Object response, Class<?> responseType) {
         if(responseType == AuthData.class){
@@ -368,6 +456,36 @@ public class ClientEval {
 
 
         return null;
+    }
+
+    public int readChessMove(String letter){
+
+        List<String> boardLetters = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
+        if(letter.matches("[A-z]")){
+            for(int i = 0; i < boardLetters.size(); i++){
+                if(letter.equalsIgnoreCase(boardLetters.get(i))){
+                    return i;
+                }
+            }
+
+        }
+        return 1000;
+    }
+    private ChessPiece.PieceType validatePromotion(String promotionPiece){
+        if(promotionPiece.equalsIgnoreCase("queen") || promotionPiece.equalsIgnoreCase("q")) {
+            return ChessPiece.PieceType.QUEEN;
+        }
+        if(promotionPiece.equalsIgnoreCase("rook") || promotionPiece.equalsIgnoreCase("r")){
+            return ChessPiece.PieceType.ROOK;
+        }
+        if(promotionPiece.equalsIgnoreCase("knight") || promotionPiece.equalsIgnoreCase("n")){
+            return ChessPiece.PieceType.KNIGHT;
+        }
+        if(promotionPiece.equalsIgnoreCase("bishop") || promotionPiece.equalsIgnoreCase("b")){
+            return ChessPiece.PieceType.BISHOP;
+        }
+        return null;
+
     }
 
 

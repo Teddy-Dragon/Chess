@@ -1,10 +1,7 @@
 package ui;
 
-import javax.management.Notification;
+import model.Notification;
 
-public class NotificationHandler {
-    void notify(Notification notification) {
-
-    }
-
+public interface NotificationHandler {
+    public void notify(Notification notification);
 }
