@@ -19,10 +19,9 @@ public class Connection {
         serverMessage.setMessage(message);
         session.getRemote().sendString(new Gson().toJson(serverMessage));
     }
-    public void update(String message, ChessGame game) throws IOException {
+    public void update(ChessGame game) throws IOException {
         ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
         serverMessage.setGame(game);
-        serverMessage.setMessage(message);
         session.getRemote().sendString(new Gson().toJson(serverMessage));
     }
 

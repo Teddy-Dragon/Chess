@@ -5,7 +5,6 @@ import chess.ChessMove;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -42,14 +41,15 @@ public class ConnectionManager {
             String message = visitorName + " has left";
             broadcastLobby(visitorName, message, gameID);
         }
-        public void gameUpdate(String username, int gameID, ChessGame game, ChessMove move) throws IOException {
+        public void gameUpdate(String username, int gameID, ChessGame game, ChessMove move) throws Exception {
             List<Connection> disconnectedUsers = new ArrayList<>();
             ConcurrentHashMap<String, Connection>  lobby = lobbies.get(gameID).getConnections();
             String message = username + " moved " + move.getStartPosition() + " to " + move.getEndPosition();
             for(Connection player: lobby.values()){
                 if(player.session.isOpen()){
                     if(!Objects.equals(username, player.username)){
-                        player.update(message, game);
+                        player.update(game);
+                        player.send(message);
                     }
                 }else{
                     disconnectedUsers.add(player);

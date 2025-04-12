@@ -245,6 +245,8 @@ public class WebSocketTests {
 
         //new white player can make move
         ChessMove move = new ChessMove(new ChessPosition(2, 5), new ChessPosition(3, 5), null);
+
+
         makeMove(white2, gameID, move, true, false, Set.of(black, observer), Set.of(white));
     }
 

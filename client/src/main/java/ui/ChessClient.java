@@ -291,7 +291,8 @@ public class ChessClient {
                     return inGameHelp(player);
                 }
                 else{
-                    return makeMove(parameters, request.gameID());}
+                    return makeMove(parameters, request.gameID());
+                }
             }
             case "leave" -> {
                 return "leave";
@@ -336,7 +337,10 @@ public class ChessClient {
         while(!input.equals("leave") && !Objects.equals(input, "resign")){
             String line = scanner.nextLine();
             input = inGameEval(line, request, player);
-            System.out.println(SET_TEXT_COLOR_LIGHT_GREY + ">>>" + input + "<<<" + RESET_TEXT_COLOR);
+            if(Objects.equals(input, "leave") || Objects.equals(input, "resign")){
+                break;
+            }
+            System.out.println(input);
         }
         if(input.equals("leave")){
             try{

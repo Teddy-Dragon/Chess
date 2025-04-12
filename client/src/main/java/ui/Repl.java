@@ -36,9 +36,6 @@ public class Repl implements NotificationHandler {
     public void notify(ServerMessage serverMessage) {
         if(serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
             System.out.println(eval.printChessGame(serverMessage.getGame()));
-            if(serverMessage.getMessage() != null){
-                System.out.println(SET_TEXT_COLOR_MAGENTA + serverMessage.getMessage());
-            }
         }
         if(serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION){
             System.out.println(SET_TEXT_COLOR_MAGENTA + serverMessage.getMessage() + RESET_TEXT_COLOR);
