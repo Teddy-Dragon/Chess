@@ -314,8 +314,6 @@ public class ChessClient {
             }
         }
     }
-
-
     public String inGame(JoinRequest request, Boolean player){
         Scanner scanner = new Scanner(System.in);
         var input = "";
@@ -468,7 +466,6 @@ public class ChessClient {
                     return i;
                 }
             }
-
         }
         return 1000;
     }
@@ -486,7 +483,6 @@ public class ChessClient {
             return ChessPiece.PieceType.BISHOP;
         }
         return null;
-
     }
     public String printChessGame(ChessGame game){
         return new ChessBoardDisplay().chessBoardDisplay(chessBoardPerspective, game, null);
