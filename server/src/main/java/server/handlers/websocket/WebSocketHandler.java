@@ -146,7 +146,8 @@ public class WebSocketHandler {
         AuthData resigningPlayer = authMap.getAuth(UUID.fromString(userGameCommand.getAuthToken()));
 
         ChessGame game = gameData.game();
-        if(!Objects.equals(resigningPlayer.username(), gameData.whiteUsername()) && !Objects.equals(resigningPlayer.username(), gameData.blackUsername())){
+        if(!Objects.equals(resigningPlayer.username(), gameData.whiteUsername()) &&
+                !Objects.equals(resigningPlayer.username(), gameData.blackUsername())){
             ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
             serverMessage.setErrorMessage("Error: Observers cannot resign");
             session.getRemote().sendString(new Gson().toJson(serverMessage));

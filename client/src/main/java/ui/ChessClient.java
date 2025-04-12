@@ -7,12 +7,9 @@ import chess.ChessPosition;
 import model.*;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
-
 import java.io.IOException;
 import java.util.*;
-
 import static ui.EscapeSequences.*;
-
 public class ChessClient {
     private UUID authorization;
     private String username;
@@ -326,7 +323,8 @@ public class ChessClient {
             websocketClient.connect(new UserGameCommand(UserGameCommand.CommandType.CONNECT, client.
                     getAuth().toString(), request.gameID()));
             if(player){
-                System.out.println(SET_TEXT_COLOR_MAGENTA + "Successfully joined game as " + request.playerColor()+ "\n");
+                System.out.println(SET_TEXT_COLOR_MAGENTA + "Successfully joined game as " +
+                        request.playerColor()+ "\n");
             }
             else{
                 System.out.println(SET_TEXT_COLOR_MAGENTA + "Watching as " + request.playerColor());
@@ -344,7 +342,8 @@ public class ChessClient {
         }
         if(input.equals("leave")){
             try{
-                UserGameCommand userGameCommand = new UserGameCommand(UserGameCommand.CommandType.LEAVE, client.getAuth().toString(), request.gameID());
+                UserGameCommand userGameCommand = new UserGameCommand(UserGameCommand.CommandType.LEAVE,
+                        client.getAuth().toString(), request.gameID());
                 websocketClient.disconnect(userGameCommand);
                 websocketClient = null;
                 return SET_TEXT_COLOR_MAGENTA + "Left Game" + RESET_TEXT_COLOR + "\n" + helpEval();
@@ -353,7 +352,8 @@ public class ChessClient {
             }
         }
         if(Objects.equals(input, "resign")) {
-            websocketClient.disconnect(new UserGameCommand(UserGameCommand.CommandType.RESIGN, client.getAuth().toString(), request.gameID()));
+            websocketClient.disconnect(new UserGameCommand(UserGameCommand.CommandType.RESIGN,
+                    client.getAuth().toString(), request.gameID()));
             websocketClient = null;
             return SET_TEXT_COLOR_MAGENTA + "Resigned" + RESET_TEXT_COLOR + "\n" + helpEval();
         }

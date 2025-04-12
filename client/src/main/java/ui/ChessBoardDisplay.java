@@ -34,11 +34,15 @@ public class ChessBoardDisplay {
 
         if(playerColor == ChessGame.TeamColor.BLACK){
             for(int i = 0; i < 8; i++){ //We go from row 0 to row 7
-                List<Integer> rowHighlights = getHighlightsInRow(highlights, i, false); // get a row, if there are valid moves in the highlights, get those as well
+                List<Integer> rowHighlights = getHighlightsInRow(highlights, i, false);
+                // get a row, if there are valid moves in the highlights, get those as well
 
-                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.BLACK) + "\n"; // makes the top of a row
-                displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.BLACK, whiteFirst, rowHighlights) + "\n"; // makes the middle of a row
-                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.BLACK) + "\n"; // makes the bottom of a row
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.BLACK) + "\n";
+                // makes the top of a row
+                displayChessBoard += row.rowChessMiddle(board[i], ChessGame.TeamColor.BLACK, whiteFirst, rowHighlights) + "\n";
+                // makes the middle of a row
+                displayChessBoard += row.rowTopOrBottom(whiteFirst, rowHighlights, ChessGame.TeamColor.BLACK) + "\n";
+                // makes the bottom of a row
                 whiteFirst = !whiteFirst; // tells the chessboard to flip color alternations
                 rowHighlights.clear(); // if there were any highlights for this row, delete so it doesn't interfere with the next row
             }
