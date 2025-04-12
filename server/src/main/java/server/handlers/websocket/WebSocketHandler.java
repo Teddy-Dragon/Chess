@@ -14,6 +14,7 @@ import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -36,7 +37,7 @@ public class WebSocketHandler {
             switch(userGameCommand.getCommandType()){
                 case CONNECT -> connectHandler(session, userGameCommand.getAuthToken(), userGameCommand.getGameID());
                 case LEAVE -> leaveHandler(userGameCommand);
-                case RESIGN -> resignHandler(userGameCommand);
+                case RESIGN -> resignHandler(userGameCommand, session);
                 case MAKE_MOVE -> {
                     MakeMoveCommand moveCommand = new Gson().fromJson(message, MakeMoveCommand.class);
                     makeMoveHandler(moveCommand, session);
@@ -50,18 +51,14 @@ public class WebSocketHandler {
 
     public void connectHandler(Session session, String authToken, Integer gameID){
         try{
-            AuthData playerInfo = authMap.getAuth(UUID.fromString(authToken));
+            AuthData playerInfo = verifyAuth(authToken, session);
+             // throws an error when it can't turn it into a UUID String
             GameData gameData = gameMap.getGameByID(gameID);
             if(gameMap.getGameByID(gameID) == null){
                 ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
                 serverMessage.setErrorMessage("Error: Game does not exist");
                 session.getRemote().sendString(new Gson().toJson(serverMessage));
                 return;
-            }
-            if(playerInfo == null){
-                ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-                serverMessage.setErrorMessage("Error: Not Authorized");
-                session.getRemote().sendString(new Gson().toJson(serverMessage));
             }
             else{
                 connectionManager.add(playerInfo.username(), session, gameData.gameID(), gameData);
@@ -76,7 +73,7 @@ public class WebSocketHandler {
     }
     public void makeMoveHandler(MakeMoveCommand moveCommand, Session session){
         try{
-            AuthData playerInfo = authMap.getAuth(UUID.fromString(moveCommand.getAuthToken()));
+            AuthData playerInfo = verifyAuth(moveCommand.getAuthToken(), session);
             GameData gameInfo = gameMap.getGameByID(moveCommand.getGameID());
             ChessGame game = gameInfo.game();
             ChessBoard board = game.getBoard();
@@ -92,10 +89,15 @@ public class WebSocketHandler {
                     ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
                     serverMessage.setErrorMessage("It is not your turn!");
                     session.getRemote().sendString(new Gson().toJson(serverMessage));
+                    return;
                 }
                 if(Objects.equals(playerInfo.username(), gameInfo.whiteUsername())){
                     commitMove(game, moveCommand, gameInfo, playerInfo, session);
                     checkGameStatus(moveCommand);
+                }else{
+                    ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+                    serverMessage.setErrorMessage("It is not your turn!");
+                    session.getRemote().sendString(new Gson().toJson(serverMessage));
                 }
             }
             else if(pieceColor == ChessGame.TeamColor.BLACK){
@@ -103,11 +105,16 @@ public class WebSocketHandler {
                     ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
                     serverMessage.setErrorMessage("It is not your turn!");
                     session.getRemote().sendString(new Gson().toJson(serverMessage));
+                    return;
                 }
                 if(Objects.equals(playerInfo.username(), gameInfo.blackUsername())){
                     commitMove(game, moveCommand, gameInfo, playerInfo, session);
                     checkGameStatus(moveCommand);
                 }
+                else{
+                    ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+                    serverMessage.setErrorMessage("It is not your turn!");
+                    session.getRemote().sendString(new Gson().toJson(serverMessage));}
             }else{
                 ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
                 serverMessage.setErrorMessage("Error: move not valid");
@@ -134,16 +141,25 @@ public class WebSocketHandler {
         }
         connectionManager.remove(userInfo.username(), userGameCommand.getGameID());
     }
-    public void resignHandler(UserGameCommand userGameCommand) throws Exception {
+    public void resignHandler(UserGameCommand userGameCommand, Session session) throws Exception {
         GameData gameData = gameMap.getGameByID(userGameCommand.getGameID());
         AuthData resigningPlayer = authMap.getAuth(UUID.fromString(userGameCommand.getAuthToken()));
 
         ChessGame game = gameData.game();
+        if(!Objects.equals(resigningPlayer.username(), gameData.whiteUsername()) && !Objects.equals(resigningPlayer.username(), gameData.blackUsername())){
+            ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            serverMessage.setErrorMessage("Error: Observers cannot resign");
+            session.getRemote().sendString(new Gson().toJson(serverMessage));
+            return;
+        }
         game.setIsGameOver(true);
         GameData updatedGame = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
         gameMap.updateGame(gameData.gameID(), updatedGame);
+
+        connectionManager.broadcastLobby("", resigningPlayer.username() + " has resigned, game is over!", gameData.gameID());
         connectionManager.remove(resigningPlayer.username(), userGameCommand.getGameID());
-        connectionManager.broadcastLobby(resigningPlayer.username(), resigningPlayer.username() + " has resigned, game is over!", gameData.gameID());
+
+
 
 
     }
@@ -186,7 +202,25 @@ public class WebSocketHandler {
             serverMessage.setGame(gameMap.getGameByID(gameInfo.gameID()).game());
             session.getRemote().sendString(new Gson().toJson(serverMessage));
             connectionManager.gameUpdate(playerInfo.username(), gameInfo.gameID(), game, moveCommand.getMove());
+        }else{
+            ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            serverMessage.setErrorMessage("Error: Invalid Move!");
+            session.getRemote().sendString(new Gson().toJson(serverMessage));
         }
+    }
+
+    private AuthData verifyAuth(String authToken, Session session) throws IOException {
+        try{
+            AuthData playerInfo;
+            playerInfo = authMap.getAuth(UUID.fromString(authToken));
+            return playerInfo;
+        }
+        catch(Exception e){
+            ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            serverMessage.setErrorMessage("Error: Not Authorized");
+            session.getRemote().sendString(new Gson().toJson(serverMessage));
+        }
+        return null;
     }
 
 
