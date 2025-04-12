@@ -152,12 +152,17 @@ public class WebSocketHandler {
             session.getRemote().sendString(new Gson().toJson(serverMessage));
             return;
         }
+        if(game.getIsGameOver()){
+            ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            serverMessage.setErrorMessage("Error: Game is already over");
+            session.getRemote().sendString(new Gson().toJson(serverMessage));
+            return;
+        }
         game.setIsGameOver(true);
         GameData updatedGame = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
         gameMap.updateGame(gameData.gameID(), updatedGame);
-
         connectionManager.broadcastLobby("", resigningPlayer.username() + " has resigned, game is over!", gameData.gameID());
-        connectionManager.remove(resigningPlayer.username(), userGameCommand.getGameID());
+
 
 
 
